@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
+using System.Waf.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Windows.UI.Core;
 using WindowsPackageManager;
 using WinGetJet.Models;
 
@@ -8,6 +10,7 @@ namespace WinGetJet.Views;
 
 public sealed partial class MainPage : Page
 {
+    private readonly TaskScheduler uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
     private readonly PackageService packageService = new();
     public ObservableCollection<AppModel> Apps { get; } = [];
 
@@ -32,16 +35,19 @@ public sealed partial class MainPage : Page
                     var details = await packageService.LoadDetailsAsync(app.Id, cancellation);
                     if (details is not null)
                     {
-                        app.Available = details.Available;
-                        app.Source = details.Source;
-                        app.IsUpdateAvailable = details.IsUpdateAvailable;
-                        app.Publisher = details.Publisher;
-                        app.Author = details.Author;
-                        app.Description = details.Description;
-                        app.PackageUrl = details.PackageUrl;
-                        app.License = details.License;
-                        app.IconUrl = details.IconUrl;
-                        //app.Icon = IconService.ResolveIcon(app);
+                        await TaskHelper.Run(() =>
+                        {
+                            app.Available = details.Available;
+                            app.Source = details.Source;
+                            app.IsUpdateAvailable = details.IsUpdateAvailable;
+                            app.Publisher = details.Publisher;
+                            app.Author = details.Author;
+                            app.Description = details.Description;
+                            app.PackageUrl = details.PackageUrl;
+                            app.License = details.License;
+                            app.IconUrl = details.IconUrl;
+                            //app.Icon = IconService.ResolveIcon(app);
+                        }, uiScheduler, cancellation);
                     }
                 });
 
