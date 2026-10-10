@@ -29,4 +29,6 @@ public class AppModel(string Id, string Name, string? Version, IReadOnlyList<str
     public string? License { get; set => SetProperty(ref field, value); }
 
     public string? IconUrl { get; set => SetProperty(ref field, value); }
+
+    public object? Icon { get; set => SetProperty(ref field, value); }
 }

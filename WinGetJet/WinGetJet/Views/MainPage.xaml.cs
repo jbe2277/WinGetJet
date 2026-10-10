@@ -2,9 +2,9 @@ using System.Collections.ObjectModel;
 using System.Waf.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Core;
 using WindowsPackageManager;
 using WinGetJet.Models;
+using WinGetJet.Services;
 
 namespace WinGetJet.Views;
 
@@ -46,7 +46,7 @@ public sealed partial class MainPage : Page
                             app.PackageUrl = details.PackageUrl;
                             app.License = details.License;
                             app.IconUrl = details.IconUrl;
-                            //app.Icon = IconService.ResolveIcon(app);
+                            app.Icon = IconService.ResolveIcon(app);
                         }, uiScheduler, cancellation);
                     }
                 });
