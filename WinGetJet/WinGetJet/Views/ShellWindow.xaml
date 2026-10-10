@@ -20,7 +20,7 @@
 
         <TitleBar x:Name="AppTitleBar" Title="WinGetJet">
             <TitleBar.IconSource>
-                <ImageIconSource ImageSource="Assets/AppIcon.ico" />
+                <ImageIconSource ImageSource="../Assets/AppIcon.ico" />
             </TitleBar.IconSource>
         </TitleBar>
 

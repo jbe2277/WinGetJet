@@ -7,11 +7,10 @@ public sealed partial class ShellWindow : Window
     public ShellWindow()
     {
         InitializeComponent();
+        AppWindow.SetIcon("Assets/AppIcon.ico");
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
-
-        AppWindow.SetIcon("Assets/AppIcon.ico");
 
         RootFrame.Navigate(typeof(MainPage));
     }
