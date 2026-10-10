@@ -7,7 +7,7 @@ namespace WindowsPackageManager;
 public record PackageInfo(string Id, string Name, string? Version, IReadOnlyList<string> ProductCodes);
 
 public record PackageDetails(string Id, string? Available, string? Source, bool IsUpdateAvailable,
-    string? Publisher, string? Author, string? Description, string? PackageUrl, string? License, string? IconUrl);
+    string? Publisher, string? Author, string? Description, string? PackageUrl, string? License, Uri? IconUrl);
 
 
 public class PackageService
@@ -73,6 +73,7 @@ public class PackageService
             // Some package sources don't implement IPackageVersionInfo4
         }
 
+        var iconUrl = metadata?.Icons.ToArray().FirstOrDefault(x => !string.IsNullOrEmpty(x.Url))?.Url;
         return new PackageDetails(id,
             Available: package.DefaultInstallVersion?.Version,
             Source: package.DefaultInstallVersion?.PackageCatalog?.Info?.Name,
@@ -82,7 +83,7 @@ public class PackageService
             Description: metadata?.Description,
             PackageUrl: metadata?.PackageUrl,
             License: metadata?.License,
-            IconUrl: metadata?.Icons?.ToArray()?.FirstOrDefault(x => !string.IsNullOrEmpty(x.Url))?.Url);
+            IconUrl: Uri.TryCreate(iconUrl, UriKind.Absolute, out var x) ? x : null);
     }
 
     private async Task<PackageCatalog> GetCompositeCatalogAsync()
