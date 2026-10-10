@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "WinGetJet (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "WinGetJet (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
