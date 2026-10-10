@@ -1,12 +1,11 @@
 ﻿using Microsoft.UI.Xaml;
+using WinGetJet.ViewModels;
 using WinGetJet.Views;
 
 namespace WinGetJet;
 
 public partial class App : Application
 {
-    private Window? window;
-    
     public App()
     {
         InitializeComponent();
@@ -14,7 +13,15 @@ public partial class App : Application
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        window = new ShellWindow();
-        window.Activate();
+        var shellWindow = new ShellWindow();
+        var shellViewModel = new ShellViewModel(shellWindow);
+        shellViewModel.Initialize();
+        
+        var mainView = new MainView();
+        var mainViewModel = new MainViewModel(mainView);
+        mainViewModel.Initialize();
+
+        shellWindow.ContentPage = mainView;
+        shellWindow.Activate();
     }
 }

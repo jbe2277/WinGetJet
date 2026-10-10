@@ -1,24 +1,25 @@
-using System.Collections.ObjectModel;
-using System.Waf.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Waf.Foundation;
 using WindowsPackageManager;
 using WinGetJet.Models;
 using WinGetJet.Services;
+using WinGetJet.ViewModels;
 
 namespace WinGetJet.Views;
 
-public sealed partial class MainPage : Page
+public sealed partial class MainView : Page, IMainView
 {
     private readonly TaskScheduler uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
     private readonly PackageService packageService = new();
-    public ObservableCollection<AppModel> Apps { get; } = [];
 
-    public MainPage()
+    public MainView()
     {
         InitializeComponent();
         Loaded += OnLoaded;
     }
+
+    public MainViewModel ViewModel => (MainViewModel)DataContext;
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
@@ -27,9 +28,9 @@ public sealed partial class MainPage : Page
         {
             var packages = await packageService.GetInstalledPackagesAsync();
             foreach (var app in packages.OrderBy(a => a.Name))
-                Apps.Add(new AppModel(app.Id, app.Name, app.Version, app.ProductCodes));
+                ViewModel.Apps.Add(new AppModel(app.Id, app.Name, app.Version, app.ProductCodes));
 
-            await Parallel.ForEachAsync(Apps, new ParallelOptions { MaxDegreeOfParallelism = 4 },
+            await Parallel.ForEachAsync(ViewModel.Apps, new ParallelOptions { MaxDegreeOfParallelism = 4 },
                 async (app, cancellation) =>
                 {
                     var details = await packageService.LoadDetailsAsync(app.Id, cancellation);
@@ -51,7 +52,7 @@ public sealed partial class MainPage : Page
                     }
                 });
 
-            StatusTextBlock.Text = $"Retrieved {Apps.Count} installed packages.";
+            StatusTextBlock.Text = $"Retrieved {ViewModel.Apps.Count} installed packages.";
         }
         catch (Exception ex)
         {

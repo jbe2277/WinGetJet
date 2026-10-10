@@ -1,8 +1,10 @@
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using WinGetJet.ViewModels;
 
 namespace WinGetJet.Views;
 
-public sealed partial class ShellWindow : Window
+public sealed partial class ShellWindow : Window, IShellView
 {
     public ShellWindow()
     {
@@ -11,7 +13,15 @@ public sealed partial class ShellWindow : Window
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
+    }
 
-        RootFrame.Navigate(typeof(MainPage));
+    public ShellViewModel ViewModel => (ShellViewModel)DataContext!;
+
+    public object? DataContext { get; set; }
+
+    public Page? ContentPage 
+    { 
+        get => RootFrame.Content as Page;
+        set => RootFrame.Content = value;
     }
 }
