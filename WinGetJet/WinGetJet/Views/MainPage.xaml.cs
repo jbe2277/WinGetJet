@@ -35,7 +35,7 @@ public sealed partial class MainPage : Page
                     var details = await packageService.LoadDetailsAsync(app.Id, cancellation);
                     if (details is not null)
                     {
-                        await TaskHelper.Run(() =>
+                        await TaskHelper.Run(async () =>
                         {
                             app.Available = details.Available;
                             app.Source = details.Source;
@@ -46,7 +46,7 @@ public sealed partial class MainPage : Page
                             app.PackageUrl = details.PackageUrl;
                             app.License = details.License;
                             app.IconUrl = details.IconUrl;
-                            app.Icon = IconService.ResolveIcon(app);
+                            app.Icon = await IconService.ResolveIconAsync(app);
                         }, uiScheduler, cancellation);
                     }
                 });
