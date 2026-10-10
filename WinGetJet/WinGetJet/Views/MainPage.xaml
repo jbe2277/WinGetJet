@@ -13,6 +13,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
@@ -51,5 +52,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        
+        <TextBlock x:Name="StatusTextBlock" Grid.Row="2" />
     </Grid>
 </Page>

@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WindowsPackageManager;
 using WinGetJet.Models;
@@ -14,19 +14,42 @@ public sealed partial class MainPage : Page
     public MainPage()
     {
         InitializeComponent();
-        Loaded += async (_, _) =>
+        Loaded += OnLoaded;
+    }
+
+    private async void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        StatusTextBlock.Text = "Retrieving installed packages...";
+        try
         {
-            try
-            {
-                var packages = await packageService.GetInstalledPackagesAsync();
-                foreach (var app in packages.OrderBy(a => a.Name))
-                    Apps.Add(new AppModel(app.Id, app.Name, app.Version, app.ProductCodes));
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions appropriately (e.g., log them, show a message to the user, etc.)
-                Debug.WriteLine($"Error retrieving installed packages: {ex.Message}");
-            }
-        };
+            var packages = await packageService.GetInstalledPackagesAsync();
+            foreach (var app in packages.OrderBy(a => a.Name))
+                Apps.Add(new AppModel(app.Id, app.Name, app.Version, app.ProductCodes));
+
+            await Parallel.ForEachAsync(Apps, new ParallelOptions { MaxDegreeOfParallelism = 4 },
+                async (app, cancellation) =>
+                {
+                    var details = await packageService.LoadDetailsAsync(app.Id, cancellation);
+                    if (details is not null)
+                    {
+                        app.Available = details.Available;
+                        app.Source = details.Source;
+                        app.IsUpdateAvailable = details.IsUpdateAvailable;
+                        app.Publisher = details.Publisher;
+                        app.Author = details.Author;
+                        app.Description = details.Description;
+                        app.PackageUrl = details.PackageUrl;
+                        app.License = details.License;
+                        app.IconUrl = details.IconUrl;
+                        //app.Icon = IconService.ResolveIcon(app);
+                    }
+                });
+
+            StatusTextBlock.Text = $"Retrieved {Apps.Count} installed packages.";
+        }
+        catch (Exception ex)
+        {
+            StatusTextBlock.Text = $"Error retrieving installed packages: {ex.Message}";
+        }
     }
 }
