@@ -32,7 +32,7 @@
 
         <!-- Rows (read-only) -->
         <ListView Grid.Row="1"
-                  ItemsSource="{x:Bind ViewModel.Apps}"
+                  ItemsSource="{x:Bind ViewModel.AppsView}"
                   SelectionMode="None"
                   IsItemClickEnabled="False">
             <ListView.ItemTemplate>

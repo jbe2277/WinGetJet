@@ -24,4 +24,17 @@ public sealed partial class ShellWindow : Window, IShellView
         get => RootFrame.Content as Page;
         set => RootFrame.Content = value;
     }
+
+    private void SearchBoxTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if (args.Reason is not AutoSuggestionBoxTextChangeReason.ProgrammaticChange)
+        {
+            ((MainViewModel)((MainView)ContentPage!).DataContext).FilterText = SearchBox.Text;
+        }
+    }
+
+    private void AppTitleBarSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        SearchBox.Width = Math.Clamp(e.NewSize.Width * 0.4, 200, 400);
+    }
 }

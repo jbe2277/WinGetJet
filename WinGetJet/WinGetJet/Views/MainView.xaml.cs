@@ -28,9 +28,9 @@ public sealed partial class MainView : Page, IMainView
         {
             var packages = await packageService.GetInstalledPackagesAsync();
             foreach (var app in packages.OrderBy(a => a.Name))
-                ViewModel.Apps.Add(new AppModel(app.Id, app.Name, app.Version, app.ProductCodes));
+                ViewModel.AppsSource.Add(new AppModel(app.Id, app.Name, app.Version, app.ProductCodes));
 
-            await Parallel.ForEachAsync(ViewModel.Apps, new ParallelOptions { MaxDegreeOfParallelism = 4 },
+            await Parallel.ForEachAsync(ViewModel.AppsView, new ParallelOptions { MaxDegreeOfParallelism = 4 },
                 async (app, cancellation) =>
                 {
                     var details = await packageService.LoadDetailsAsync(app.Id, cancellation);
@@ -52,7 +52,7 @@ public sealed partial class MainView : Page, IMainView
                     }
                 });
 
-            StatusTextBlock.Text = $"Retrieved {ViewModel.Apps.Count} installed packages.";
+            StatusTextBlock.Text = $"Retrieved {ViewModel.AppsView.Count} installed packages.";
         }
         catch (Exception ex)
         {

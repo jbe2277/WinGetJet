@@ -18,10 +18,14 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TitleBar x:Name="AppTitleBar" Title="WinGetJet">
+        <TitleBar x:Name="AppTitleBar" Title="WinGetJet" SizeChanged="AppTitleBarSizeChanged">
             <TitleBar.IconSource>
                 <ImageIconSource ImageSource="../Assets/AppIcon.ico" />
             </TitleBar.IconSource>
+            <TitleBar.Content>
+                <AutoSuggestBox x:Name="SearchBox" PlaceholderText="Search" QueryIcon="Find" TextChanged="SearchBoxTextChanged" 
+                        VerticalAlignment="Center"/>
+            </TitleBar.Content>
         </TitleBar>
 
         <Frame x:Name="RootFrame" Grid.Row="1" />
