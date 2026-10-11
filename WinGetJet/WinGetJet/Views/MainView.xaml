@@ -18,7 +18,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="{x:Bind v:ViewConvert.Format('{0} apps found', ViewModel.AppsView.Count), Mode=OneWay}" />
+        <TextBlock Grid.Row="0" Text="{x:Bind v:ViewConvert.Format('{0} apps found ({1} updates available)', ViewModel.AppsView.Count, ViewModel.UpdateCount), Mode=OneWay}" />
         
         <!-- Header -->
         <Grid Grid.Row="1" Padding="12,4" ColumnSpacing="12">
@@ -26,12 +26,12 @@
                 <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="0.4*" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="Name" FontWeight="SemiBold" />
             <TextBlock Grid.Column="1" Text="Version" FontWeight="SemiBold" />
             <TextBlock Grid.Column="2" Text="Available" FontWeight="SemiBold" />
-            <TextBlock Grid.Column="3" Text="Source" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="3" Text="Update" FontWeight="SemiBold" />
         </Grid>
 
         <!-- Rows (read-only) -->
@@ -46,7 +46,7 @@
                             <ColumnDefinition Width="3*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="0.4*" />
                         </Grid.ColumnDefinitions>
                         <Grid Grid.Column="0" ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
@@ -58,7 +58,7 @@
                         </Grid>
                         <TextBlock Grid.Column="1" Text="{x:Bind Version}" TextTrimming="CharacterEllipsis" />
                         <TextBlock Grid.Column="2" Text="{x:Bind Available, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Grid.Column="3" Text="{x:Bind Source, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Grid.Column="3" Text="{x:Bind v:ViewConvert.UpdateAvailable(IsUpdateAvailable), Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

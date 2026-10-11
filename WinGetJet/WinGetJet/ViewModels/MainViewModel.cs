@@ -14,6 +14,10 @@ public class MainViewModel : ViewModelCore<IMainView>
     public MainViewModel(IMainView view) : base(view, false)
     {
         AppsView = new(appsSource, null, Filter, null);
+        
+        AppsView.PropertyChanged += AppsViewPropertyChanged;
+        AppsView.CollectionItemChanged += AppsViewCollectionItemChanged;
+        UpdateCountProperty();
     }
 
     public ObservableList<AppModel> AppsSource => appsSource;
@@ -22,18 +26,29 @@ public class MainViewModel : ViewModelCore<IMainView>
 
     public string FilterText { get; set => SetProperty(ref field, value); } = "";
 
+    public int UpdateCount { get; set => SetProperty(ref field, value); }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+        if (e.PropertyName is nameof(FilterText)) AppsView.Update();        
+    }
+
     private bool Filter(AppModel app)
     {
         return string.IsNullOrEmpty(FilterText)
             || (!string.IsNullOrEmpty(app.Name) && app.Name.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase));
     }
 
-    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    private void UpdateCountProperty() => UpdateCount = AppsView.Count(x => x.IsUpdateAvailable);
+
+    private void AppsViewPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        base.OnPropertyChanged(e);
-        if (e.PropertyName is nameof(FilterText))
-        {
-            AppsView.Update();
-        }
+        if (e.PropertyName is nameof(AppsView.Count)) UpdateCountProperty();
+    }
+
+    private void AppsViewCollectionItemChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(AppModel.IsUpdateAvailable)) UpdateCountProperty();
     }
 }
