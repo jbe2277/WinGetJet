@@ -53,7 +53,7 @@
                                 <ColumnDefinition Width="24" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Image Source="{x:Bind (media:ImageSource)Icon, Mode=OneWay}" Width="24" Height="24" VerticalAlignment="Center" />
+                            <Image Source="{x:Bind (media:ImageSource)Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}" Width="24" Height="24" VerticalAlignment="Center" />
                             <TextBlock Grid.Column="1" Text="{x:Bind Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                         </Grid>
                         <TextBlock Grid.Column="1" Text="{x:Bind Version}" TextTrimming="CharacterEllipsis" />
