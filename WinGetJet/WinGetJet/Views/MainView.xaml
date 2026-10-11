@@ -18,8 +18,18 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="{x:Bind v:ViewConvert.Format('{0} apps found ({1} updates available)', ViewModel.AppsView.Count, ViewModel.UpdateCount), Mode=OneWay}" />
-        
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="{x:Bind v:ViewConvert.Format('{0} apps found ({1} updates available)', ViewModel.AppsView.Count, ViewModel.UpdateCount), Mode=OneWay}" />
+            
+            <CheckBox Grid.Column="1" Content="Show only apps with updates" IsChecked="{x:Bind ViewModel.ShowOnlyUpdates, Mode=TwoWay}" />
+        </Grid>
+
         <!-- Header -->
         <Grid Grid.Row="1" Padding="12,4" ColumnSpacing="12">
             <Grid.ColumnDefinitions>

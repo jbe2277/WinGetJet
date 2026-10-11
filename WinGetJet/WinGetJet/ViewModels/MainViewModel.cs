@@ -28,16 +28,21 @@ public class MainViewModel : ViewModelCore<IMainView>
 
     public int UpdateCount { get; set => SetProperty(ref field, value); }
 
+    public bool ShowOnlyUpdates { get; set => SetProperty(ref field, value); }
+
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
-        if (e.PropertyName is nameof(FilterText)) AppsView.Update();        
+        if (e.PropertyName is nameof(FilterText) or nameof(ShowOnlyUpdates)) AppsView.Update();        
     }
 
     private bool Filter(AppModel app)
     {
-        return string.IsNullOrEmpty(FilterText)
-            || (!string.IsNullOrEmpty(app.Name) && app.Name.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase));
+        return 
+            (string.IsNullOrEmpty(FilterText)
+                || (!string.IsNullOrEmpty(app.Name) && app.Name.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase))
+            )
+            && (!ShowOnlyUpdates || app.IsUpdateAvailable);
     }
 
     private void UpdateCountProperty() => UpdateCount = AppsView.Count(x => x.IsUpdateAvailable);
