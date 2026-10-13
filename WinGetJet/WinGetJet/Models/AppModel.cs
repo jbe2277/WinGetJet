@@ -2,7 +2,10 @@
 
 namespace WinGetJet.Models;
 
-public record AppTextLink(string? Text, Uri? Url);
+public record AppTextLink(string? Text, Uri? Url)
+{
+    public static AppTextLink Empty { get; } = new(null, null);
+}
 
 public class AppModel(string Id, string Name, string? Version, IReadOnlyList<string> ProductCodes) : Model
 {
@@ -20,7 +23,7 @@ public class AppModel(string Id, string Name, string? Version, IReadOnlyList<str
 
     public bool IsUpdateAvailable { get; set => SetProperty(ref field, value); }
 
-    public AppTextLink? Publisher { get; set => SetProperty(ref field, value); }
+    public AppTextLink Publisher { get; set => SetProperty(ref field, value); } = AppTextLink.Empty;
 
     public string? Author { get; set => SetProperty(ref field, value); }
 
@@ -28,7 +31,7 @@ public class AppModel(string Id, string Name, string? Version, IReadOnlyList<str
 
     public Uri? PackageUrl { get; set => SetProperty(ref field, value); }
 
-    public AppTextLink? License { get; set => SetProperty(ref field, value); }
+    public AppTextLink License { get; set => SetProperty(ref field, value); } = AppTextLink.Empty;
 
     public Uri? IconUrl { get; set => SetProperty(ref field, value); }
 
@@ -36,7 +39,7 @@ public class AppModel(string Id, string Name, string? Version, IReadOnlyList<str
 
     public string? Copyright { get; set => SetProperty(ref field, value); }
 
-    public AppTextLink? ReleaseNotes { get; set => SetProperty(ref field, value); }
+    public AppTextLink ReleaseNotes { get; set => SetProperty(ref field, value); } = AppTextLink.Empty;
 
     public IReadOnlyList<AppTextLink> Documentations { get; set => SetProperty(ref field, value); } = [];
 

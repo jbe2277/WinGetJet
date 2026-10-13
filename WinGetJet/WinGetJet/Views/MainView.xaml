@@ -103,7 +103,6 @@
                                    Width="48" Height="48" VerticalAlignment="Top" />
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.Name, Mode=OneWay}" Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
-                                <TextBlock Text="{x:Bind ViewModel.SelectedApp.Id, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher.Text, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
                                            Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Publisher.Text), Mode=OneWay, FallbackValue=Collapsed}" />
                             </StackPanel>
@@ -160,7 +159,7 @@
                             </ItemsControl>
                         </StackPanel>
 
-                        <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotes), Mode=OneWay, FallbackValue=Collapsed}">
+                        <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotes.Text), Mode=OneWay, FallbackValue=Collapsed}">
                             <TextBlock Text="Release notes" Style="{StaticResource BodyStrongTextBlockStyle}" />
                             <TextBlock Text="{x:Bind ViewModel.SelectedApp.ReleaseNotes.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                         </StackPanel>
