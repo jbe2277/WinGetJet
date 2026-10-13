@@ -7,7 +7,11 @@ namespace WindowsPackageManager;
 public record PackageInfo(string Id, string Name, string? Version, IReadOnlyList<string> ProductCodes);
 
 public record PackageDetails(string Id, string? Available, string? Source, bool IsUpdateAvailable,
-    string? Publisher, string? Author, string? Description, string? PackageUrl, string? License, Uri? IconUrl);
+    string? Publisher, string? Author, string? Description, string? PackageUrl, string? License, Uri? IconUrl,
+    string? PublisherUrl, string? PublisherSupportUrl, string? LicenseUrl, string? Copyright, string? ReleaseNotes, string? ReleaseNotesUrl,
+    IReadOnlyList<PackageDocumentation> Documentations, IReadOnlyList<string> Tags);
+
+public record PackageDocumentation(string Label, string Url);
 
 
 public class PackageService
@@ -83,7 +87,15 @@ public class PackageService
             Description: metadata?.Description,
             PackageUrl: metadata?.PackageUrl,
             License: metadata?.License,
-            IconUrl: Uri.TryCreate(iconUrl, UriKind.Absolute, out var x) ? x : null);
+            IconUrl: Uri.TryCreate(iconUrl, UriKind.Absolute, out var x) ? x : null,
+            PublisherUrl: metadata?.PublisherUrl,
+            PublisherSupportUrl: metadata?.PublisherSupportUrl,
+            LicenseUrl: metadata?.LicenseUrl,
+            Copyright: metadata?.Copyright,
+            ReleaseNotes: metadata?.ReleaseNotes,
+            ReleaseNotesUrl: metadata?.ReleaseNotesUrl,
+            Documentations: metadata?.Documentations.ToArray().Select(d => new PackageDocumentation(d.DocumentLabel, d.DocumentUrl)).ToArray() ?? [],
+            Tags: metadata?.Tags.ToArray() ?? []);
     }
 
     private async Task<PackageCatalog> GetCompositeCatalogAsync()

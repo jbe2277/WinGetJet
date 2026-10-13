@@ -21,6 +21,8 @@ public sealed partial class MainView : Page, IMainView
 
     public MainViewModel ViewModel => (MainViewModel)DataContext;
 
+    private void AppsListViewSelectionChanged(object sender, SelectionChangedEventArgs e) => ViewModel.SelectedApp = ((ListView)sender).SelectedItem as AppModel;
+
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
         StatusTextBlock.Text = "Retrieving installed packages...";
@@ -47,6 +49,14 @@ public sealed partial class MainView : Page, IMainView
                             app.PackageUrl = details.PackageUrl;
                             app.License = details.License;
                             app.IconUrl = details.IconUrl;
+                            app.PublisherUrl = details.PublisherUrl;
+                            app.PublisherSupportUrl = details.PublisherSupportUrl;
+                            app.LicenseUrl = details.LicenseUrl;
+                            app.Copyright = details.Copyright;
+                            app.ReleaseNotes = details.ReleaseNotes;
+                            app.ReleaseNotesUrl = details.ReleaseNotesUrl;
+                            app.Documentations = [.. details.Documentations.Select(d => new AppDocumentation(d.Label, d.Url))];
+                            app.Tags = details.Tags;
                             app.Icon = await IconService.ResolveIconAsync(app);
                         }, uiScheduler, cancellation);
                     }
