@@ -104,8 +104,8 @@
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.Name, Mode=OneWay}" Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.Id, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
-                                <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                           Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Publisher), Mode=OneWay, FallbackValue=Collapsed}" />
+                                <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher.Text, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                           Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Publisher.Text), Mode=OneWay, FallbackValue=Collapsed}" />
                             </StackPanel>
                         </Grid>
 
@@ -134,7 +134,7 @@
                             <TextBlock Grid.Row="3" Text="Author" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Author, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                             <TextBlock Grid.Row="4" Text="License" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.License, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.License.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                             <TextBlock Grid.Row="5" Text="Copyright" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             <TextBlock Grid.Row="5" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Copyright, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                         </Grid>
@@ -143,18 +143,18 @@
                             <TextBlock Text="Links" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0,0,0,4" />
                             <HyperlinkButton Content="Homepage" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.PackageUrl, Mode=OneWay, FallbackValue={x:Null}}"
                                              Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.PackageUrl), Mode=OneWay, FallbackValue=Collapsed}" />
-                            <HyperlinkButton Content="Publisher" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.PublisherUrl, Mode=OneWay, FallbackValue={x:Null}}"
-                                             Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.PublisherUrl), Mode=OneWay, FallbackValue=Collapsed}" />
+                            <HyperlinkButton Content="Publisher" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.Publisher.Url, Mode=OneWay, FallbackValue={x:Null}}"
+                                             Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Publisher.Url), Mode=OneWay, FallbackValue=Collapsed}" />
                             <HyperlinkButton Content="Publisher support" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.PublisherSupportUrl, Mode=OneWay, FallbackValue={x:Null}}"
                                              Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.PublisherSupportUrl), Mode=OneWay, FallbackValue=Collapsed}" />
-                            <HyperlinkButton Content="License" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.LicenseUrl, Mode=OneWay, FallbackValue={x:Null}}"
-                                             Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.LicenseUrl), Mode=OneWay, FallbackValue=Collapsed}" />
-                            <HyperlinkButton Content="Release notes" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.ReleaseNotesUrl, Mode=OneWay, FallbackValue={x:Null}}"
-                                             Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotesUrl), Mode=OneWay, FallbackValue=Collapsed}" />
+                            <HyperlinkButton Content="License" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.License.Url, Mode=OneWay, FallbackValue={x:Null}}"
+                                             Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.License.Url), Mode=OneWay, FallbackValue=Collapsed}" />
+                            <HyperlinkButton Content="Release notes" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.ReleaseNotes.Url, Mode=OneWay, FallbackValue={x:Null}}"
+                                             Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotes.Url), Mode=OneWay, FallbackValue=Collapsed}" />
                             <ItemsControl ItemsSource="{x:Bind ViewModel.SelectedApp.Documentations, Mode=OneWay}">
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="m:AppDocumentation">
-                                        <HyperlinkButton Content="{x:Bind Label}" Padding="0,2" NavigateUri="{x:Bind Url}" />
+                                    <DataTemplate x:DataType="m:AppTextLink">
+                                        <HyperlinkButton Content="{x:Bind Text}" Padding="0,2" NavigateUri="{x:Bind Url}" />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -162,7 +162,7 @@
 
                         <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotes), Mode=OneWay, FallbackValue=Collapsed}">
                             <TextBlock Text="Release notes" Style="{StaticResource BodyStrongTextBlockStyle}" />
-                            <TextBlock Text="{x:Bind ViewModel.SelectedApp.ReleaseNotes, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                            <TextBlock Text="{x:Bind ViewModel.SelectedApp.ReleaseNotes.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                         </StackPanel>
 
                         <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Tags), Mode=OneWay, FallbackValue=Collapsed}">

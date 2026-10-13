@@ -2,7 +2,7 @@
 
 namespace WinGetJet.Models;
 
-public record AppDocumentation(string Label, Uri? Url);
+public record AppTextLink(string? Text, Uri? Url);
 
 public class AppModel(string Id, string Name, string? Version, IReadOnlyList<string> ProductCodes) : Model
 {
@@ -20,7 +20,7 @@ public class AppModel(string Id, string Name, string? Version, IReadOnlyList<str
 
     public bool IsUpdateAvailable { get; set => SetProperty(ref field, value); }
 
-    public string? Publisher { get; set => SetProperty(ref field, value); }
+    public AppTextLink? Publisher { get; set => SetProperty(ref field, value); }
 
     public string? Author { get; set => SetProperty(ref field, value); }
 
@@ -28,23 +28,17 @@ public class AppModel(string Id, string Name, string? Version, IReadOnlyList<str
 
     public Uri? PackageUrl { get; set => SetProperty(ref field, value); }
 
-    public string? License { get; set => SetProperty(ref field, value); }
+    public AppTextLink? License { get; set => SetProperty(ref field, value); }
 
     public Uri? IconUrl { get; set => SetProperty(ref field, value); }
 
-    public Uri? PublisherUrl { get; set => SetProperty(ref field, value); }
-
     public Uri? PublisherSupportUrl { get; set => SetProperty(ref field, value); }
-
-    public Uri? LicenseUrl { get; set => SetProperty(ref field, value); }
 
     public string? Copyright { get; set => SetProperty(ref field, value); }
 
-    public string? ReleaseNotes { get; set => SetProperty(ref field, value); }
+    public AppTextLink? ReleaseNotes { get; set => SetProperty(ref field, value); }
 
-    public Uri? ReleaseNotesUrl { get; set => SetProperty(ref field, value); }
-
-    public IReadOnlyList<AppDocumentation> Documentations { get; set => SetProperty(ref field, value); } = [];
+    public IReadOnlyList<AppTextLink> Documentations { get; set => SetProperty(ref field, value); } = [];
 
     public IReadOnlyList<string> Tags { get; set => SetProperty(ref field, value); } = [];
 

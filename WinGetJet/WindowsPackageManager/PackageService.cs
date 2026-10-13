@@ -7,11 +7,11 @@ namespace WindowsPackageManager;
 public record PackageInfo(string Id, string Name, string? Version, IReadOnlyList<string> ProductCodes);
 
 public record PackageDetails(string Id, string? Available, string? Source, bool IsUpdateAvailable,
-    string? Publisher, string? Author, string? Description, Uri? PackageUrl, string? License, Uri? IconUrl,
-    Uri? PublisherUrl, Uri? PublisherSupportUrl, Uri? LicenseUrl, string? Copyright, string? ReleaseNotes, Uri? ReleaseNotesUrl,
-    IReadOnlyList<PackageDocumentation> Documentations, IReadOnlyList<string> Tags);
+    PackageTextLink Publisher, string? Author, string? Description, Uri? PackageUrl, PackageTextLink License, Uri? IconUrl,
+    Uri? PublisherSupportUrl, string? Copyright, PackageTextLink ReleaseNotes,
+    IReadOnlyList<PackageTextLink> Documentations, IReadOnlyList<string> Tags);
 
-public record PackageDocumentation(string Label, Uri? Url);
+public record PackageTextLink(string? Text, Uri? Url);
 
 
 public class PackageService
@@ -82,19 +82,16 @@ public class PackageService
             Available: package.DefaultInstallVersion?.Version,
             Source: package.DefaultInstallVersion?.PackageCatalog?.Info?.Name,
             IsUpdateAvailable: package.IsUpdateAvailable,
-            Publisher: metadata?.Publisher,
+            Publisher: new(metadata?.Publisher, ToUri(metadata?.PublisherUrl)),
             Author: metadata?.Author,
             Description: metadata?.Description,
             PackageUrl: ToUri(metadata?.PackageUrl),
-            License: metadata?.License,
+            License: new(metadata?.License, ToUri(metadata?.LicenseUrl)),
             IconUrl: ToUri(iconUrl),
-            PublisherUrl: ToUri(metadata?.PublisherUrl),
             PublisherSupportUrl: ToUri(metadata?.PublisherSupportUrl),
-            LicenseUrl: ToUri(metadata?.LicenseUrl),
             Copyright: metadata?.Copyright,
-            ReleaseNotes: metadata?.ReleaseNotes,
-            ReleaseNotesUrl: ToUri(metadata?.ReleaseNotesUrl),
-            Documentations: metadata?.Documentations.ToArray().Select(d => new PackageDocumentation(d.DocumentLabel, ToUri(d.DocumentUrl))).ToArray() ?? [],
+            ReleaseNotes: new(metadata?.ReleaseNotes, ToUri(metadata?.ReleaseNotesUrl)),
+            Documentations: metadata?.Documentations.ToArray().Select(d => new PackageTextLink(d.DocumentLabel, ToUri(d.DocumentUrl))).ToArray() ?? [],
             Tags: metadata?.Tags.ToArray() ?? []);
     }
 
