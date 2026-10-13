@@ -41,12 +41,17 @@ public sealed partial class MainView : Page, IMainView
                             app.Available = details.Available;
                             app.Source = details.Source;
                             app.IsUpdateAvailable = details.IsUpdateAvailable;
-                            app.Publisher = details.Publisher;
+                            app.Publisher = new(details.Publisher.Text, details.Publisher.Url);
                             app.Author = details.Author;
                             app.Description = details.Description;
                             app.PackageUrl = details.PackageUrl;
-                            app.License = details.License;
+                            app.License = new(details.License.Text, details.License.Url);
                             app.IconUrl = details.IconUrl;
+                            app.PublisherSupportUrl = details.PublisherSupportUrl;
+                            app.Copyright = details.Copyright;
+                            app.ReleaseNotes = new(details.ReleaseNotes.Text, details.ReleaseNotes.Url);
+                            app.Documentations = [.. details.Documentations.Select(d => new AppTextLink(d.Text, d.Url))];
+                            app.Tags = details.Tags;
                             app.Icon = await IconService.ResolveIconAsync(app);
                         }, uiScheduler, cancellation);
                     }

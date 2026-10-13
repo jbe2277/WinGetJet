@@ -7,7 +7,11 @@ namespace WindowsPackageManager;
 public record PackageInfo(string Id, string Name, string? Version, IReadOnlyList<string> ProductCodes);
 
 public record PackageDetails(string Id, string? Available, string? Source, bool IsUpdateAvailable,
-    string? Publisher, string? Author, string? Description, string? PackageUrl, string? License, Uri? IconUrl);
+    PackageTextLink Publisher, string? Author, string? Description, Uri? PackageUrl, PackageTextLink License, Uri? IconUrl,
+    Uri? PublisherSupportUrl, string? Copyright, PackageTextLink ReleaseNotes,
+    IReadOnlyList<PackageTextLink> Documentations, IReadOnlyList<string> Tags);
+
+public record PackageTextLink(string? Text, Uri? Url);
 
 
 public class PackageService
@@ -78,13 +82,20 @@ public class PackageService
             Available: package.DefaultInstallVersion?.Version,
             Source: package.DefaultInstallVersion?.PackageCatalog?.Info?.Name,
             IsUpdateAvailable: package.IsUpdateAvailable,
-            Publisher: metadata?.Publisher,
+            Publisher: new(metadata?.Publisher, ToUri(metadata?.PublisherUrl)),
             Author: metadata?.Author,
             Description: metadata?.Description,
-            PackageUrl: metadata?.PackageUrl,
-            License: metadata?.License,
-            IconUrl: Uri.TryCreate(iconUrl, UriKind.Absolute, out var x) ? x : null);
+            PackageUrl: ToUri(metadata?.PackageUrl),
+            License: new(metadata?.License, ToUri(metadata?.LicenseUrl)),
+            IconUrl: ToUri(iconUrl),
+            PublisherSupportUrl: ToUri(metadata?.PublisherSupportUrl),
+            Copyright: metadata?.Copyright,
+            ReleaseNotes: new(metadata?.ReleaseNotes, ToUri(metadata?.ReleaseNotesUrl)),
+            Documentations: metadata?.Documentations.ToArray().Select(d => new PackageTextLink(d.DocumentLabel, ToUri(d.DocumentUrl))).ToArray() ?? [],
+            Tags: metadata?.Tags.ToArray() ?? []);
     }
+
+    private static Uri? ToUri(string? url) => Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
 
     private async Task<PackageCatalog> GetCompositeCatalogAsync()
     {

@@ -14,7 +14,7 @@ public class MainViewModel : ViewModelCore<IMainView>
     public MainViewModel(IMainView view) : base(view, false)
     {
         AppsView = new(appsSource, null, Filter, null);
-        
+
         AppsView.PropertyChanged += AppsViewPropertyChanged;
         AppsView.CollectionItemChanged += AppsViewCollectionItemChanged;
         UpdateCountProperty();
@@ -30,15 +30,17 @@ public class MainViewModel : ViewModelCore<IMainView>
 
     public bool ShowOnlyUpdates { get; set => SetProperty(ref field, value); }
 
+    public AppModel? SelectedApp { get; set => SetProperty(ref field, value); }
+
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
-        if (e.PropertyName is nameof(FilterText) or nameof(ShowOnlyUpdates)) AppsView.Update();        
+        if (e.PropertyName is nameof(FilterText) or nameof(ShowOnlyUpdates)) AppsView.Update();
     }
 
     private bool Filter(AppModel app)
     {
-        return 
+        return
             (string.IsNullOrEmpty(FilterText)
                 || (!string.IsNullOrEmpty(app.Name) && app.Name.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase))
             )

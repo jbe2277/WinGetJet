@@ -11,7 +11,7 @@ namespace WinGetJet.Services;
 
 internal static class IconService
 {
-    private const int IconSize = 32;
+    private const int IconSize = 48;
     private static readonly PackageManager packageManager = new();
 
     public static async Task<ImageSource?> ResolveIconAsync(AppModel app)
