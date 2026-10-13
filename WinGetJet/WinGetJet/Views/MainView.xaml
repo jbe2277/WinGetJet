@@ -141,20 +141,20 @@
 
                         <StackPanel Spacing="0">
                             <TextBlock Text="Links" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0,0,0,4" />
-                            <HyperlinkButton Content="Homepage" Padding="0,2" NavigateUri="{x:Bind v:ViewConvert.ToUri(ViewModel.SelectedApp.PackageUrl), Mode=OneWay, FallbackValue={x:Null}}"
+                            <HyperlinkButton Content="Homepage" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.PackageUrl, Mode=OneWay, FallbackValue={x:Null}}"
                                              Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.PackageUrl), Mode=OneWay, FallbackValue=Collapsed}" />
-                            <HyperlinkButton Content="Publisher" Padding="0,2" NavigateUri="{x:Bind v:ViewConvert.ToUri(ViewModel.SelectedApp.PublisherUrl), Mode=OneWay, FallbackValue={x:Null}}"
+                            <HyperlinkButton Content="Publisher" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.PublisherUrl, Mode=OneWay, FallbackValue={x:Null}}"
                                              Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.PublisherUrl), Mode=OneWay, FallbackValue=Collapsed}" />
-                            <HyperlinkButton Content="Publisher support" Padding="0,2" NavigateUri="{x:Bind v:ViewConvert.ToUri(ViewModel.SelectedApp.PublisherSupportUrl), Mode=OneWay, FallbackValue={x:Null}}"
+                            <HyperlinkButton Content="Publisher support" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.PublisherSupportUrl, Mode=OneWay, FallbackValue={x:Null}}"
                                              Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.PublisherSupportUrl), Mode=OneWay, FallbackValue=Collapsed}" />
-                            <HyperlinkButton Content="License" Padding="0,2" NavigateUri="{x:Bind v:ViewConvert.ToUri(ViewModel.SelectedApp.LicenseUrl), Mode=OneWay, FallbackValue={x:Null}}"
+                            <HyperlinkButton Content="License" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.LicenseUrl, Mode=OneWay, FallbackValue={x:Null}}"
                                              Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.LicenseUrl), Mode=OneWay, FallbackValue=Collapsed}" />
-                            <HyperlinkButton Content="Release notes" Padding="0,2" NavigateUri="{x:Bind v:ViewConvert.ToUri(ViewModel.SelectedApp.ReleaseNotesUrl), Mode=OneWay, FallbackValue={x:Null}}"
+                            <HyperlinkButton Content="Release notes" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.ReleaseNotesUrl, Mode=OneWay, FallbackValue={x:Null}}"
                                              Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotesUrl), Mode=OneWay, FallbackValue=Collapsed}" />
                             <ItemsControl ItemsSource="{x:Bind ViewModel.SelectedApp.Documentations, Mode=OneWay}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="m:AppDocumentation">
-                                        <HyperlinkButton Content="{x:Bind Label}" Padding="0,2" NavigateUri="{x:Bind v:ViewConvert.ToUri(Url)}" />
+                                        <HyperlinkButton Content="{x:Bind Label}" Padding="0,2" NavigateUri="{x:Bind Url}" />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>

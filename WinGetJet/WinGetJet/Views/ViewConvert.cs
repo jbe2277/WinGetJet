@@ -19,8 +19,6 @@ public static class ViewConvert
         _ => Visibility.Visible
     };
 
-    public static Uri? ToUri(string? url) => Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
-
     public static string Join(IEnumerable<string>? values) => values is null ? "" : string.Join(", ", values);
 
     public static Visibility IsNotVisible(object? value) => IsVisible(value) == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;

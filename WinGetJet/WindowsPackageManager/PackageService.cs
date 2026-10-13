@@ -7,11 +7,11 @@ namespace WindowsPackageManager;
 public record PackageInfo(string Id, string Name, string? Version, IReadOnlyList<string> ProductCodes);
 
 public record PackageDetails(string Id, string? Available, string? Source, bool IsUpdateAvailable,
-    string? Publisher, string? Author, string? Description, string? PackageUrl, string? License, Uri? IconUrl,
-    string? PublisherUrl, string? PublisherSupportUrl, string? LicenseUrl, string? Copyright, string? ReleaseNotes, string? ReleaseNotesUrl,
+    string? Publisher, string? Author, string? Description, Uri? PackageUrl, string? License, Uri? IconUrl,
+    Uri? PublisherUrl, Uri? PublisherSupportUrl, Uri? LicenseUrl, string? Copyright, string? ReleaseNotes, Uri? ReleaseNotesUrl,
     IReadOnlyList<PackageDocumentation> Documentations, IReadOnlyList<string> Tags);
 
-public record PackageDocumentation(string Label, string Url);
+public record PackageDocumentation(string Label, Uri? Url);
 
 
 public class PackageService
@@ -85,18 +85,20 @@ public class PackageService
             Publisher: metadata?.Publisher,
             Author: metadata?.Author,
             Description: metadata?.Description,
-            PackageUrl: metadata?.PackageUrl,
+            PackageUrl: ToUri(metadata?.PackageUrl),
             License: metadata?.License,
-            IconUrl: Uri.TryCreate(iconUrl, UriKind.Absolute, out var x) ? x : null,
-            PublisherUrl: metadata?.PublisherUrl,
-            PublisherSupportUrl: metadata?.PublisherSupportUrl,
-            LicenseUrl: metadata?.LicenseUrl,
+            IconUrl: ToUri(iconUrl),
+            PublisherUrl: ToUri(metadata?.PublisherUrl),
+            PublisherSupportUrl: ToUri(metadata?.PublisherSupportUrl),
+            LicenseUrl: ToUri(metadata?.LicenseUrl),
             Copyright: metadata?.Copyright,
             ReleaseNotes: metadata?.ReleaseNotes,
-            ReleaseNotesUrl: metadata?.ReleaseNotesUrl,
-            Documentations: metadata?.Documentations.ToArray().Select(d => new PackageDocumentation(d.DocumentLabel, d.DocumentUrl)).ToArray() ?? [],
+            ReleaseNotesUrl: ToUri(metadata?.ReleaseNotesUrl),
+            Documentations: metadata?.Documentations.ToArray().Select(d => new PackageDocumentation(d.DocumentLabel, ToUri(d.DocumentUrl))).ToArray() ?? [],
             Tags: metadata?.Tags.ToArray() ?? []);
     }
+
+    private static Uri? ToUri(string? url) => Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
 
     private async Task<PackageCatalog> GetCompositeCatalogAsync()
     {
