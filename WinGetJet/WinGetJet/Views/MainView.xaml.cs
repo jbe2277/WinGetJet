@@ -21,8 +21,6 @@ public sealed partial class MainView : Page, IMainView
 
     public MainViewModel ViewModel => (MainViewModel)DataContext;
 
-    private void AppsListViewSelectionChanged(object sender, SelectionChangedEventArgs e) => ViewModel.SelectedApp = ((ListView)sender).SelectedItem as AppModel;
-
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
         StatusTextBlock.Text = "Retrieving installed packages...";
