@@ -29,12 +29,12 @@ jobs:
     - name: 📦 Create MSIX x64
       run: |
         cd WinGetJet/WinGetJet
-        dotnet publish -c Release -p:Platform=x64 -p:RuntimeIdentifier=win-x64 -p:GenerateAppxPackageOnBuild=true -p:AppxPackageSigningEnabled=true -p:PackageCertificateKeyFile=MSStoreLocalCert.p12 -p:AppxPackageDir=AppPackages/x64/
+        dotnet publish -c Release -p:Platform=x64 -p:GenerateAppxPackageOnBuild=true -p:AppxPackageSigningEnabled=true -p:PackageCertificateKeyFile=MSStoreLocalCert.p12 -p:AppxPackageDir=AppPackages/x64/
 
     - name: 📦 Create MSIX arm64
       run: |
         cd WinGetJet/WinGetJet
-        dotnet publish -c Release -p:Platform=ARM64 -p:RuntimeIdentifier=win-arm64 -p:GenerateAppxPackageOnBuild=true -p:AppxPackageSigningEnabled=true -p:PackageCertificateKeyFile=MSStoreLocalCert.p12 -p:AppxPackageDir=AppPackages/arm64/
+        dotnet publish -c Release -p:Platform=ARM64 -p:GenerateAppxPackageOnBuild=true -p:AppxPackageSigningEnabled=true -p:PackageCertificateKeyFile=MSStoreLocalCert.p12 -p:AppxPackageDir=AppPackages/arm64/
 
     - name: 📦 Upload MSIX
       uses: actions/upload-artifact@v6
