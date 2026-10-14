@@ -69,7 +69,10 @@
   </PropertyGroup>
 
   <!-- Publish Properties -->
-  <PropertyGroup>    
+  <PropertyGroup>
+    <SelfContained>true</SelfContained>
+    <WindowsAppSDKSelfContained>True</WindowsAppSDKSelfContained>
+    
     <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
     <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
     <!-- Note: Trimming is not supported at this time -->
