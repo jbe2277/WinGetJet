@@ -1,0 +1,45 @@
+name: WinGetJet
+on:
+  push:
+    paths:
+    - 'WinGetJet/**'
+    - '.github/workflows/**'
+jobs:
+  build:
+    name: 🔨 Build
+    runs-on: windows-latest
+    steps:
+    - name: 📥 Check-out
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    - name: ⚙️ Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '10'
+
+    - name: 🔐 Prepare certificate
+      shell: pwsh
+      env:
+        MSStoreLocalCert64: ${{ secrets.MS_STORE_LOCAL_CERT64 }}
+      run: |
+        [IO.File]::WriteAllBytes((Join-Path $pwd "WinGetJet/WinGetJet" "MSStoreLocalCert.p12"), [Convert]::FromBase64String($env:MSStoreLocalCert64))
+
+    - name: 📦 Create MSIX x64
+      run: |
+        cd WinGetJet/WinGetJet
+        dotnet publish -c Release -p:Platform=x64 -p:GenerateAppxPackageOnBuild=true -p:AppxPackageSigningEnabled=true -p:PackageCertificateKeyFile=MSStoreLocalCert.p12 -p:AppxPackageDir=AppPackages/x64/
+
+    - name: 📦 Create MSIX arm64
+      run: |
+        cd WinGetJet/WinGetJet
+        dotnet publish -c Release -p:Platform=ARM64 -p:GenerateAppxPackageOnBuild=true -p:AppxPackageSigningEnabled=true -p:PackageCertificateKeyFile=MSStoreLocalCert.p12 -p:AppxPackageDir=AppPackages/arm64/
+
+    - name: 📦 Upload MSIX
+      uses: actions/upload-artifact@v6
+      with:
+        name: WinGetJetWindows
+        if-no-files-found: error
+        path: |
+          ./**/AppPackages/**/WinGetJet*.msix

@@ -9,16 +9,11 @@
   xmlns:systemai="http://schemas.microsoft.com/appx/manifest/systemai/windows10"
   IgnorableNamespaces="uap uap10 rescap systemai">
 
-  <Identity
-    Name="E57BA85C-C29A-4E37-AC9B-24BCE7ED79B5"
-    Publisher="CN=AppPublisher"
-    Version="1.0.0.0" />
-
-  <mp:PhoneIdentity PhoneProductId="E57BA85C-C29A-4E37-AC9B-24BCE7ED79B5" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <Identity Name="WinGetJet" Publisher="CN=3C8CBF61-934D-4358-AA07-F08013E88454" Version="1.0.0.0" />
 
   <Properties>
     <DisplayName>WinGetJet</DisplayName>
-    <PublisherDisplayName>AppPublisher</PublisherDisplayName>
+    <PublisherDisplayName>jbe2277</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
     <uap10:PackageIntegrity>
       <uap10:Content Enforcement="on"/>
@@ -26,8 +21,7 @@
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26226.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26226.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26226.0" />
   </Dependencies>
 
   <Resources>
@@ -52,6 +46,5 @@
 
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
-    <systemai:Capability Name="systemAIModels"/>
   </Capabilities>
 </Package>
