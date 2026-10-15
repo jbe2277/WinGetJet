@@ -6,7 +6,7 @@ using WinGetJet.Tests.Views;
 namespace WinGetJet.Tests;
 
 public abstract class UITest() : UITestBase(
-        Environment.GetEnvironmentVariable("UITestWindowsAppId") ?? "E57BA85C-C29A-4E37-AC9B-24BCE7ED79B5_1z32rh13vfry6!App",
+        Environment.GetEnvironmentVariable("UITestWindowsAppId") ?? "WinGetJet_a8txtqew917ny!App",
         Environment.GetEnvironmentVariable("UITestOutputPath") ?? "TestResults/WinGetJet/")
 {
     public Application Launch()
