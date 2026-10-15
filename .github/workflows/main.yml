@@ -3,6 +3,7 @@ on:
   push:
     paths:
     - 'WinGetJet/**'
+    - 'WinGetJet.UITests/**'
     - '.github/workflows/**'
 jobs:
   Build:
