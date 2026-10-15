@@ -46,7 +46,7 @@ jobs:
 
   UITests:
     runs-on: windows-2025
-    needs: Windows
+    needs: Build
     steps:
     - name: 📥 Check-out
       uses: actions/checkout@v6
