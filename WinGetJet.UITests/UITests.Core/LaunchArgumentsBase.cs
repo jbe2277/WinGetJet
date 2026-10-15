@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace UITest;
+namespace UITests;
 
 public abstract record LaunchArgumentsBase
 {

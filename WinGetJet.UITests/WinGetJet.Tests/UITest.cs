@@ -1,6 +1,6 @@
 ﻿using FlaUI.Core;
 using FlaUI.Core.AutomationElements;
-using UITest;
+using UITests;
 using WinGetJet.Tests.Views;
 
 namespace WinGetJet.Tests;

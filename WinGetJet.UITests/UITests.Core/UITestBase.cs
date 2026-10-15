@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using Xunit;
 
-namespace UITest;
+namespace UITests;
 
 public abstract class UITestBase : IDisposable
 {

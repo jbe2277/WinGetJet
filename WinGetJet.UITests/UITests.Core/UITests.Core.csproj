@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <RootNamespace>UITest</RootNamespace>
+    <RootNamespace>UITests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
