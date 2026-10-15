@@ -23,17 +23,17 @@ public abstract class UITestBase : IDisposable
         Retry.DefaultInterval = TimeSpan.FromMilliseconds(250);
     }
 
-    protected UITestBase(string executableFileName, string executablePath, string testOutputPath)
+    protected UITestBase(string windowsAppId, string testOutputPath)
     {
+        WindowsAppId = windowsAppId;
         var rootPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
-        Executable = Path.GetFullPath(Path.Combine(Path.IsPathFullyQualified(executablePath) ? executablePath : Path.Combine(rootPath, executablePath), executableFileName));
         TestOutPath = Path.GetFullPath(Path.IsPathFullyQualified(testOutputPath) ? testOutputPath : Path.Combine(rootPath, testOutputPath));
         Directory.CreateDirectory(TestOutPath);
         Log.WriteLine($"OSVersion:       {Environment.OSVersion}");
         Log.WriteLine($"ProcessorCount:  {Environment.ProcessorCount}");
         Log.WriteLine($"MachineName:     {Environment.MachineName}");
         Log.WriteLine($"UserInteractive: {Environment.UserInteractive}");
-        Log.WriteLine($"Executable:      {Executable}");
+        Log.WriteLine($"WindowsAppId:    {WindowsAppId}");
         Log.WriteLine($"TestOutPath:     {TestOutPath}");
         Automation = new()
         {
@@ -43,7 +43,7 @@ public abstract class UITestBase : IDisposable
 
     public ITestOutputHelper Log { get; } = TestContext.Current.TestOutputHelper ?? throw new InvalidOperationException("Test context not available.");
 
-    public string Executable { get; }
+    public string WindowsAppId { get; }
 
     public string TestOutPath { get; }
 
