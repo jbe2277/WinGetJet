@@ -13,5 +13,7 @@ public class WinGetJetTest : UITest
         Assert.Equal("WinGetJet", window.Title);
         Assert.False(window.ShowOnlyUpdatesCheckBox.IsOffscreen);
         Assert.True(window.ShowOnlyUpdatesCheckBox.IsEnabled);
+        Thread.Sleep(3000);
+        window.CaptureToFile(GetScreenshotFile("Launch"));
     }
 }
