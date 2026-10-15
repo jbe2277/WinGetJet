@@ -5,7 +5,7 @@ on:
     - 'WinGetJet/**'
     - '.github/workflows/**'
 jobs:
-  build:
+  Build:
     name: 🔨 Build
     runs-on: windows-latest
     steps:
@@ -39,7 +39,44 @@ jobs:
     - name: 📦 Upload MSIX
       uses: actions/upload-artifact@v6
       with:
-        name: WinGetJetWindows
+        name: WinGetJet
         if-no-files-found: error
         path: |
           ./**/AppPackages/**/WinGetJet*.msix
+
+  UITests:
+    runs-on: windows-2025
+    needs: Windows
+    steps:
+    - name: 📥 Check-out
+      uses: actions/checkout@v6
+
+    - name: 📦 Download Windows App
+      uses: actions/download-artifact@v8
+      with:
+        name: WinGetJet
+        path: ./WinGetJet
+
+    - name: ⚙️ Install App
+      shell: pwsh
+      run: |
+        $rootFolder = "./WinGetJet"
+        $msixFile = Get-ChildItem -Path $rootFolder -Recurse -Filter *x64.msix | Select-Object -First 1
+        Export-Certificate -Cert (Get-AuthenticodeSignature -FilePath $msixFile).SignerCertificate -FilePath ".\App.cer"
+        Import-Certificate -FilePath ".\App.cer" -CertStoreLocation "Cert:\LocalMachine\TrustedPeople"
+        Add-AppxPackage -Path $msixFile
+        Get-AppxPackage -Name WinGetJet
+      
+    - name: 🖥️ UI Test
+      run: |
+        cd ./WinGetJet.UITests
+        dotnet test --solution ./WinGetJet.UITests.slnx
+
+    - name: 📦 Upload UI Test results
+      uses: actions/upload-artifact@v6
+      if: always()
+      with:
+        name: UITests
+        if-no-files-found: ignore
+        path: |
+          TestResults/WinGetJet.UITests/
