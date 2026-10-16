@@ -46,9 +46,17 @@ jobs:
           ./**/AppPackages/**/WinGetJet*.msix
 
   UITests:
-    name: 🖥️ UI Tests
-    runs-on: windows-2025
+    name: 🖥️ UI Tests (${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
     needs: Build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - arch: x64
+          os: windows-2025
+        - arch: arm64
+          os: windows-11-arm
     steps:
     - name: 📥 Check-out
       uses: actions/checkout@v6
@@ -63,7 +71,7 @@ jobs:
       shell: pwsh
       run: |
         $rootFolder = "./WinGetJet"
-        $msixFile = Get-ChildItem -Path $rootFolder -Recurse -Filter *x64.msix | Select-Object -First 1
+        $msixFile = Get-ChildItem -Path $rootFolder -Recurse -Filter "*${{ matrix.arch }}.msix" | Select-Object -First 1        
         Export-Certificate -Cert (Get-AuthenticodeSignature -FilePath $msixFile).SignerCertificate -FilePath ".\App.cer"
         Import-Certificate -FilePath ".\App.cer" -CertStoreLocation "Cert:\LocalMachine\TrustedPeople"
         Add-AppxPackage -Path $msixFile
@@ -78,7 +86,7 @@ jobs:
       uses: actions/upload-artifact@v6
       if: always()
       with:
-        name: UITests
+        name: UITests-${{ matrix.arch }}
         if-no-files-found: ignore
         path: |
           WinGetJet.UITests/TestResults/WinGetJet
