@@ -12,7 +12,7 @@ public abstract class UITest() : UITestBase(
     public Application Launch()
     {
         Log.WriteLine("");
-        Log.WriteLine($"Launch:          {WindowsAppId}");
+        Log.WriteLine(("Launch:", $"{WindowsAppId}"));
         return App = Application.LaunchStoreApp(WindowsAppId);
     }
 

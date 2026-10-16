@@ -29,19 +29,17 @@ public abstract class UITestBase : IDisposable
         var rootPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
         TestOutPath = Path.GetFullPath(Path.IsPathFullyQualified(testOutputPath) ? testOutputPath : Path.Combine(rootPath, testOutputPath));
         Directory.CreateDirectory(TestOutPath);
-        Log.WriteLine($"OSVersion:       {Environment.OSVersion}");
-        Log.WriteLine($"ProcessorCount:  {Environment.ProcessorCount}");
-        Log.WriteLine($"MachineName:     {Environment.MachineName}");
-        Log.WriteLine($"UserInteractive: {Environment.UserInteractive}");
-        Log.WriteLine($"WindowsAppId:    {WindowsAppId}");
-        Log.WriteLine($"TestOutPath:     {TestOutPath}");
+        Log.WriteLine(("OSVersion:", $"{Environment.OSVersion}"));
+        Log.WriteLine(("ProcessorCount:", $"{Environment.ProcessorCount}"));
+        Log.WriteLine(("MachineName:", $"{Environment.MachineName}"));
+        Log.WriteLine(("UserInteractive:", $"{Environment.UserInteractive}"));
+        Log.WriteLine(("WindowsAppId:", $"{WindowsAppId}"));
+        Log.WriteLine(("TestOutPath:", $"{TestOutPath}"));
         Automation = new()
         {
             ConnectionTimeout = TimeSpan.FromSeconds(5)
         };
     }
-
-    public ITestOutputHelper Log { get; } = TestContext.Current.TestOutputHelper ?? throw new InvalidOperationException("Test context not available.");
 
     public string WindowsAppId { get; }
 
@@ -60,7 +58,7 @@ public abstract class UITestBase : IDisposable
         var file = $"UITest_{Path.GetRandomFileName()}.{fileExtension}";
         file = Path.Combine(Path.GetTempPath(), file);
         usedFiles.Add(file);
-        Log.WriteLine($"TempFile:        {file}");
+        Log.WriteLine(("TempFile:", file));
         return file;
     }
 
@@ -68,13 +66,14 @@ public abstract class UITestBase : IDisposable
     {
         var file = Path.Combine(TestOutPath, string.Join("-", TestMethodName, fileName));
         if (string.IsNullOrEmpty(Path.GetExtension(file))) file += ".png";
+        Log.WriteLine(("ScreenshotFile:", file));
         return file;
     }
 
     public void Dispose()
     {
         if (TestContext.Current.TestState?.Result == TestResult.Failed) TryGetScreenshot();
-        
+
         if (!SkipAppClose) App?.Close();
         App?.Dispose();
         Automation.Dispose();

@@ -46,6 +46,7 @@ jobs:
           ./**/AppPackages/**/WinGetJet*.msix
 
   UITests:
+    name: 🖥️ UI Tests
     runs-on: windows-2025
     needs: Build
     steps:
@@ -71,7 +72,7 @@ jobs:
     - name: 🖥️ UI Test
       run: |
         cd ./WinGetJet.UITests
-        dotnet test --solution ./WinGetJet.UITests.slnx
+        dotnet test --solution ./WinGetJet.UITests.slnx  --max-parallel-test-modules 1 --output Detailed
 
     - name: 📦 Upload UI Test results
       uses: actions/upload-artifact@v6
@@ -80,4 +81,4 @@ jobs:
         name: UITests
         if-no-files-found: ignore
         path: |
-          TestResults/WinGetJet.UITests/
+          WinGetJet.UITests/TestResults/WinGetJet
