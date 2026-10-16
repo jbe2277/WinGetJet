@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+  </Folder>
+  <Project Path="UITests.Core/UITests.Core.csproj" />
+  <Project Path="WinGetJet.Tests/WinGetJet.Tests.csproj" />
+</Solution>
