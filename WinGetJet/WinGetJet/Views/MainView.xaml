@@ -45,12 +45,10 @@
                     <ColumnDefinition Width="3*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="0.4*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Name" FontWeight="SemiBold" />
                 <TextBlock Grid.Column="1" Text="Version" FontWeight="SemiBold" />
                 <TextBlock Grid.Column="2" Text="Available" FontWeight="SemiBold" />
-                <TextBlock Grid.Column="3" Text="Update" FontWeight="SemiBold" />
             </Grid>
 
             <!-- Rows (read-only) -->
@@ -62,19 +60,18 @@
                                 <ColumnDefinition Width="3*" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="0.4*" />
                             </Grid.ColumnDefinitions>
                             <Grid Grid.Column="0" ColumnSpacing="8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="24" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Image Source="{x:Bind (media:ImageSource)Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}" Width="24" Height="24" VerticalAlignment="Center" />
+                                <v:AppIcon VerticalAlignment="Center" Icon="{x:Bind (media:ImageSource)Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}"
+                                           IsUpdateAvailable="{x:Bind IsUpdateAvailable, Mode=OneWay}" />
                                 <TextBlock Grid.Column="1" Text="{x:Bind Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                             </Grid>
                             <TextBlock Grid.Column="1" Text="{x:Bind Version}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Grid.Column="2" Text="{x:Bind Available, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Grid.Column="3" Text="{x:Bind v:ViewConvert.UpdateAvailable(IsUpdateAvailable), Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -95,8 +92,8 @@
                                 <ColumnDefinition Width="48" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Image Source="{x:Bind (media:ImageSource)ViewModel.SelectedApp.Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}"
-                                   Width="48" Height="48" VerticalAlignment="Top" />
+                            <v:AppIcon Width="48" Height="48" VerticalAlignment="Top" Icon="{x:Bind (media:ImageSource)ViewModel.SelectedApp.Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}"
+                                       IsUpdateAvailable="{x:Bind ViewModel.SelectedApp.IsUpdateAvailable, Mode=OneWay, FallbackValue=False}" />
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.Name, Mode=OneWay}" Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher.Text, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
