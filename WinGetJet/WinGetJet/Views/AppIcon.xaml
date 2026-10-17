@@ -14,12 +14,12 @@
             </Canvas>
         </Viewbox>
         <Image Source="{x:Bind Icon, Mode=OneWay}" />
-        <Viewbox x:Name="UpdateBadge" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-2,-2"
+        <Viewbox x:Name="UpdateBadge" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                  ToolTipService.ToolTip="Update available"
                  Visibility="{x:Bind v:ViewConvert.BoolToVisibility(IsUpdateAvailable), Mode=OneWay}">
             <Canvas Width="12" Height="12">
                 <Ellipse Width="12" Height="12" Fill="{ThemeResource AccentFillColorDefaultBrush}" />
-                <Path Data="M6,9 L6,3 M3.5,5.5 L6,3 L8.5,5.5" Stroke="{ThemeResource TextOnAccentFillColorPrimaryBrush}" StrokeThickness="1.5"
+                <Path Data="M6,9 L6,3 M3,6 L6,3 L9,6" Stroke="{ThemeResource TextOnAccentFillColorPrimaryBrush}" StrokeThickness="1.5"
                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
             </Canvas>
         </Viewbox>
