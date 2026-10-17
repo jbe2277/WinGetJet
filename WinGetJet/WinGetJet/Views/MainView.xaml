@@ -42,13 +42,13 @@
             <!-- Header -->
             <Grid Grid.Row="0" Padding="12,4" ColumnSpacing="12">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="6*" />
+                    <ColumnDefinition Width="4*" />
+                    <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="Name" FontWeight="SemiBold" />
-                <TextBlock Grid.Column="1" Text="Version" FontWeight="SemiBold" />
-                <TextBlock Grid.Column="2" Text="Available" FontWeight="SemiBold" />
+                <TextBlock Grid.Column="1" Text="Publisher" FontWeight="SemiBold" />
+                <TextBlock Grid.Column="2" Text="Version" FontWeight="SemiBold" />
             </Grid>
 
             <!-- Rows (read-only) -->
@@ -57,9 +57,9 @@
                     <DataTemplate x:DataType="m:AppModel">
                         <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="6*" />
+                                <ColumnDefinition Width="4*" />
+                                <ColumnDefinition Width="2*" />
                             </Grid.ColumnDefinitions>
                             <Grid Grid.Column="0" ColumnSpacing="8">
                                 <Grid.ColumnDefinitions>
@@ -70,8 +70,8 @@
                                            IsUpdateAvailable="{x:Bind IsUpdateAvailable, Mode=OneWay}" />
                                 <TextBlock Grid.Column="1" Text="{x:Bind Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                             </Grid>
-                            <TextBlock Grid.Column="1" Text="{x:Bind Version}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Grid.Column="2" Text="{x:Bind Available, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Grid.Column="1" Text="{x:Bind Publisher.Text, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Grid.Column="2" Text="{x:Bind Version}" TextTrimming="CharacterEllipsis" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
