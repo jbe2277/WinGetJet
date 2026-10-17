@@ -52,10 +52,7 @@ public sealed partial class AppIcon : UserControl
         var large = Size == AppIconSize.Large;
         RootGrid.Width = RootGrid.Height = large ? 48 : 24;
         IconImage.Width = IconImage.Height = large ? 48 : 24;
-        PlaceholderIcon.FontSize = large ? 40 : 20;
-        UpdateBadge.Width = UpdateBadge.Height = large ? 20 : 14;
-        UpdateBadge.CornerRadius = new CornerRadius(large ? 10 : 6);
-        UpdateBadge.Margin = large ? new Thickness(0, 0, -4, -4) : new Thickness(0, 0, -3, -3);
-        UpdateGlyph.FontSize = large ? 12 : 9;
+        UpdateBadge.Width = UpdateBadge.Height = large ? 20 : 12;
+        UpdateBadge.Margin = large ? new Thickness(0, 0, -3, -3) : new Thickness(0, 0, -2, -2);
     }
 }

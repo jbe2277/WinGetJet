@@ -6,13 +6,21 @@
     xmlns:v="using:WinGetJet.Views">
 
     <Grid x:Name="RootGrid" Width="24" Height="24">
-        <FontIcon x:Name="PlaceholderIcon" Glyph="&#xE7B8;" FontSize="20" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                  Visibility="{x:Bind v:ViewConvert.IsNotVisible(Icon), Mode=OneWay}" />
+        <Viewbox x:Name="PlaceholderIcon" Visibility="{x:Bind v:ViewConvert.IsNotVisible(Icon), Mode=OneWay}">
+            <Canvas Width="24" Height="24">
+                <Path Data="M4,7.5 L12,3.5 L20,7.5 L20,16.5 L12,20.5 L4,16.5 Z M4,7.5 L12,11.5 L20,7.5 M12,11.5 L12,20.5"
+                      Stroke="{ThemeResource TextFillColorSecondaryBrush}" StrokeThickness="1.5" StrokeLineJoin="Round" />
+            </Canvas>
+        </Viewbox>
         <Image x:Name="IconImage" Source="{x:Bind Icon, Mode=OneWay}" Width="24" Height="24" />
-        <Border x:Name="UpdateBadge" Width="14" Height="14" CornerRadius="6" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-3,-3"
-                Background="{ThemeResource AccentFillColorDefaultBrush}" ToolTipService.ToolTip="Update available"
-                Visibility="{x:Bind v:ViewConvert.BoolToVisibility(IsUpdateAvailable), Mode=OneWay}">
-            <FontIcon x:Name="UpdateGlyph" Glyph="&#xE74A;" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
-        </Border>
+        <Viewbox x:Name="UpdateBadge" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-2,-2"
+                 ToolTipService.ToolTip="Update available"
+                 Visibility="{x:Bind v:ViewConvert.BoolToVisibility(IsUpdateAvailable), Mode=OneWay}">
+            <Canvas Width="12" Height="12">
+                <Ellipse Width="12" Height="12" Fill="{ThemeResource AccentFillColorDefaultBrush}" />
+                <Path Data="M6,3 L6,9 M3.5,6.5 L6,9 L8.5,6.5" Stroke="{ThemeResource TextOnAccentFillColorPrimaryBrush}" StrokeThickness="1.5"
+                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+            </Canvas>
+        </Viewbox>
     </Grid>
 </UserControl>
