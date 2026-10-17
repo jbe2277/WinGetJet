@@ -7,7 +7,7 @@ namespace WinGetJet.Views;
 public sealed partial class AppIcon : UserControl
 {
     public static readonly DependencyProperty IconProperty =
-        DependencyProperty.Register(nameof(Icon), typeof(ImageSource), typeof(AppIcon), new PropertyMetadata(null));
+        DependencyProperty.Register(nameof(Icon), typeof(ImageSource), typeof(AppIcon), new PropertyMetadata(null, IconChanged));
 
     public static readonly DependencyProperty IsUpdateAvailableProperty =
         DependencyProperty.Register(nameof(IsUpdateAvailable), typeof(bool), typeof(AppIcon), new PropertyMetadata(false));
@@ -27,6 +27,11 @@ public sealed partial class AppIcon : UserControl
     {
         get => (bool)GetValue(IsUpdateAvailableProperty);
         set => SetValue(IsUpdateAvailableProperty, value);
+    }
+
+    private static void IconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        ((AppIcon)d).PlaceholderIcon.Visibility = e.NewValue is null ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void RootGridSizeChanged(object sender, SizeChangedEventArgs e)

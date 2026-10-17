@@ -7,7 +7,7 @@
     Width="24" Height="24">
 
     <Grid SizeChanged="RootGridSizeChanged">
-        <Viewbox x:Name="PlaceholderIcon" Visibility="{x:Bind v:ViewConvert.IsNotVisible(Icon), Mode=OneWay}">
+        <Viewbox x:Name="PlaceholderIcon">
             <Canvas Width="24" Height="24">
                 <Path Data="M4,7.5 L12,3.5 L20,7.5 L20,16.5 L12,20.5 L4,16.5 Z M4,7.5 L12,11.5 L20,7.5 M12,11.5 L12,20.5"
                       Stroke="{ThemeResource TextFillColorSecondaryBrush}" StrokeThickness="1.5" StrokeLineJoin="Round" />
