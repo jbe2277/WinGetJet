@@ -66,16 +66,8 @@
                                     <ColumnDefinition Width="24" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Grid Width="24" Height="24" VerticalAlignment="Center">
-                                    <FontIcon Glyph="&#xE7B8;" FontSize="20" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                              Visibility="{x:Bind v:ViewConvert.IsNotVisible(Icon), Mode=OneWay}" />
-                                    <Image Source="{x:Bind (media:ImageSource)Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}" Width="24" Height="24" />
-                                    <Border Width="14" Height="14" CornerRadius="6" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-3,-3"
-                                            Background="{ThemeResource AccentFillColorDefaultBrush}" ToolTipService.ToolTip="Update available"
-                                            Visibility="{x:Bind v:ViewConvert.BoolToVisibility(IsUpdateAvailable), Mode=OneWay}">
-                                        <FontIcon Glyph="&#xE74A;" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
-                                    </Border>
-                                </Grid>
+                                <v:AppIcon VerticalAlignment="Center" Icon="{x:Bind (media:ImageSource)Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}"
+                                           IsUpdateAvailable="{x:Bind IsUpdateAvailable, Mode=OneWay}" />
                                 <TextBlock Grid.Column="1" Text="{x:Bind Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                             </Grid>
                             <TextBlock Grid.Column="1" Text="{x:Bind Version}" TextTrimming="CharacterEllipsis" />
@@ -100,17 +92,8 @@
                                 <ColumnDefinition Width="48" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Grid Width="48" Height="48" VerticalAlignment="Top">
-                                <FontIcon Glyph="&#xE7B8;" FontSize="40" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                          Visibility="{x:Bind v:ViewConvert.IsNotVisible(ViewModel.SelectedApp.Icon), Mode=OneWay}" />
-                                <Image Source="{x:Bind (media:ImageSource)ViewModel.SelectedApp.Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}"
-                                       Width="48" Height="48" />
-                                <Border Width="20" Height="20" CornerRadius="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-4,-4"
-                                        Background="{ThemeResource AccentFillColorDefaultBrush}" ToolTipService.ToolTip="Update available"
-                                        Visibility="{x:Bind v:ViewConvert.BoolToVisibility(ViewModel.SelectedApp.IsUpdateAvailable), Mode=OneWay, FallbackValue=Collapsed}">
-                                    <FontIcon Glyph="&#xE74A;" FontSize="12" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
-                                </Border>
-                            </Grid>
+                            <v:AppIcon Size="Large" VerticalAlignment="Top" Icon="{x:Bind (media:ImageSource)ViewModel.SelectedApp.Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}"
+                                       IsUpdateAvailable="{x:Bind ViewModel.SelectedApp.IsUpdateAvailable, Mode=OneWay, FallbackValue=False}" />
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.Name, Mode=OneWay}" Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher.Text, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
