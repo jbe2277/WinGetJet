@@ -19,7 +19,7 @@
                  Visibility="{x:Bind v:ViewConvert.BoolToVisibility(IsUpdateAvailable), Mode=OneWay}">
             <Canvas Width="12" Height="12">
                 <Ellipse Width="12" Height="12" Fill="{ThemeResource AccentFillColorDefaultBrush}" />
-                <Path Data="M6,3 L6,9 M3.5,6.5 L6,9 L8.5,6.5" Stroke="{ThemeResource TextOnAccentFillColorPrimaryBrush}" StrokeThickness="1.5"
+                <Path Data="M6,9 L6,3 M3.5,5.5 L6,3 L8.5,5.5" Stroke="{ThemeResource TextOnAccentFillColorPrimaryBrush}" StrokeThickness="1.5"
                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
             </Canvas>
         </Viewbox>
