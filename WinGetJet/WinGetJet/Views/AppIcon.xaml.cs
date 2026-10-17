@@ -1,15 +1,8 @@
-using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 
 namespace WinGetJet.Views;
-
-public enum AppIconSize
-{
-    Small,
-    Large
-}
 
 public sealed partial class AppIcon : UserControl
 {
@@ -18,9 +11,6 @@ public sealed partial class AppIcon : UserControl
 
     public static readonly DependencyProperty IsUpdateAvailableProperty =
         DependencyProperty.Register(nameof(IsUpdateAvailable), typeof(bool), typeof(AppIcon), new PropertyMetadata(false));
-
-    public static readonly DependencyProperty SizeProperty =
-        DependencyProperty.Register(nameof(Size), typeof(AppIconSize), typeof(AppIcon), new PropertyMetadata(AppIconSize.Small, OnSizeChanged));
 
     public AppIcon()
     {
@@ -39,20 +29,11 @@ public sealed partial class AppIcon : UserControl
         set => SetValue(IsUpdateAvailableProperty, value);
     }
 
-    public AppIconSize Size
+    private void RootGridSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        get => (AppIconSize)GetValue(SizeProperty);
-        set => SetValue(SizeProperty, value);
-    }
-
-    private static void OnSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((AppIcon)d).ApplySize();
-
-    private void ApplySize()
-    {
-        var large = Size == AppIconSize.Large;
-        RootGrid.Width = RootGrid.Height = large ? 48 : 24;
-        IconImage.Width = IconImage.Height = large ? 48 : 24;
-        UpdateBadge.Width = UpdateBadge.Height = large ? 20 : 12;
-        UpdateBadge.Margin = large ? new Thickness(0, 0, -3, -3) : new Thickness(0, 0, -2, -2);
+        var size = Math.Min(e.NewSize.Width, e.NewSize.Height);
+        UpdateBadge.Width = UpdateBadge.Height = Math.Round(size * 0.45);
+        var offset = -Math.Round(size * 0.08);
+        UpdateBadge.Margin = new Thickness(0, 0, offset, offset);
     }
 }
