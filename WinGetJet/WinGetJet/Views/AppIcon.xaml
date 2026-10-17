@@ -18,7 +18,8 @@
                  ToolTipService.ToolTip="Update available"
                  Visibility="{x:Bind v:ViewConvert.BoolToVisibility(IsUpdateAvailable), Mode=OneWay}">
             <Canvas Width="12" Height="12">
-                <Ellipse Width="12" Height="12" Fill="{ThemeResource AccentFillColorDefaultBrush}" />
+                <Ellipse Width="12" Height="12" Fill="{ThemeResource AccentFillColorDefaultBrush}" 
+                      Stroke="{ThemeResource SolidBackgroundFillColorBaseBrush}" StrokeThickness="1"/>
                 <Path Data="M6,9 L6,3 M3,6 L6,3 L9,6" Stroke="{ThemeResource TextOnAccentFillColorPrimaryBrush}" StrokeThickness="1.5"
                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
             </Canvas>
