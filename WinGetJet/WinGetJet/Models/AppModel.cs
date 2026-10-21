@@ -1,4 +1,5 @@
 ﻿using System.Waf.Foundation;
+using WindowsPackageManager;
 
 namespace WinGetJet.Models;
 
@@ -17,7 +18,9 @@ public class AppModel(string Id, string Name, string? Version, IReadOnlyList<str
 
     public IReadOnlyList<string> ProductCodes { get; } = ProductCodes;
 
-    public string? Available { get; set => SetProperty(ref field, value); }
+    public IReadOnlyList<PackageVersionKey> AvailableVersions { get; set => SetProperty(ref field, value); } = [];
+
+    public PackageVersionKey? SelectedVersion { get; set => SetProperty(ref field, value); }
 
     public string? Source { get; set => SetProperty(ref field, value); }
 

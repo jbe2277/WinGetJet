@@ -6,13 +6,15 @@ namespace WindowsPackageManager;
 
 public record PackageInfo(string Id, string Name, string? Version, IReadOnlyList<string> ProductCodes);
 
-public record PackageDetails(string Id, string? Available, string? Source, bool IsUpdateAvailable,
+public record PackageDetails(string Id, IReadOnlyList<PackageVersionKey> AvailableVersions, string? Source, bool IsUpdateAvailable,
     PackageTextLink Publisher, string? Author, string? Description, Uri? PackageUrl, PackageTextLink License, Uri? IconUrl,
     Uri? PublisherSupportUrl, string? Copyright, PackageTextLink ReleaseNotes,
     IReadOnlyList<PackageTextLink> Documentations, IReadOnlyList<string> Tags);
 
 public record PackageTextLink(string? Text, Uri? Url);
 
+public enum PackageVersionKind { Installed, DefaultInstall, Available }
+public record PackageVersionKey(PackageVersionKind Kind, string? Version = null);
 
 public class PackageService
 {
@@ -49,7 +51,7 @@ public class PackageService
     }
 
     /// <summary>Slow: correlates a single package with remote sources and fills details.</summary>
-    public async Task<PackageDetails?> LoadDetailsAsync(string id, CancellationToken cancellation = default)
+    public async Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey version, CancellationToken cancellation = default)
     {
         var catalog = await compositeCatalog.Value.ConfigureAwait(false);
 
@@ -66,11 +68,22 @@ public class PackageService
             return null;
 
         var package = findResult.Matches[0].CatalogPackage;
+        var availableVersionsRaw = package.AvailableVersions.ToArray();
+        var packageVersion = version.Kind switch
+        {
+            PackageVersionKind.Installed => package.InstalledVersion,
+            PackageVersionKind.DefaultInstall => package.DefaultInstallVersion,
+            PackageVersionKind.Available => package.GetPackageVersionInfo(availableVersionsRaw.First(x => x.Version == version.Version)),
+            _ => throw new NotSupportedException($"Unsupported version kind: {version.Kind}")
+        };
+        var availableVersions = availableVersionsRaw.Select(v => new PackageVersionKey(PackageVersionKind.Available, v?.Version));
+        if (package.DefaultInstallVersion is not null) availableVersions = availableVersions.Prepend(new(PackageVersionKind.DefaultInstall, package.DefaultInstallVersion.Version));
+        if (package.InstalledVersion is not null) availableVersions = availableVersions.Prepend(new(PackageVersionKind.Installed, package.InstalledVersion.Version));
 
         CatalogPackageMetadata? metadata = null;
         try
         {
-            metadata = (package.DefaultInstallVersion ?? package.InstalledVersion)?.GetCatalogPackageMetadata();
+            metadata = (packageVersion ?? package.InstalledVersion)?.GetCatalogPackageMetadata();
         }
         catch (COMException)
         {
@@ -79,8 +92,8 @@ public class PackageService
 
         var iconUrl = metadata?.Icons.ToArray().FirstOrDefault(x => !string.IsNullOrEmpty(x.Url))?.Url;
         return new PackageDetails(id,
-            Available: package.DefaultInstallVersion?.Version,
-            Source: package.DefaultInstallVersion?.PackageCatalog?.Info?.Name,
+            AvailableVersions: availableVersions.ToArray(),
+            Source: packageVersion?.PackageCatalog?.Info?.Name,
             IsUpdateAvailable: package.IsUpdateAvailable,
             Publisher: new(metadata?.Publisher, ToUri(metadata?.PublisherUrl)),
             Author: metadata?.Author,
