@@ -53,21 +53,9 @@ public class PackageService
     /// <summary>Slow: correlates a single package with remote sources and fills details.</summary>
     public async Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey version, CancellationToken cancellation = default)
     {
-        var catalog = await compositeCatalog.Value.ConfigureAwait(false);
+        var package = await FindPackageAsync(id, cancellation).ConfigureAwait(false);
+        if (package is null) return null;
 
-        var options = new FindPackagesOptions { ResultLimit = 1 };
-        options.Selectors.Add(new PackageMatchFilter
-        {
-            Field = PackageMatchField.Id,
-            Option = PackageFieldMatchOption.Equals,
-            Value = id
-        });
-
-        var findResult = await catalog.FindPackagesAsync(options).AsTask(cancellation).ConfigureAwait(false);
-        if (findResult.Status != FindPackagesResultStatus.Ok || findResult.Matches.Count == 0)
-            return null;
-
-        var package = findResult.Matches[0].CatalogPackage;
         var availableVersionsRaw = package.AvailableVersions.ToArray();
         var packageVersion = version.Kind switch
         {
@@ -113,20 +101,8 @@ public class PackageService
     {
         if (version.Kind == PackageVersionKind.Installed) throw new ArgumentException("Cannot upgrade to the installed version.", nameof(version));
         var manager = await packageManager.Value.ConfigureAwait(false);
-        var catalog = await compositeCatalog.Value.ConfigureAwait(false);
-
-        var findOptions = new FindPackagesOptions { ResultLimit = 1 };
-        findOptions.Selectors.Add(new PackageMatchFilter
-        {
-            Field = PackageMatchField.Id,
-            Option = PackageFieldMatchOption.Equals,
-            Value = id
-        });
-        var findResult = await catalog.FindPackagesAsync(findOptions).AsTask(cancellation).ConfigureAwait(false);
-        if (findResult.Status != FindPackagesResultStatus.Ok || findResult.Matches.Count == 0)
-            throw new InvalidOperationException($"Package not found: {id}");
-
-        var package = findResult.Matches[0].CatalogPackage;
+        var package = await FindPackageAsync(id, cancellation).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Package not found: {id}");
         var options = new InstallOptions
         {
             PackageInstallMode = PackageInstallMode.Silent,
@@ -140,6 +116,21 @@ public class PackageService
         var result = await operation.AsTask(cancellation).ConfigureAwait(false);
         if (result.Status != InstallResultStatus.Ok)
             throw new InvalidOperationException($"Upgrade failed: {result.Status} (0x{result.ExtendedErrorCode?.HResult:X8})");
+    }
+
+    private async Task<CatalogPackage?> FindPackageAsync(string id, CancellationToken cancellation)
+    {
+        var catalog = await compositeCatalog.Value.ConfigureAwait(false);
+        var options = new FindPackagesOptions { ResultLimit = 1 };
+        options.Selectors.Add(new PackageMatchFilter
+        {
+            Field = PackageMatchField.Id,
+            Option = PackageFieldMatchOption.Equals,
+            Value = id
+        });
+        var findResult = await catalog.FindPackagesAsync(options).AsTask(cancellation).ConfigureAwait(false);
+        if (findResult.Status != FindPackagesResultStatus.Ok || findResult.Matches.Count == 0) return null;
+        return findResult.Matches[0].CatalogPackage;
     }
 
     private static Uri? ToUri(string? url) => Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
