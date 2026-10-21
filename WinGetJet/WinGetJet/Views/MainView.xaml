@@ -101,9 +101,6 @@
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.Description, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True"
-                                   Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Description), Mode=OneWay, FallbackValue=Collapsed}" />
-
                         <Grid ColumnSpacing="12" RowSpacing="4">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -118,9 +115,10 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="Version" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Version, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
-                            <TextBlock Grid.Row="1" Text="Available" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Available, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.SelectedVersion.Version, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                            <TextBlock Grid.Row="1" Text="Available" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
+                            <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.SelectedApp.AvailableVersions, Mode=OneWay}"
+                                      SelectedItem="{x:Bind ViewModel.SelectedApp.SelectedVersion, Mode=OneWay}" DisplayMemberPath="Version" />
                             <TextBlock Grid.Row="2" Text="Source" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Source, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                             <TextBlock Grid.Row="3" Text="Author" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
@@ -130,6 +128,11 @@
                             <TextBlock Grid.Row="5" Text="Copyright" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             <TextBlock Grid.Row="5" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Copyright, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                         </Grid>
+
+                        <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotes.Text), Mode=OneWay, FallbackValue=Collapsed}">
+                            <TextBlock Text="Release notes" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                            <TextBlock Text="{x:Bind ViewModel.SelectedApp.ReleaseNotes.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                        </StackPanel>
 
                         <StackPanel Spacing="0">
                             <TextBlock Text="Links" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0,0,0,4" />
@@ -152,10 +155,8 @@
                             </ItemsControl>
                         </StackPanel>
 
-                        <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotes.Text), Mode=OneWay, FallbackValue=Collapsed}">
-                            <TextBlock Text="Release notes" Style="{StaticResource BodyStrongTextBlockStyle}" />
-                            <TextBlock Text="{x:Bind ViewModel.SelectedApp.ReleaseNotes.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
-                        </StackPanel>
+                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.Description, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True"
+                            Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Description), Mode=OneWay, FallbackValue=Collapsed}" />
 
                         <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Tags), Mode=OneWay, FallbackValue=Collapsed}">
                             <TextBlock Text="Tags" Style="{StaticResource BodyStrongTextBlockStyle}" />
