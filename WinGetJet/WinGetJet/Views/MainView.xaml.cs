@@ -23,6 +23,7 @@ public sealed partial class MainView : Page, IMainView
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
+        ViewModel.PropertyChanged += ViewModelPropertyChanged;
         StatusTextBlock.Text = "Retrieving installed packages...";
         try
         {
@@ -64,5 +65,18 @@ public sealed partial class MainView : Page, IMainView
         {
             StatusTextBlock.Text = $"Error retrieving installed packages: {ex.Message}";
         }
+    }
+
+    private void ViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        // ComboBox resets SelectedItem when ItemsSource changes; re-apply the selection afterwards
+        if (e.PropertyName == nameof(MainViewModel.SelectedApp))
+            DispatcherQueue.TryEnqueue(() => VersionComboBox.SelectedItem = ViewModel.SelectedApp?.SelectedVersion);
+    }
+
+    private void VersionComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        // ComboBox sets SelectedItem to null when ItemsSource changes; do not propagate this to the model
+        if (VersionComboBox.SelectedItem is PackageVersionKey version && ViewModel.SelectedApp is { } app) app.SelectedVersion = version;
     }
 }

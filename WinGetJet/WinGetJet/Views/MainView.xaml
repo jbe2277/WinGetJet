@@ -117,8 +117,8 @@
                             <TextBlock Grid.Row="0" Text="Version" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.SelectedVersion.Version, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                             <TextBlock Grid.Row="1" Text="Available" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
-                            <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.SelectedApp.AvailableVersions, Mode=OneWay}"
-                                      SelectedItem="{x:Bind ViewModel.SelectedApp.SelectedVersion, Mode=OneWay}" DisplayMemberPath="Version" />
+                            <ComboBox x:Name="VersionComboBox" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.SelectedApp.AvailableVersions, Mode=OneWay}"
+                                      SelectedItem="{x:Bind ViewModel.SelectedApp.SelectedVersion, Mode=OneWay}" SelectionChanged="VersionComboBoxSelectionChanged" DisplayMemberPath="Version" />
                             <TextBlock Grid.Row="2" Text="Source" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Source, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                             <TextBlock Grid.Row="3" Text="Author" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
