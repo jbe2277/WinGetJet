@@ -108,6 +108,40 @@ public class PackageService
             Tags: metadata?.Tags.ToArray() ?? []);
     }
 
+    /// <summary>Upgrades the package to the specified version. DefaultInstall upgrades to the latest version.</summary>
+    public async Task UpgradeAsync(string id, PackageVersionKey version, IProgress<double>? progress = null, CancellationToken cancellation = default)
+    {
+        if (version.Kind == PackageVersionKind.Installed) throw new ArgumentException("Cannot upgrade to the installed version.", nameof(version));
+        var manager = await packageManager.Value.ConfigureAwait(false);
+        var catalog = await compositeCatalog.Value.ConfigureAwait(false);
+
+        var findOptions = new FindPackagesOptions { ResultLimit = 1 };
+        findOptions.Selectors.Add(new PackageMatchFilter
+        {
+            Field = PackageMatchField.Id,
+            Option = PackageFieldMatchOption.Equals,
+            Value = id
+        });
+        var findResult = await catalog.FindPackagesAsync(findOptions).AsTask(cancellation).ConfigureAwait(false);
+        if (findResult.Status != FindPackagesResultStatus.Ok || findResult.Matches.Count == 0)
+            throw new InvalidOperationException($"Package not found: {id}");
+
+        var package = findResult.Matches[0].CatalogPackage;
+        var options = new InstallOptions
+        {
+            PackageInstallMode = PackageInstallMode.Silent,
+            AcceptPackageAgreements = true
+        };
+        if (version.Kind == PackageVersionKind.Available)
+            options.PackageVersionId = package.AvailableVersions.ToArray().First(x => x.Version == version.Version);
+
+        var operation = manager.UpgradePackageAsync(package, options);
+        if (progress is not null) operation.Progress = (_, p) => progress.Report(p.DownloadProgress * 0.5 + p.InstallationProgress * 0.5);
+        var result = await operation.AsTask(cancellation).ConfigureAwait(false);
+        if (result.Status != InstallResultStatus.Ok)
+            throw new InvalidOperationException($"Upgrade failed: {result.Status} (0x{result.ExtendedErrorCode?.HResult:X8})");
+    }
+
     private static Uri? ToUri(string? url) => Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
 
     private async Task<PackageCatalog> GetCompositeCatalogAsync()

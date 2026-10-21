@@ -129,6 +129,8 @@
                             <TextBlock Grid.Row="5" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Copyright, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                         </Grid>
 
+                        <Button x:Name="UpdateButton" Content="Update to selected version" Style="{StaticResource AccentButtonStyle}" Click="UpdateButtonClick" />
+
                         <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotes.Text), Mode=OneWay, FallbackValue=Collapsed}">
                             <TextBlock Text="Release notes" Style="{StaticResource BodyStrongTextBlockStyle}" />
                             <TextBlock Text="{x:Bind ViewModel.SelectedApp.ReleaseNotes.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />

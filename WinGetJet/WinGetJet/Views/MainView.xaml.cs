@@ -78,5 +78,28 @@ public sealed partial class MainView : Page, IMainView
     {
         // ComboBox sets SelectedItem to null when ItemsSource changes; do not propagate this to the model
         if (VersionComboBox.SelectedItem is PackageVersionKey version && ViewModel.SelectedApp is { } app) app.SelectedVersion = version;
+        UpdateButton.IsEnabled = ViewModel.SelectedApp?.SelectedVersion is { Kind: not PackageVersionKind.Installed };
+    }
+
+    private async void UpdateButtonClick(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.SelectedApp is not { SelectedVersion: { Kind: not PackageVersionKind.Installed } version } app) return;
+        UpdateButton.IsEnabled = false;
+        var versionText = version.Version ?? "latest";
+        StatusTextBlock.Text = $"Updating {app.Name} to {versionText}...";
+        try
+        {
+            var progress = new Progress<double>(p => StatusTextBlock.Text = $"Updating {app.Name} to {versionText}... {p:P0}");
+            await packageService.UpgradeAsync(app.Id, version, progress);
+            StatusTextBlock.Text = $"Updated {app.Name} to {versionText}.";
+        }
+        catch (Exception ex)
+        {
+            StatusTextBlock.Text = $"Error updating {app.Name}: {ex.Message}";
+        }
+        finally
+        {
+            UpdateButton.IsEnabled = ViewModel.SelectedApp?.SelectedVersion is { Kind: not PackageVersionKind.Installed };
+        }
     }
 }
