@@ -30,6 +30,7 @@ public sealed partial class MainView : Page, IMainView
             var packages = await packageService.GetInstalledPackagesAsync();
             foreach (var app in packages.OrderBy(a => a.Name))
                 ViewModel.AppsSource.Add(new AppModel(app.Id, app.Name, app.Version, app.ProductCodes));
+            ViewModel.SelectedApp = ViewModel.AppsView.FirstOrDefault();
 
             await Parallel.ForEachAsync(ViewModel.AppsView, new ParallelOptions { MaxDegreeOfParallelism = 4 },
                 async (app, cancellation) =>
