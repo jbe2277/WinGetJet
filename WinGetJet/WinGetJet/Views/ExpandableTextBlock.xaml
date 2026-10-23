@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="WinGetJet.Views.ExpandableTextBlock"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Border Padding="12,8" CornerRadius="{StaticResource ControlCornerRadius}" BorderThickness="1"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+        <StackPanel Spacing="4">
+            <TextBlock x:Name="ContentTextBlock" TextWrapping="Wrap" IsTextSelectionEnabled="True"
+                    TextTrimming="CharacterEllipsis" IsTextTrimmedChanged="ContentTextTrimmedChanged" />
+            <HyperlinkButton x:Name="ExpandButton" Content="Show more" Padding="0,0,0,2" Visibility="Collapsed" Click="ExpandButtonClick" />
+        </StackPanel>
+    </Border>
+</UserControl>

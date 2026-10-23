@@ -72,41 +72,7 @@ public sealed partial class MainView : Page, IMainView
     {
         // ComboBox resets SelectedItem when ItemsSource changes; re-apply the selection afterwards
         if (e.PropertyName == nameof(MainViewModel.SelectedApp))
-        {
             DispatcherQueue.TryEnqueue(() => VersionComboBox.SelectedItem = ViewModel.SelectedApp?.SelectedVersion);
-            SetReleaseNotesExpanded(false);
-            SetDescriptionExpanded(false);
-        }
-    }
-
-    private void DescriptionTextTrimmedChanged(TextBlock sender, IsTextTrimmedChangedEventArgs args)
-    {
-        if (DescriptionTextBlock.MaxLines != 0)
-            DescriptionExpandButton.Visibility = sender.IsTextTrimmed ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    private void DescriptionExpandButtonClick(object sender, RoutedEventArgs e) => SetDescriptionExpanded(DescriptionTextBlock.MaxLines != 0);
-
-    private void SetDescriptionExpanded(bool expanded)
-    {
-        DescriptionTextBlock.MaxLines = expanded ? 0 : 5;
-        DescriptionExpandButton.Content = expanded ? "Show less" : "Show more";
-        DescriptionExpandButton.Visibility = expanded || DescriptionTextBlock.IsTextTrimmed ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    private void ReleaseNotesTextTrimmedChanged(TextBlock sender, IsTextTrimmedChangedEventArgs args)
-    {
-        if (ReleaseNotesTextBlock.MaxLines != 0)
-            ReleaseNotesExpandButton.Visibility = sender.IsTextTrimmed ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    private void ReleaseNotesExpandButtonClick(object sender, RoutedEventArgs e) => SetReleaseNotesExpanded(ReleaseNotesTextBlock.MaxLines != 0);
-
-    private void SetReleaseNotesExpanded(bool expanded)
-    {
-        ReleaseNotesTextBlock.MaxLines = expanded ? 0 : 5;
-        ReleaseNotesExpandButton.Content = expanded ? "Show less" : "Show more";
-        ReleaseNotesExpandButton.Visibility = expanded || ReleaseNotesTextBlock.IsTextTrimmed ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void VersionComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
