@@ -42,9 +42,14 @@ public class MainViewModel : ViewModelCore<IMainView>
     {
         return
             (string.IsNullOrEmpty(FilterText)
-                || (!string.IsNullOrEmpty(app.Name) && app.Name.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase))
+                || ContainsFilter(app.Name)
+                || ContainsFilter(app.Publisher.Text)
+                || ContainsFilter(app.Description)
+                || app.Tags.Any(x => ContainsFilter(x))
             )
             && (!ShowOnlyUpdates || app.IsUpdateAvailable);
+
+        bool ContainsFilter(string? text) => !string.IsNullOrEmpty(text) && text.Contains(FilterText, StringComparison.CurrentCultureIgnoreCase);
     }
 
     private void UpdateCountProperty() => UpdateCount = AppsView.Count(x => x.IsUpdateAvailable);
