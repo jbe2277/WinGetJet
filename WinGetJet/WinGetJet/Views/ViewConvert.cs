@@ -19,6 +19,8 @@ public static class ViewConvert
         _ => Visibility.Visible
     };
 
+    public static Visibility IsAnyVisible(object? value1, object? value2) => IsVisible(value1) == Visibility.Visible ? Visibility.Visible : IsVisible(value2);
+
     public static string Join(IEnumerable<string>? values) => values is null ? "" : string.Join(", ", values);
 
     public static Visibility IsNotVisible(object? value) => IsVisible(value) == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;

@@ -138,20 +138,34 @@
                             <TextBlock Grid.Row="5" Text="Copyright" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             <TextBlock Grid.Row="5" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Copyright, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                         </Grid>
+                        
+                        <StackPanel Spacing="0">
+                            <StackPanel Orientation="Horizontal" Spacing="8"
+                                    Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.PackageUrl), Mode=OneWay, FallbackValue=Collapsed}">
+                                <FontIcon Glyph="&#xE774;" FontSize="16" VerticalAlignment="Center" />
+                                <HyperlinkButton Content="Homepage" Padding="0,0,0,2" VerticalAlignment="Center" 
+                                                 NavigateUri="{x:Bind ViewModel.SelectedApp.PackageUrl, Mode=OneWay, FallbackValue={x:Null}}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="8"
+                                    Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.PublisherSupportUrl), Mode=OneWay, FallbackValue=Collapsed}">
+                                <FontIcon Glyph="&#xEA6B;" FontSize="16" VerticalAlignment="Center" />
+                                <HyperlinkButton Content="Support" Padding="0,0,0,2" VerticalAlignment="Center" 
+                                                 NavigateUri="{x:Bind ViewModel.SelectedApp.PublisherSupportUrl, Mode=OneWay, FallbackValue={x:Null}}" />
+                            </StackPanel>
+                        </StackPanel>
 
-                        <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotes.Text), Mode=OneWay, FallbackValue=Collapsed}">
+                        <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsAnyVisible(ViewModel.SelectedApp.ReleaseNotes.Text, ViewModel.SelectedApp.ReleaseNotes.Url), Mode=OneWay, FallbackValue=Collapsed}">
                             <TextBlock Text="Release notes" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                            <StackPanel Orientation="Horizontal" Spacing="8"
+                                    Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotes.Url), Mode=OneWay, FallbackValue=Collapsed}">
+                                <FontIcon Glyph="&#xE8A5;" FontSize="16" VerticalAlignment="Center" />
+                                <HyperlinkButton Content="Release notes" Padding="0,0,0,2" VerticalAlignment="Center" NavigateUri="{x:Bind ViewModel.SelectedApp.ReleaseNotes.Url, Mode=OneWay, FallbackValue={x:Null}}" />
+                            </StackPanel>
                             <TextBlock Text="{x:Bind ViewModel.SelectedApp.ReleaseNotes.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                         </StackPanel>
 
                         <StackPanel Spacing="0">
                             <TextBlock Text="Links" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0,0,0,4" />
-                            <HyperlinkButton Content="Homepage" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.PackageUrl, Mode=OneWay, FallbackValue={x:Null}}"
-                                             Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.PackageUrl), Mode=OneWay, FallbackValue=Collapsed}" />
-                            <HyperlinkButton Content="Publisher support" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.PublisherSupportUrl, Mode=OneWay, FallbackValue={x:Null}}"
-                                             Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.PublisherSupportUrl), Mode=OneWay, FallbackValue=Collapsed}" />
-                            <HyperlinkButton Content="Release notes" Padding="0,2" NavigateUri="{x:Bind ViewModel.SelectedApp.ReleaseNotes.Url, Mode=OneWay, FallbackValue={x:Null}}"
-                                             Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotes.Url), Mode=OneWay, FallbackValue=Collapsed}" />
                             <ItemsControl ItemsSource="{x:Bind ViewModel.SelectedApp.Documentations, Mode=OneWay}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="m:AppTextLink">
