@@ -112,7 +112,6 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="Installed" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Version, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
@@ -126,17 +125,15 @@
                                              Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Publisher.Url), Mode=OneWay, FallbackValue=Collapsed}">
                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher.Text, Mode=OneWay}" TextWrapping="Wrap" />
                             </HyperlinkButton>
-                            <TextBlock Grid.Row="3" Text="Author" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Author, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
-                            <TextBlock Grid.Row="4" Text="License" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.License.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True"
+                            <TextBlock Grid.Row="3" Text="License" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.License.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True"
                                        Visibility="{x:Bind v:ViewConvert.IsNotVisible(ViewModel.SelectedApp.License.Url), Mode=OneWay, FallbackValue=Visible}" />
-                            <HyperlinkButton Grid.Row="4" Grid.Column="1" Padding="0" VerticalAlignment="Top" NavigateUri="{x:Bind ViewModel.SelectedApp.License.Url, Mode=OneWay, FallbackValue={x:Null}}"
+                            <HyperlinkButton Grid.Row="3" Grid.Column="1" Padding="0" VerticalAlignment="Top" NavigateUri="{x:Bind ViewModel.SelectedApp.License.Url, Mode=OneWay, FallbackValue={x:Null}}"
                                              Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.License.Url), Mode=OneWay, FallbackValue=Collapsed}">
                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.License.Text, Mode=OneWay}" TextWrapping="Wrap" />
                             </HyperlinkButton>
-                            <TextBlock Grid.Row="5" Text="Copyright" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <TextBlock Grid.Row="5" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Copyright, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                            <TextBlock Grid.Row="4" Text="Copyright" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Copyright, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                         </Grid>
                         
                         <StackPanel Spacing="0">
@@ -161,10 +158,11 @@
                                 <FontIcon Glyph="&#xE8A5;" FontSize="16" VerticalAlignment="Center" />
                                 <HyperlinkButton Content="Release notes" Padding="0,0,0,2" VerticalAlignment="Center" NavigateUri="{x:Bind ViewModel.SelectedApp.ReleaseNotes.Url, Mode=OneWay, FallbackValue={x:Null}}" />
                             </StackPanel>
-                            <TextBlock Text="{x:Bind ViewModel.SelectedApp.ReleaseNotes.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                            <TextBlock Text="{x:Bind ViewModel.SelectedApp.ReleaseNotes.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" 
+                                    Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.ReleaseNotes.Text), Mode=OneWay, FallbackValue=Collapsed}"/>
                         </StackPanel>
 
-                        <StackPanel Spacing="0">
+                        <StackPanel Spacing="0" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Documentations), Mode=OneWay, FallbackValue=Collapsed}">
                             <TextBlock Text="Links" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0,0,0,4" />
                             <ItemsControl ItemsSource="{x:Bind ViewModel.SelectedApp.Documentations, Mode=OneWay}">
                                 <ItemsControl.ItemTemplate>
@@ -175,8 +173,10 @@
                             </ItemsControl>
                         </StackPanel>
 
-                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.Description, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True"
-                            Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Description), Mode=OneWay, FallbackValue=Collapsed}" />
+                        <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Description), Mode=OneWay, FallbackValue=Collapsed}">
+                            <TextBlock Text="Description" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                            <TextBlock Text="{x:Bind ViewModel.SelectedApp.Description, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True"/>
+                        </StackPanel>
 
                         <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Tags), Mode=OneWay, FallbackValue=Collapsed}">
                             <TextBlock Text="Tags" Style="{StaticResource BodyStrongTextBlockStyle}" />
