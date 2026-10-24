@@ -24,7 +24,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="{x:Bind v:ViewConvert.Format('{0} apps found ({1} updates available)', ViewModel.AppsView.Count, ViewModel.UpdateCount), Mode=OneWay}" />
+            <TextBlock Text="{x:Bind v:ViewConvert.Format('{0} apps found ({1} updates available)', ViewModel.AppsView.Count, ViewModel.UpdateCount), Mode=OneWay}" VerticalAlignment="Center" />
 
             <CheckBox Grid.Column="1" Content="Show only apps with updates" IsChecked="{x:Bind ViewModel.ShowOnlyUpdates, Mode=TwoWay}" />
         </Grid>
@@ -103,27 +103,27 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="Installed" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Version, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                            <TextBlock Grid.Row="0" Text="Installed" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Version, Mode=OneWay}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center" />
                             <TextBlock Grid.Row="1" Text="Available" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
                             <ComboBox x:Name="VersionComboBox" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.SelectedApp.AvailableVersions, Mode=OneWay}"
                                       SelectedItem="{x:Bind ViewModel.SelectedApp.SelectedVersion, Mode=OneWay}" SelectionChanged="VersionComboBoxSelectionChanged" DisplayMemberPath="Version" />
-                            <TextBlock Grid.Row="2" Text="Publisher" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Publisher.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True"
+                            <TextBlock Grid.Row="2" Text="Publisher" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Publisher.Text, Mode=OneWay}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center"
                                        Visibility="{x:Bind v:ViewConvert.IsNotVisible(ViewModel.SelectedApp.Publisher.Url), Mode=OneWay, FallbackValue=Visible}" />
-                            <HyperlinkButton Grid.Row="2" Grid.Column="1" Padding="0" VerticalAlignment="Top" NavigateUri="{x:Bind ViewModel.SelectedApp.Publisher.Url, Mode=OneWay, FallbackValue={x:Null}}"
+                            <HyperlinkButton Grid.Row="2" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" NavigateUri="{x:Bind ViewModel.SelectedApp.Publisher.Url, Mode=OneWay, FallbackValue={x:Null}}"
                                              Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Publisher.Url), Mode=OneWay, FallbackValue=Collapsed}">
-                                <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher.Text, Mode=OneWay}" TextWrapping="Wrap" />
+                                <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher.Text, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             </HyperlinkButton>
-                            <TextBlock Grid.Row="3" Text="License" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.License.Text, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True"
+                            <TextBlock Grid.Row="3" Text="License" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.License.Text, Mode=OneWay}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center"
                                        Visibility="{x:Bind v:ViewConvert.IsNotVisible(ViewModel.SelectedApp.License.Url), Mode=OneWay, FallbackValue=Visible}" />
-                            <HyperlinkButton Grid.Row="3" Grid.Column="1" Padding="0" VerticalAlignment="Top" NavigateUri="{x:Bind ViewModel.SelectedApp.License.Url, Mode=OneWay, FallbackValue={x:Null}}"
+                            <HyperlinkButton Grid.Row="3" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" NavigateUri="{x:Bind ViewModel.SelectedApp.License.Url, Mode=OneWay, FallbackValue={x:Null}}"
                                              Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.License.Url), Mode=OneWay, FallbackValue=Collapsed}">
-                                <TextBlock Text="{x:Bind ViewModel.SelectedApp.License.Text, Mode=OneWay}" TextWrapping="Wrap" />
+                                <TextBlock Text="{x:Bind ViewModel.SelectedApp.License.Text, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             </HyperlinkButton>
-                            <TextBlock Grid.Row="4" Text="Copyright" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Copyright, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                            <TextBlock Grid.Row="4" Text="Copyright" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Copyright, Mode=OneWay}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center" />
                         </Grid>
                         
                         <StackPanel Orientation="Horizontal" Spacing="24">
