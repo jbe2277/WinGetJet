@@ -39,13 +39,13 @@ public sealed partial class MainView : Page, IMainView
             await Parallel.ForEachAsync(ViewModel.AppsView, new ParallelOptions { MaxDegreeOfParallelism = 16 },
                 async (app, cancellation) =>
                 {
-                    var details = await packageService.LoadDetailsAsync(app.Id, new(PackageVersionKind.DefaultInstall), cancellation);
+                    var details = await packageService.LoadDetailsAsync(app.Id, null, cancellation);
                     if (details is not null)
                     {
                         await TaskHelper.Run(async () =>
                         {
-                            app.AvailableVersions = details.AvailableVersions;
-                            app.SelectedVersion = details.AvailableVersions.FirstOrDefault();
+                            app.AvailableVersions = details.AvailableVersions.Where(x => x.Kind == PackageVersionKind.Available).ToArray();
+                            app.SelectedVersion = app.AvailableVersions.FirstOrDefault();
                             app.Source = details.Source;
                             app.IsUpdateAvailable = details.IsUpdateAvailable;
                             app.Publisher = new(details.Publisher.Text, details.Publisher.Url);

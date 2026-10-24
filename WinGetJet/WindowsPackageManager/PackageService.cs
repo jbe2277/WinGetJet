@@ -49,8 +49,9 @@ public class PackageService
     }
 
     /// <summary>Slow: correlates a single package with remote sources and fills details.</summary>
-    public async Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey version, CancellationToken cancellation = default)
+    public async Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey? version = null, CancellationToken cancellation = default)
     {
+        version ??= new(PackageVersionKind.DefaultInstall);
         var catalog = await compositeCatalog.Value.ConfigureAwait(false);
 
         var options = new FindPackagesOptions { ResultLimit = 1 };
