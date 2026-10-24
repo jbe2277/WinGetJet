@@ -103,18 +103,27 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0" Text="Installed" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
-                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Version, Mode=OneWay}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center" />
+                                <Grid Grid.Row="0" Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" MaxWidth="200" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border MinWidth="64" MinHeight="32" Padding="11,5,11,6"
+                                            Background="{ThemeResource ControlFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                            BorderThickness="{ThemeResource ComboBoxBorderThemeThickness}" CornerRadius="{ThemeResource ControlCornerRadius}">
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.Version, Mode=OneWay}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center" />
+                                    </Border>
+                                </Grid>
                                 <TextBlock Grid.Row="1" Text="Available" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
-                                <Grid Grid.Row="1" Grid.Column="1"
-                                  Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.AvailableVersions), Mode=OneWay, FallbackValue=Collapsed}">
+                                <Grid Grid.Row="1" Grid.Column="1">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" MaxWidth="200" />
                                     </Grid.ColumnDefinitions>
                                     <ComboBox x:Name="VersionComboBox" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.SelectedApp.AvailableVersions, Mode=OneWay}"
+                                          IsEnabled="{x:Bind v:ViewConvert.HasItems(ViewModel.SelectedApp.AvailableVersions), Mode=OneWay, FallbackValue=False}"
                                           SelectedItem="{x:Bind ViewModel.SelectedApp.SelectedVersion, Mode=OneWay}" SelectionChanged="VersionComboBoxSelectionChanged" DisplayMemberPath="Version" />
                                 </Grid>
                             </Grid>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
+                            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,8">
                                 <Button Content="Update to selected version" Style="{StaticResource AccentButtonStyle}" />
                                 <Button Content="Uninstall" />
                             </StackPanel>

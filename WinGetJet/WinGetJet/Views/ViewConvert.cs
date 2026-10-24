@@ -26,5 +26,12 @@ public static class ViewConvert
 
     public static string Join(IEnumerable<string>? values) => values is null ? "" : string.Join(", ", values);
 
+    public static bool HasItems(System.Collections.IEnumerable? value) => value switch
+    {
+        null => false,
+        System.Collections.ICollection c => c.Count > 0,
+        _ => value.GetEnumerator().MoveNext()
+    };
+
     public static Visibility IsNotVisible(object? value) => IsVisible(value) == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
 }
