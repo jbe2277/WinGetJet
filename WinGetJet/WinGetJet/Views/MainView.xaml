@@ -126,7 +126,7 @@
                             <TextBlock Grid.Row="4" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.Copyright, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                         </Grid>
                         
-                        <StackPanel Spacing="0">
+                        <StackPanel Orientation="Horizontal" Spacing="24">
                             <StackPanel Orientation="Horizontal" Spacing="8"
                                     Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.PackageUrl), Mode=OneWay, FallbackValue=Collapsed}">
                                 <FontIcon Glyph="&#xE774;" FontSize="16" VerticalAlignment="Center" />
@@ -170,7 +170,7 @@
 
                         <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.Tags), Mode=OneWay, FallbackValue=Collapsed}">
                             <TextBlock Text="Tags" Style="{StaticResource BodyStrongTextBlockStyle}" />
-                            <TextBlock Text="{x:Bind v:ViewConvert.Join(ViewModel.SelectedApp.Tags), Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True"
+                            <v:ExpandableTextBlock Text="{x:Bind v:ViewConvert.Join(ViewModel.SelectedApp.Tags), Mode=OneWay}"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                         </StackPanel>
                     </StackPanel>
