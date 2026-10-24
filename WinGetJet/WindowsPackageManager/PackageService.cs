@@ -1,5 +1,4 @@
 ﻿using Microsoft.Management.Deployment;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace WindowsPackageManager;
@@ -44,7 +43,6 @@ public class PackageService
         for (int i = 0; i < matches.Count; i++)
         {
             var package = matches[i].CatalogPackage;
-            Trace.WriteLine($"{package.Id}: ProductCodes: {string.Join(",", package.InstalledVersion?.ProductCodes?.ToArray() ?? [])}");
             results[i] = new PackageInfo(package.Id, package.Name, package.InstalledVersion?.Version, package.InstalledVersion?.ProductCodes?.ToArray() ?? []);
         }
         return results;

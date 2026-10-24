@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Diagnostics;
 using System.Waf.Foundation;
 using WindowsPackageManager;
 using WinGetJet.Models;
@@ -27,12 +28,15 @@ public sealed partial class MainView : Page, IMainView
         StatusTextBlock.Text = "Retrieving installed packages...";
         try
         {
+            var timeStamp = Stopwatch.GetTimestamp();
             var packages = await packageService.GetInstalledPackagesAsync();
             foreach (var app in packages.OrderBy(a => a.Name))
                 ViewModel.AppsSource.Add(new AppModel(app.Id, app.Name, app.Version, app.ProductCodes));
             ViewModel.SelectedApp = ViewModel.AppsView.FirstOrDefault();
+            Log.Default.Info($"Retrieved {ViewModel.AppsView.Count} installed packages in {Stopwatch.GetElapsedTime(timeStamp).TotalSeconds:F2} seconds.");
 
-            await Parallel.ForEachAsync(ViewModel.AppsView, new ParallelOptions { MaxDegreeOfParallelism = 4 },
+            timeStamp = Stopwatch.GetTimestamp();
+            await Parallel.ForEachAsync(ViewModel.AppsView, new ParallelOptions { MaxDegreeOfParallelism = 16 },
                 async (app, cancellation) =>
                 {
                     var details = await packageService.LoadDetailsAsync(app.Id, new(PackageVersionKind.DefaultInstall), cancellation);
@@ -59,6 +63,7 @@ public sealed partial class MainView : Page, IMainView
                         }, uiScheduler, cancellation);
                     }
                 });
+            Log.Default.Info($"Retrieved details for {ViewModel.AppsView.Count} installed packages in {Stopwatch.GetElapsedTime(timeStamp).TotalSeconds:F2} seconds.");
 
             StatusTextBlock.Text = $"Retrieved {ViewModel.AppsView.Count} installed packages.";
         }

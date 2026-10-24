@@ -47,11 +47,14 @@
     Set <EnableWinAppRunSupport>false</EnableWinAppRunSupport> in a
     <PropertyGroup> above to opt out.
   -->
-  <ItemGroup>
+  <ItemGroup>    
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="*" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="*" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinApp" Version="*" />
     <PackageReference Include="Microsoft.WindowsPackageManager.ComInterop" Version="1.29.380" />
+    <PackageReference Include="NLog" Version="6.2.2" />
+    <PackageReference Include="NLog.Targets.AtomicFile" Version="6.2.2" />
+    <PackageReference Include="NLog.Targets.Trace" Version="6.0.3" />
     <PackageReference Include="System.Waf.Core" Version="8.3.0" />
   </ItemGroup>
 
