@@ -58,9 +58,9 @@
                             <v:AppIcon Width="32" Height="32" VerticalAlignment="Center" Icon="{x:Bind (media:ImageSource)Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}"
                                        IsUpdateAvailable="{x:Bind IsUpdateAvailable, Mode=OneWay}" />
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
-                                <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongTextBlockStyle}" FontWeight="Normal" FontSize="16" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongTextBlockStyle}" FontWeight="Normal" FontSize="16" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                                 <TextBlock Text="{x:Bind v:ViewConvert.VersionAndPublisher(Version, Publisher.Text), Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"
-                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                             </StackPanel>
                         </Grid>
                     </DataTemplate>
