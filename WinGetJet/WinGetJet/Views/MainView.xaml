@@ -92,7 +92,6 @@
                         </Grid>
 
                         <StackPanel Spacing="8">
-                            <TextBlock Text="Manage" Style="{StaticResource BodyStrongTextBlockStyle}" />
                             <Grid ColumnSpacing="12" RowSpacing="4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -125,12 +124,11 @@
                             </Grid>
                             <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,8">
                                 <Button Content="Update to selected version" Style="{StaticResource AccentButtonStyle}" />
-                                <Button Content="Uninstall" />
+                                <Button Content="Uninstall" MinWidth="100"/>
                             </StackPanel>
                         </StackPanel>
 
                         <StackPanel Spacing="8">
-                            <TextBlock Text="App Details" Style="{StaticResource BodyStrongTextBlockStyle}" />
                             <Grid ColumnSpacing="12" RowSpacing="4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
