@@ -32,6 +32,8 @@ public class MainViewModel : ViewModelCore<IMainView>
 
     public AppModel? SelectedApp { get; set => SetProperty(ref field, value); }
 
+    public string? StatusText { get; set => SetProperty(ref field, value); }
+
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
@@ -43,9 +45,9 @@ public class MainViewModel : ViewModelCore<IMainView>
         return
             (string.IsNullOrEmpty(FilterText)
                 || ContainsFilter(app.Name)
-                || ContainsFilter(app.Publisher.Text)
-                || ContainsFilter(app.Description)
-                || app.Tags.Any(x => ContainsFilter(x))
+                || ContainsFilter(app.DefaultVersionDetails?.Publisher.Text)
+                || ContainsFilter(app.DefaultVersionDetails?.Description)
+                || app.DefaultVersionDetails?.Tags.Any(x => ContainsFilter(x)) == true
             )
             && (!ShowOnlyUpdates || app.IsUpdateAvailable);
 

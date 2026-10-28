@@ -18,35 +18,21 @@ public class AppModel(string Id, string Name, string? Version, IReadOnlyList<str
 
     public IReadOnlyList<string> ProductCodes { get; } = ProductCodes;
 
+    public bool IsUpdateAvailable { get; set => SetProperty(ref field, value); }
+
     public IReadOnlyList<PackageVersionKey> AvailableVersions { get; set => SetProperty(ref field, value); } = [];
 
     public PackageVersionKey? SelectedVersion { get; set => SetProperty(ref field, value); }
 
-    public string? Source { get; set => SetProperty(ref field, value); }
+    public AppVersionModel? DefaultVersionDetails { get; set => SetProperty(ref field, value); }
 
-    public bool IsUpdateAvailable { get; set => SetProperty(ref field, value); }
+    public AppVersionModel? SelectedVersionDetails { get; set => SetProperty(ref field, value); }
 
-    public AppTextLink Publisher { get; set => SetProperty(ref field, value); } = AppTextLink.Empty;
-
-    public string? Author { get; set => SetProperty(ref field, value); }
-
-    public string? Description { get; set => SetProperty(ref field, value); }
-
-    public Uri? PackageUrl { get; set => SetProperty(ref field, value); }
-
-    public AppTextLink License { get; set => SetProperty(ref field, value); } = AppTextLink.Empty;
-
-    public Uri? IconUrl { get; set => SetProperty(ref field, value); }
-
-    public Uri? PublisherSupportUrl { get; set => SetProperty(ref field, value); }
-
-    public string? Copyright { get; set => SetProperty(ref field, value); }
-
-    public AppTextLink ReleaseNotes { get; set => SetProperty(ref field, value); } = AppTextLink.Empty;
-
-    public IReadOnlyList<AppTextLink> Documentations { get; set => SetProperty(ref field, value); } = [];
-
-    public IReadOnlyList<string> Tags { get; set => SetProperty(ref field, value); } = [];
+    public Dictionary<string, AppVersionModel?> VersionDetailsCache { get; } = [];
 
     public object? Icon { get; set => SetProperty(ref field, value); }
 }
+
+public record AppVersionModel(PackageVersionKey Version, string? Source, AppTextLink Publisher, string? Author, string? Description, Uri? PackageUrl,
+    AppTextLink License, Uri? IconUrl, Uri? PublisherSupportUrl, string? Copyright, AppTextLink ReleaseNotes,
+    IReadOnlyList<AppTextLink> Documentations, IReadOnlyList<string> Tags);

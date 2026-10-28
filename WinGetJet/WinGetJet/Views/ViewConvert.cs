@@ -9,7 +9,7 @@ public static class ViewConvert
 
     public static string Format(string format, object? value1, object? value2) => string.Format(CultureInfo.CurrentCulture, format, value1, value2);
 
-    public static string VersionAndPublisher(object? version, string? publisher) 
+    public static string VersionAndPublisher(object? version, string? publisher)
         => string.IsNullOrEmpty(publisher) ? Format("{0}", version) : Format("{0}   |   {1}", version, publisher);
 
     public static Visibility BoolToVisibility(bool value) => value ? Visibility.Visible : Visibility.Collapsed;
@@ -34,4 +34,11 @@ public static class ViewConvert
     };
 
     public static Visibility IsNotVisible(object? value) => IsVisible(value) == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+
+    public static string? GetSourceDisplayName(string? source) => source switch
+    {
+        "winget" => "WinGet",
+        "msstore" => "Microsoft Store",
+        _ => source
+    };
 }

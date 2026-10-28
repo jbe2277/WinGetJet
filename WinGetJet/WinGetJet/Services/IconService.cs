@@ -16,9 +16,9 @@ internal static class IconService
 
     public static async Task<ImageSource?> ResolveIconAsync(AppModel app)
     {
-        if (app.IconUrl is not null)
+        if (app.DefaultVersionDetails?.IconUrl is not null)
         {
-            return new BitmapImage { DecodePixelWidth = IconSize, UriSource = app.IconUrl };
+            return new BitmapImage { DecodePixelWidth = IconSize, UriSource = app.DefaultVersionDetails.IconUrl };
         }
 
         foreach (var productCode in app.ProductCodes)
