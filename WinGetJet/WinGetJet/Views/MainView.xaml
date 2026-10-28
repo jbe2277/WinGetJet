@@ -26,7 +26,11 @@
 
             <TextBlock Text="{x:Bind v:ViewConvert.Format('{0} apps found ({1} updates available)', ViewModel.AppsView.Count, ViewModel.UpdateCount), Mode=OneWay}" VerticalAlignment="Center" />
 
-            <CheckBox Grid.Column="1" Content="Show only apps with updates" IsChecked="{x:Bind ViewModel.ShowOnlyUpdates, Mode=TwoWay}" />
+            <CheckBox Grid.Column="1" Content="Show only apps with updates" IsChecked="{x:Bind ViewModel.ShowOnlyUpdates, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+            <Button Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32">
+                <FontIcon Glyph="&#xE72C;" FontSize="14" />
+            </Button>
         </Grid>
 
         <Grid Grid.Row="1">
