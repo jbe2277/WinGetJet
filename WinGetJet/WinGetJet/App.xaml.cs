@@ -23,7 +23,6 @@ public partial class App : Application
         ("WGJ", LogLevel.Info),
     ];
 
-    private readonly TaskScheduler uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
     private readonly SemaphoreSlim loadDetailsSemaphore = new(16);
     private readonly PackageService packageService = new();
     private readonly AsyncDelegateCommand refreshCommand;
@@ -120,17 +119,14 @@ public partial class App : Application
         {
             var details = await packageService.LoadDetailsAsync(app.Id, null, CancellationToken.None);
             if (details is not null)
-            {
-                await TaskHelper.Run(async () =>
-                {
-                    app.AvailableVersions = details.AvailableVersions.Where(x => x.Kind == PackageVersionKind.Available).ToArray();
-                    app.SelectedVersion = app.AvailableVersions.FirstOrDefault();
-                    app.IsUpdateAvailable = details.IsUpdateAvailable;
-                    app.DefaultVersionDetails = CreateAppVersionModel(details.VersionDetails);
-                    app.SelectedVersionDetails = app.DefaultVersionDetails;
-                    if (app.DefaultVersionDetails.Version.Version is not null) app.VersionDetailsCache[app.DefaultVersionDetails.Version.Version] = app.DefaultVersionDetails;
-                    app.Icon = await IconService.ResolveIconAsync(app);
-                }, uiScheduler);
+            {                
+                app.AvailableVersions = details.AvailableVersions.Where(x => x.Kind == PackageVersionKind.Available).ToArray();
+                app.SelectedVersion = app.AvailableVersions.FirstOrDefault();
+                app.IsUpdateAvailable = details.IsUpdateAvailable;
+                app.DefaultVersionDetails = CreateAppVersionModel(details.VersionDetails);
+                app.SelectedVersionDetails = app.DefaultVersionDetails;
+                if (app.DefaultVersionDetails.Version.Version is not null) app.VersionDetailsCache[app.DefaultVersionDetails.Version.Version] = app.DefaultVersionDetails;
+                app.Icon = await IconService.ResolveIconAsync(app);
             }
         }
         catch (Exception ex)
