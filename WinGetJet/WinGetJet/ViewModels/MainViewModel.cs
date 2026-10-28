@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Waf.Applications;
 using System.Waf.Foundation;
+using System.Windows.Input;
 using WinGetJet.Models;
 
 namespace WinGetJet.ViewModels;
@@ -23,6 +24,8 @@ public class MainViewModel : ViewModelCore<IMainView>
     public ObservableList<AppModel> AppsSource => appsSource;
 
     public ObservableListViewCore<AppModel> AppsView { get; }
+
+    public ICommand RefreshCommand { get; internal set; } = DelegateCommand.DisabledCommand;
 
     public string FilterText { get; set => SetProperty(ref field, value); } = "";
 

@@ -24,6 +24,7 @@ public partial class App : Application
 
     private readonly TaskScheduler uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
     private readonly PackageService packageService = new();
+    private readonly AsyncDelegateCommand refreshCommand;
     private ShellWindow shellWindow = null!;
     private ShellViewModel shellViewModel = null!;
     private MainViewModel mainViewModel = null!;
@@ -54,6 +55,7 @@ public partial class App : Application
                 c.ForLogger(loggerNamePattern).FilterMinLevel(minLevel).WriteTo(fileTarget).WriteTo(traceTarget);
             }
         });
+        refreshCommand = new AsyncDelegateCommand(Refresh);
         InitializeComponent();
     }
 
@@ -67,7 +69,10 @@ public partial class App : Application
         shellViewModel.Initialize();
 
         var mainView = new MainView();
-        mainViewModel = new MainViewModel(mainView);
+        mainViewModel = new MainViewModel(mainView)
+        {
+            RefreshCommand = refreshCommand
+        };
         mainViewModel.Initialize();
 
         shellWindow.ContentPage = mainView;
@@ -111,6 +116,14 @@ public partial class App : Application
         {
             mainViewModel.StatusText = $"Error retrieving installed packages: {ex.Message}";
         }
+    }
+
+    private async Task Refresh() 
+    {
+        var packages = await packageService.GetInstalledPackagesAsync();
+        var appModels = packages.OrderBy(a => a.Name).Select(x => new AppModel(x.Id, x.Name, x.Version, x.ProductCodes)).ToArray();
+        CollectionHelper.Merge(mainViewModel.AppsSource, appModels, AppModelComparer.Default, null, null, null, moveAction: mainViewModel.AppsSource.Move);
+        // TODO: Refresh details for new apps
     }
 
     private async void AppsSourceCollectionItemChanged(object? sender, PropertyChangedEventArgs e)
