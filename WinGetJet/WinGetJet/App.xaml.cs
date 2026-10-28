@@ -2,6 +2,7 @@
 using NLog;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -23,6 +24,7 @@ public partial class App : Application
     ];
 
     private readonly TaskScheduler uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+    private readonly SemaphoreSlim loadDetailsSemaphore = new(16);
     private readonly PackageService packageService = new();
     private readonly AsyncDelegateCommand refreshCommand;
     private ShellWindow shellWindow = null!;
@@ -79,6 +81,7 @@ public partial class App : Application
         shellWindow.Activate();
 
         mainViewModel.StatusText = "Retrieving installed packages...";
+        mainViewModel.AppsSource.CollectionChanged += AppsSourceCollectionChanged;
         mainViewModel.AppsSource.CollectionItemChanged += AppsSourceCollectionItemChanged;
         try
         {
@@ -89,27 +92,6 @@ public partial class App : Application
             mainViewModel.SelectedApp = mainViewModel.AppsView.FirstOrDefault();
             Log.Default.Info($"Retrieved {mainViewModel.AppsView.Count} installed packages in {Stopwatch.GetElapsedTime(timeStamp).TotalSeconds:F2} seconds.");
 
-            timeStamp = Stopwatch.GetTimestamp();
-            await Parallel.ForEachAsync(mainViewModel.AppsView, new ParallelOptions { MaxDegreeOfParallelism = 16 },
-                async (app, cancellation) =>
-                {
-                    var details = await packageService.LoadDetailsAsync(app.Id, null, cancellation);
-                    if (details is not null)
-                    {
-                        await TaskHelper.Run(async () =>
-                        {
-                            app.AvailableVersions = details.AvailableVersions.Where(x => x.Kind == PackageVersionKind.Available).ToArray();
-                            app.SelectedVersion = app.AvailableVersions.FirstOrDefault();
-                            app.IsUpdateAvailable = details.IsUpdateAvailable;
-                            app.DefaultVersionDetails = CreateAppVersionModel(details.VersionDetails);
-                            app.SelectedVersionDetails = app.DefaultVersionDetails;
-                            if (app.DefaultVersionDetails.Version.Version is not null) app.VersionDetailsCache[app.DefaultVersionDetails.Version.Version] = app.DefaultVersionDetails;
-                            app.Icon = await IconService.ResolveIconAsync(app);
-                        }, uiScheduler, cancellation);
-                    }
-                });
-            Log.Default.Info($"Retrieved details for {mainViewModel.AppsView.Count} installed packages in {Stopwatch.GetElapsedTime(timeStamp).TotalSeconds:F2} seconds.");
-
             mainViewModel.StatusText = $"Retrieved {mainViewModel.AppsView.Count} installed packages.";
         }
         catch (Exception ex)
@@ -118,12 +100,47 @@ public partial class App : Application
         }
     }
 
-    private async Task Refresh() 
+    private async Task Refresh()
     {
         var packages = await packageService.GetInstalledPackagesAsync();
         var appModels = packages.OrderBy(a => a.Name).Select(x => new AppModel(x.Id, x.Name, x.Version, x.ProductCodes)).ToArray();
         CollectionHelper.Merge(mainViewModel.AppsSource, appModels, AppModelComparer.Default, null, null, null, moveAction: mainViewModel.AppsSource.Move);
-        // TODO: Refresh details for new apps
+    }
+
+    private void AppsSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action is not (NotifyCollectionChangedAction.Add or NotifyCollectionChangedAction.Replace) || e.NewItems is null) return;
+        foreach (var app in e.NewItems.OfType<AppModel>()) LoadDetails(app);
+    }
+
+    private async void LoadDetails(AppModel app)
+    {
+        await loadDetailsSemaphore.WaitAsync();
+        try
+        {
+            var details = await packageService.LoadDetailsAsync(app.Id, null, CancellationToken.None);
+            if (details is not null)
+            {
+                await TaskHelper.Run(async () =>
+                {
+                    app.AvailableVersions = details.AvailableVersions.Where(x => x.Kind == PackageVersionKind.Available).ToArray();
+                    app.SelectedVersion = app.AvailableVersions.FirstOrDefault();
+                    app.IsUpdateAvailable = details.IsUpdateAvailable;
+                    app.DefaultVersionDetails = CreateAppVersionModel(details.VersionDetails);
+                    app.SelectedVersionDetails = app.DefaultVersionDetails;
+                    if (app.DefaultVersionDetails.Version.Version is not null) app.VersionDetailsCache[app.DefaultVersionDetails.Version.Version] = app.DefaultVersionDetails;
+                    app.Icon = await IconService.ResolveIconAsync(app);
+                }, uiScheduler);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Default.Error(ex, "Failed to load details for {0}", app.Id);
+        }
+        finally
+        {
+            loadDetailsSemaphore.Release();
+        }
     }
 
     private async void AppsSourceCollectionItemChanged(object? sender, PropertyChangedEventArgs e)
