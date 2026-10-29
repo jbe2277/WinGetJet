@@ -87,7 +87,7 @@ public partial class App : Application
             var timeStamp = Stopwatch.GetTimestamp();
             var packages = await packageService.GetInstalledPackagesAsync();
             foreach (var app in packages.OrderBy(a => a.Name))
-                mainViewModel.AppsSource.Add(new AppModel(app.Id, app.Name, app.Version, app.ProductCodes));
+                mainViewModel.AppsSource.Add(new AppModel(app.Id, app.Name, app.ProductCodes, app.InstalledVersion));
             mainViewModel.SelectedApp = mainViewModel.AppsView.FirstOrDefault();
             Log.Default.Info($"Retrieved {mainViewModel.AppsView.Count} installed packages in {Stopwatch.GetElapsedTime(timeStamp).TotalSeconds:F2} seconds.");
 
@@ -101,9 +101,15 @@ public partial class App : Application
 
     private async Task Refresh()
     {
+        packageService.InvalidateCache();
         var packages = await packageService.GetInstalledPackagesAsync();
-        var appModels = packages.OrderBy(a => a.Name).Select(x => new AppModel(x.Id, x.Name, x.Version, x.ProductCodes)).ToArray();
-        CollectionHelper.Merge(mainViewModel.AppsSource, appModels, AppModelComparer.Default, null, null, null, moveAction: mainViewModel.AppsSource.Move);
+        var appModels = packages.OrderBy(a => a.Name).Select(x => new AppModel(x.Id, x.Name, x.ProductCodes, x.InstalledVersion)).ToArray();
+        CollectionHelper.Merge(mainViewModel.AppsSource, appModels, AppModelComparer.Default, null, null, null, moveAction: mainViewModel.AppsSource.Move);        
+        foreach (var app in mainViewModel.AppsSource)
+        {
+            app.InstalledVersion = packages.FirstOrDefault(p => p.Id == app.Id)?.InstalledVersion;            
+            LoadDetails(app);
+        }
     }
 
     private void AppsSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -119,14 +125,24 @@ public partial class App : Application
         {
             var details = await packageService.LoadDetailsAsync(app.Id, null, CancellationToken.None);
             if (details is not null)
-            {                
-                app.AvailableVersions = details.AvailableVersions.Where(x => x.Kind == PackageVersionKind.Available).ToArray();
-                app.SelectedVersion = app.AvailableVersions.FirstOrDefault();
+            {
                 app.IsUpdateAvailable = details.IsUpdateAvailable;
-                app.DefaultVersionDetails = CreateAppVersionModel(details.VersionDetails);
-                app.SelectedVersionDetails = app.DefaultVersionDetails;
-                if (app.DefaultVersionDetails.Version.Version is not null) app.VersionDetailsCache[app.DefaultVersionDetails.Version.Version] = app.DefaultVersionDetails;
-                app.Icon = await IconService.ResolveIconAsync(app);
+
+                var availableVersions = details.AvailableVersions.Where(x => x.Kind == PackageVersionKind.Available).ToArray();
+                if (!app.AvailableVersions.SequenceEqual(availableVersions))
+                {
+                    app.AvailableVersions = availableVersions;
+                    app.SelectedVersion = app.AvailableVersions.FirstOrDefault();
+                }
+                
+                if (app.DefaultVersionDetails?.Version.Version != details.VersionDetails.Version.Version)
+                {
+                    app.DefaultVersionDetails = CreateAppVersionModel(details.VersionDetails);
+                    app.SelectedVersionDetails = app.DefaultVersionDetails;
+                    if (app.DefaultVersionDetails.Version.Version is not null) app.VersionDetailsCache[app.DefaultVersionDetails.Version.Version] = app.DefaultVersionDetails;
+                }
+                
+                app.Icon ??= await IconService.ResolveIconAsync(app);
             }
         }
         catch (Exception ex)

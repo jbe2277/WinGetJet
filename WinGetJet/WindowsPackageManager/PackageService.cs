@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace WindowsPackageManager;
 
-public record PackageInfo(string Id, string Name, string? Version, IReadOnlyList<string> ProductCodes);
+public record PackageInfo(string Id, string Name, IReadOnlyList<string> ProductCodes, string? InstalledVersion);
 
 public record PackageDetails(string Id, IReadOnlyList<PackageVersionKey> AvailableVersions, bool IsUpdateAvailable,
     PackageVersionDetails VersionDetails);
@@ -21,12 +21,15 @@ public record PackageVersionKey(PackageVersionKind Kind, string? Version = null)
 public class PackageService
 {
     private readonly Lazy<Task<PackageManager>> packageManager = new(() => Task.Run(() => new PackageManager()));
-    private readonly Lazy<Task<PackageCatalog>> compositeCatalog;
+    private Lazy<Task<PackageCatalog>> compositeCatalog;
 
     public PackageService()
     {
         compositeCatalog = new(GetCompositeCatalogAsync);
     }
+
+    /// <summary>Call after install/uninstall so cached catalog data is rebuilt.</summary>
+    public void InvalidateCache() => compositeCatalog = new(GetCompositeCatalogAsync);
 
     /// <summary>Fast: local installed catalog only, no remote correlation.</summary>
     public async Task<IReadOnlyList<PackageInfo>> GetInstalledPackagesAsync(CancellationToken cancellation = default)
@@ -46,7 +49,7 @@ public class PackageService
         for (int i = 0; i < matches.Count; i++)
         {
             var package = matches[i].CatalogPackage;
-            results[i] = new PackageInfo(package.Id, package.Name, package.InstalledVersion?.Version, package.InstalledVersion?.ProductCodes?.ToArray() ?? []);
+            results[i] = new PackageInfo(package.Id, package.Name, package.InstalledVersion?.ProductCodes.ToArray() ?? [], package.InstalledVersion?.Version);
         }
         return results;
     }

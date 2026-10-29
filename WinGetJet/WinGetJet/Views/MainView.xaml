@@ -63,7 +63,7 @@
                                        IsUpdateAvailable="{x:Bind IsUpdateAvailable, Mode=OneWay}" />
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
                                 <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongTextBlockStyle}" FontWeight="Normal" FontSize="16" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{x:Bind v:ViewConvert.VersionAndPublisher(Version, DefaultVersionDetails.Publisher.Text), Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"
+                                <TextBlock Text="{x:Bind v:ViewConvert.VersionAndPublisher(InstalledVersion, DefaultVersionDetails.Publisher.Text), Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                             </StackPanel>
                         </Grid>
@@ -113,7 +113,7 @@
                                     <Border MinWidth="64" MinHeight="32" Padding="11,5,11,6"
                                             Background="{ThemeResource ControlFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                                             BorderThickness="{ThemeResource ComboBoxBorderThemeThickness}" CornerRadius="{ThemeResource ControlCornerRadius}">
-                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.Version, Mode=OneWay, FallbackValue=''}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center" />
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.InstalledVersion, Mode=OneWay, FallbackValue=''}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center" />
                                     </Border>
                                 </Grid>
                                 <TextBlock Grid.Row="1" Text="Available" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />

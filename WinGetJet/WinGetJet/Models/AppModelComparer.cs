@@ -8,8 +8,8 @@ public sealed class AppModelComparer : IEqualityComparer<AppModel>
     {
         if (ReferenceEquals(x, y)) return true;
         if (x is null || y is null) return false;
-        return x.Id == y.Id && x.Version == y.Version;
+        return x.Id == y.Id;
     }
 
-    public int GetHashCode(AppModel obj) => (obj.Id, obj.Version).GetHashCode();    
+    public int GetHashCode(AppModel obj) => obj.Id.GetHashCode();    
 }
