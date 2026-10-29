@@ -135,7 +135,7 @@ public partial class App : Application
                     app.SelectedVersion = app.AvailableVersions.FirstOrDefault();
                 }
                 
-                if (app.DefaultVersionDetails?.Version.Version != details.VersionDetails.Version.Version)
+                if (!details.VersionDetails.Version.Equals(app.DefaultVersionDetails?.Version))
                 {
                     app.DefaultVersionDetails = CreateAppVersionModel(details.VersionDetails);
                     app.SelectedVersionDetails = app.DefaultVersionDetails;
