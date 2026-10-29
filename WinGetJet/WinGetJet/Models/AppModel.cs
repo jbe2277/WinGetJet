@@ -8,15 +8,15 @@ public record AppTextLink(string? Text, Uri? Url)
     public static AppTextLink Empty { get; } = new(null, null);
 }
 
-public class AppModel(string Id, string Name, string? Version, IReadOnlyList<string> ProductCodes) : Model
+public class AppModel(string id, string name, IReadOnlyList<string> productCodes, string? installedVersion) : Model
 {
-    public string Id { get; } = Id;
+    public string Id { get; } = id;
 
-    public string Name { get; } = Name;
+    public string Name { get; } = name;
 
-    public string? Version { get; } = Version;
+    public IReadOnlyList<string> ProductCodes { get; } = productCodes;
 
-    public IReadOnlyList<string> ProductCodes { get; } = ProductCodes;
+    public string? InstalledVersion { get; set => SetProperty(ref field, value); } = installedVersion;
 
     public bool IsUpdateAvailable { get; set => SetProperty(ref field, value); }
 
