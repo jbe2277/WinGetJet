@@ -22,6 +22,7 @@ public class WinGetJetTest : UITest
         window.CaptureToFile(GetScreenshotFile("Launch"));
 
         window.SearchBox.TextBox.Enter("git");
+        Assert.Equal("git", window.SearchBox.TextBox.Text);
         Retry.WhileFalse(() => "Git" == detailsView.AppNameTextBlock.Text, throwOnTimeout: true);
         Thread.Sleep(1000);
         window.CaptureToFile(GetScreenshotFile("Launch2"));
