@@ -101,7 +101,7 @@
                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Text, Mode=OneWay}" 
                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
                                            Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Text), Mode=OneWay, FallbackValue=Collapsed}" 
-                                           AutomationProperties.AutomationId="PublisherTextBlock"/>
+                                           AutomationProperties.AutomationId="PublisherHeaderTextBlock"/>
                             </StackPanel>
                         </Grid>
 

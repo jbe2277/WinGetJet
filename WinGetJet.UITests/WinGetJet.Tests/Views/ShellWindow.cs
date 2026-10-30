@@ -8,7 +8,7 @@ namespace WinGetJet.Tests.Views;
 
 public class ShellWindow(FrameworkAutomationElementBase element) : Window(element)
 {
-    public MainView StartView => this.Find("MainView").As<MainView>();
+    public MainView MainView => this.Find("MainView").As<MainView>();
 
     public AutoSuggestBox SearchBox => this.Find("SearchBox").As<AutoSuggestBox>();
 
