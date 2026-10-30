@@ -22,9 +22,10 @@ public class WinGetJetTest : UITest
         window.CaptureToFile(GetScreenshotFile("Launch2"));
         var mainView = window.MainView;
         
-        var itemsCount = mainView.AppsListView.Items.Length;
-        Assert.Contains(itemsCount.ToString(), mainView.AppsFoundTextBlock.Text);
-        
+        var itemsCount = mainView.AppsListView.Items.Length;  // Virtualization will only load the visible items
+        var appsFoundCount = int.Parse(mainView.AppsFoundTextBlock.Text.Split(" ")[0]);
+        Assert.True(appsFoundCount >= itemsCount);
+
         var selectedApp = mainView.AppsListView.SelectedItem.As<AppsListViewItem>()!;
         Assert.Equal("Git", selectedApp.AppNameTextBlock.Text);
         Assert.Contains("The Git Development Community", selectedApp.AppVersionAndPublisherTextBlock.Text);
