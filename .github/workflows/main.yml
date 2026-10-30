@@ -95,7 +95,7 @@ jobs:
       uses: actions/upload-artifact@v6
       if: always()
       with:
-        name: UITestAppLogs
+        name: UITestAppLogs-${{ matrix.arch }}
         if-no-files-found: ignore
         path: |
           ~/AppData/Local/Packages/WinGetJet_a8txtqew917ny/LocalCache/Local/WinGetJet/Log
