@@ -90,3 +90,4 @@ jobs:
         if-no-files-found: ignore
         path: |
           WinGetJet.UITests/TestResults/WinGetJet
+          ~/AppData/Local/Packages/WinGetJet_a8txtqew917ny/LocalCache/Local/WinGetJet/Log
