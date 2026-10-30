@@ -24,7 +24,7 @@
             </TitleBar.IconSource>
             <TitleBar.Content>
                 <AutoSuggestBox x:Name="SearchBox" PlaceholderText="Search" QueryIcon="Find" TextChanged="SearchBoxTextChanged" 
-                        VerticalAlignment="Center"/>
+                        VerticalAlignment="Center" AutomationProperties.AutomationId="SearchBox"/>
             </TitleBar.Content>
         </TitleBar>
 

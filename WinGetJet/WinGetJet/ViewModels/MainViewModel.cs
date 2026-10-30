@@ -40,7 +40,15 @@ public class MainViewModel : ViewModelCore<IMainView>
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
-        if (e.PropertyName is nameof(FilterText) or nameof(ShowOnlyUpdates)) AppsView.Update();
+        if (e.PropertyName is nameof(FilterText) or nameof(ShowOnlyUpdates)) 
+        { 
+            var selectedApp = SelectedApp;
+            AppsView.Update(); 
+            if (selectedApp is not null && !AppsView.Contains(selectedApp))
+            {
+                SelectedApp = AppsView.FirstOrDefault();
+            }
+        }
     }
 
     private bool Filter(AppModel app)

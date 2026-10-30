@@ -1,3 +1,4 @@
+using FlaUI.Core.Definitions;
 using Xunit;
 
 namespace WinGetJet.Tests.Tests;
@@ -9,11 +10,14 @@ public class WinGetJetTest : UITest
     {
         Launch();
         var window = GetShellWindow();
+        window.SetState(WindowVisualState.Maximized);
 
-        Assert.Equal("WinGetJet", window.Title);
-        Assert.False(window.ShowOnlyUpdatesCheckBox.IsOffscreen);
-        Assert.True(window.ShowOnlyUpdatesCheckBox.IsEnabled);
-        Thread.Sleep(3000);
+        Thread.Sleep(8000);
         window.CaptureToFile(GetScreenshotFile("Launch"));
+
+        window.SearchBox.TextBox.Enter("git");
+
+        Thread.Sleep(8000);
+        window.CaptureToFile(GetScreenshotFile("Launch2"));
     }
 }

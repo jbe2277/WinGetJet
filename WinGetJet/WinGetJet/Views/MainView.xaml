@@ -8,7 +8,7 @@
     xmlns:m="using:WinGetJet.Models"
     xmlns:media="using:Microsoft.UI.Xaml.Media"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d" AutomationProperties.Name="MainView" AutomationProperties.AutomationId="MainView">
 
     <Grid Padding="16" RowSpacing="8" MaxWidth="1200">
         <Grid.RowDefinitions>
@@ -24,11 +24,14 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="{x:Bind v:ViewConvert.Format('{0} apps found ({1} updates available)', ViewModel.AppsView.Count, ViewModel.UpdateCount), Mode=OneWay}" VerticalAlignment="Center" />
+            <TextBlock Text="{x:Bind v:ViewConvert.Format('{0} apps found ({1} updates available)', ViewModel.AppsView.Count, ViewModel.UpdateCount), Mode=OneWay}" 
+                       VerticalAlignment="Center" AutomationProperties.AutomationId="AppsFoundTextBlock"/>
 
-            <CheckBox Grid.Column="1" Content="Show only apps with updates" IsChecked="{x:Bind ViewModel.ShowOnlyUpdates, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <CheckBox Grid.Column="1" Content="Show only apps with updates" IsChecked="{x:Bind ViewModel.ShowOnlyUpdates, Mode=TwoWay}" 
+                      HorizontalAlignment="Center" VerticalAlignment="Center" AutomationProperties.AutomationId="ShowOnlyUpdatesCheckBox"/>
 
-            <Button Grid.Column="2" Command="{x:Bind ViewModel.RefreshCommand}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32">
+            <Button Grid.Column="2" Command="{x:Bind ViewModel.RefreshCommand}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" 
+                    AutomationProperties.AutomationId="RefreshButton">
                 <FontIcon Glyph="&#xE72C;" FontSize="14" />
             </Button>
         </Grid>
@@ -42,7 +45,8 @@
             <!-- App cards -->
             <ListView Grid.Row="0" SelectionMode="Single"
                       ItemsSource="{x:Bind ViewModel.AppsView}"
-                      SelectedItem="{x:Bind ViewModel.SelectedApp, Mode=TwoWay}">
+                      SelectedItem="{x:Bind ViewModel.SelectedApp, Mode=TwoWay}"
+                      AutomationProperties.AutomationId="AppsListView">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                         <Setter Property="Padding" Value="0" />
@@ -54,7 +58,7 @@
                     <DataTemplate x:DataType="m:AppModel">
                         <Grid Padding="16,14" MinHeight="68" ColumnSpacing="16" CornerRadius="4" BorderThickness="1"
                               Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" AutomationProperties.Name="AppCard" AutomationProperties.AutomationId="AppCard">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="32" />
                                 <ColumnDefinition Width="*" />
@@ -62,9 +66,10 @@
                             <v:AppIcon Width="32" Height="32" VerticalAlignment="Center" Icon="{x:Bind (media:ImageSource)Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}"
                                        IsUpdateAvailable="{x:Bind IsUpdateAvailable, Mode=OneWay}" />
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
-                                <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongTextBlockStyle}" FontWeight="Normal" FontSize="16" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{x:Bind v:ViewConvert.VersionAndPublisher(InstalledVersion, DefaultVersionDetails.Publisher.Text), Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"
-                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongTextBlockStyle}" FontWeight="Normal" FontSize="16" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" AutomationProperties.AutomationId="AppNameTextBlock"/>
+                                <TextBlock Text="{x:Bind v:ViewConvert.VersionAndPublisher(InstalledVersion, DefaultVersionDetails.Publisher.Text), Mode=OneWay}" 
+                                           Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="NoWrap" 
+                                           TextTrimming="CharacterEllipsis" AutomationProperties.AutomationId="AppVersionAndPublisherTextBlock"/>
                             </StackPanel>
                         </Grid>
                     </DataTemplate>
@@ -73,11 +78,11 @@
 
             <!-- Details view -->
             <Grid Grid.Column="1" Margin="12,0,0,0" CornerRadius="8" BorderThickness="1"
-                  Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                  Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                  AutomationProperties.Name="DetailsView" AutomationProperties.AutomationId="DetailsView">
                 <TextBlock Text="Select an app to see its details." HorizontalAlignment="Center" VerticalAlignment="Center"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                           Visibility="{x:Bind v:ViewConvert.IsNotVisible(ViewModel.SelectedApp), Mode=OneWay}" />
+                           Visibility="{x:Bind v:ViewConvert.IsNotVisible(ViewModel.SelectedApp), Mode=OneWay}" AutomationProperties.AutomationId="NoAppSelectedTextBlock"/>
 
                 <ScrollViewer Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp), Mode=OneWay}">
                     <StackPanel Padding="16" Spacing="18">
@@ -86,12 +91,17 @@
                                 <ColumnDefinition Width="48" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <v:AppIcon Width="48" Height="48" VerticalAlignment="Top" Icon="{x:Bind (media:ImageSource)ViewModel.SelectedApp.Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}"
+                            <v:AppIcon Width="48" Height="48" VerticalAlignment="Top" 
+                                       Icon="{x:Bind (media:ImageSource)ViewModel.SelectedApp.Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}"
                                        IsUpdateAvailable="{x:Bind ViewModel.SelectedApp.IsUpdateAvailable, Mode=OneWay, FallbackValue=False}" />
                             <StackPanel Grid.Column="1">
-                                <TextBlock Text="{x:Bind ViewModel.SelectedApp.Name, Mode=OneWay, FallbackValue=''}" Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
-                                <TextBlock Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Text, Mode=OneWay}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
-                                           Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Text), Mode=OneWay, FallbackValue=Collapsed}" />
+                                <TextBlock Text="{x:Bind ViewModel.SelectedApp.Name, Mode=OneWay, FallbackValue=''}" 
+                                           Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" IsTextSelectionEnabled="True" 
+                                           AutomationProperties.AutomationId="AppNameTextBlock"/>
+                                <TextBlock Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Text, Mode=OneWay}" 
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"
+                                           Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Text), Mode=OneWay, FallbackValue=Collapsed}" 
+                                           AutomationProperties.AutomationId="PublisherTextBlock"/>
                             </StackPanel>
                         </Grid>
 
@@ -113,7 +123,9 @@
                                     <Border MinWidth="64" MinHeight="32" Padding="11,5,11,6"
                                             Background="{ThemeResource ControlFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                                             BorderThickness="{ThemeResource ComboBoxBorderThemeThickness}" CornerRadius="{ThemeResource ControlCornerRadius}">
-                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.InstalledVersion, Mode=OneWay, FallbackValue=''}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center" />
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.InstalledVersion, Mode=OneWay, FallbackValue=''}" 
+                                                   TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center" 
+                                                   AutomationProperties.AutomationId="InstalledVersionTextBlock"/>
                                     </Border>
                                 </Grid>
                                 <TextBlock Grid.Row="1" Text="Available" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
@@ -122,16 +134,19 @@
                                         <ColumnDefinition Width="*" MaxWidth="200" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox x:Name="VersionComboBox" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.SelectedApp.AvailableVersions, Mode=OneWay}"
-                                          IsEnabled="{x:Bind v:ViewConvert.HasItems(ViewModel.SelectedApp.AvailableVersions), Mode=OneWay, FallbackValue=False}"
-                                          SelectedItem="{x:Bind ViewModel.SelectedApp.SelectedVersion, Mode=OneWay}" SelectionChanged="VersionComboBoxSelectionChanged" DisplayMemberPath="Version" />
-                                    <TextBlock Grid.Column="1" Text="{x:Bind v:ViewConvert.GetSourceDisplayName(ViewModel.SelectedApp.SelectedVersionDetails.Source), Mode=OneWay, FallbackValue=''}" 
-                                          VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="VersionComboBox" HorizontalAlignment="Stretch" 
+                                              ItemsSource="{x:Bind ViewModel.SelectedApp.AvailableVersions, Mode=OneWay}"                                              
+                                              SelectedItem="{x:Bind ViewModel.SelectedApp.SelectedVersion, Mode=OneWay}" SelectionChanged="VersionComboBoxSelectionChanged" DisplayMemberPath="Version"
+                                              IsEnabled="{x:Bind v:ViewConvert.HasItems(ViewModel.SelectedApp.AvailableVersions), Mode=OneWay, FallbackValue=False}"
+                                              AutomationProperties.AutomationId="VersionComboBox"/>
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                               Text="{x:Bind v:ViewConvert.GetSourceDisplayName(ViewModel.SelectedApp.SelectedVersionDetails.Source), Mode=OneWay, FallbackValue=''}" 
+                                               AutomationProperties.AutomationId="SourceTextBlock"/>
                                 </Grid>
                             </Grid>
                             <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,8">
-                                <Button Content="Update to selected version" Style="{StaticResource AccentButtonStyle}" />
-                                <Button Content="Uninstall" MinWidth="100"/>
+                                <Button Content="Update to selected version" Style="{StaticResource AccentButtonStyle}" AutomationProperties.AutomationId="UpdateButton"/>
+                                <Button Content="Uninstall" MinWidth="100" AutomationProperties.AutomationId="UninstallButton"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -147,21 +162,33 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0" Text="Publisher" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
-                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Text, Mode=OneWay, FallbackValue=''}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center"
-                                       Visibility="{x:Bind v:ViewConvert.IsNotVisible(ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Url), Mode=OneWay, FallbackValue=Visible}" />
-                                <HyperlinkButton Grid.Row="0" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" NavigateUri="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Url, Mode=OneWay, FallbackValue={x:Null}}"
-                                             Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Url), Mode=OneWay, FallbackValue=Collapsed}">
-                                    <TextBlock Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Text, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True"
+                                           Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Text, Mode=OneWay, FallbackValue=''}" 
+                                           Visibility="{x:Bind v:ViewConvert.IsNotVisible(ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Url), Mode=OneWay, FallbackValue=Visible}" 
+                                           AutomationProperties.AutomationId="PublisherTextBlock"/>
+                                <HyperlinkButton Grid.Row="0" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" 
+                                                 NavigateUri="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Url, Mode=OneWay, FallbackValue={x:Null}}"
+                                                 Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Url), Mode=OneWay, FallbackValue=Collapsed}"
+                                                 AutomationProperties.AutomationId="PublisherHyperlinkButton">
+                                    <TextBlock Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Publisher.Text, Mode=OneWay}" TextTrimming="CharacterEllipsis" 
+                                               AutomationProperties.AutomationId="PublisherTextBlock"/>
                                 </HyperlinkButton>
                                 <TextBlock Grid.Row="1" Text="License" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.License.Text, Mode=OneWay, FallbackValue=''}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center"
-                                       Visibility="{x:Bind v:ViewConvert.IsNotVisible(ViewModel.SelectedApp.DefaultVersionDetails.License.Url), Mode=OneWay, FallbackValue=Visible}" />
-                                <HyperlinkButton Grid.Row="1" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" NavigateUri="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.License.Url, Mode=OneWay, FallbackValue={x:Null}}"
-                                             Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.License.Url), Mode=OneWay, FallbackValue=Collapsed}">
-                                    <TextBlock Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.License.Text, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True"
+                                           Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.License.Text, Mode=OneWay, FallbackValue=''}"
+                                           Visibility="{x:Bind v:ViewConvert.IsNotVisible(ViewModel.SelectedApp.DefaultVersionDetails.License.Url), Mode=OneWay, FallbackValue=Visible}" 
+                                           AutomationProperties.AutomationId="LicenseTextBlock"/>
+                                <HyperlinkButton Grid.Row="1" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" 
+                                                 NavigateUri="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.License.Url, Mode=OneWay, FallbackValue={x:Null}}"
+                                                 Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.License.Url), Mode=OneWay, FallbackValue=Collapsed}"
+                                                 AutomationProperties.AutomationId="LicenseHyperlinkButton">
+                                    <TextBlock Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.License.Text, Mode=OneWay}" TextTrimming="CharacterEllipsis" 
+                                               AutomationProperties.AutomationId="LicenseTextBlock"/>
                                 </HyperlinkButton>
                                 <TextBlock Grid.Row="2" Text="Copyright" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" />
-                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Copyright, Mode=OneWay, FallbackValue=''}" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True"
+                                           Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Copyright, Mode=OneWay, FallbackValue=''}"
+                                           AutomationProperties.AutomationId="CopyrightTextBlock"/>
                             </Grid>
                         </StackPanel>
 
@@ -170,13 +197,15 @@
                                     Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.PackageUrl), Mode=OneWay, FallbackValue=Collapsed}">
                                 <FontIcon Glyph="&#xE774;" FontSize="16" VerticalAlignment="Center" />
                                 <HyperlinkButton Content="Homepage" Padding="0,0,0,2" VerticalAlignment="Center" 
-                                                 NavigateUri="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.PackageUrl, Mode=OneWay, FallbackValue={x:Null}}" />
+                                                 NavigateUri="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.PackageUrl, Mode=OneWay, FallbackValue={x:Null}}" 
+                                                 AutomationProperties.AutomationId="HomepageHyperlinkButton"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="8"
                                     Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.PublisherSupportUrl), Mode=OneWay, FallbackValue=Collapsed}">
                                 <FontIcon Glyph="&#xEA6B;" FontSize="16" VerticalAlignment="Center" />
                                 <HyperlinkButton Content="Support" Padding="0,0,0,2" VerticalAlignment="Center" 
-                                                 NavigateUri="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.PublisherSupportUrl, Mode=OneWay, FallbackValue={x:Null}}" />
+                                                 NavigateUri="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.PublisherSupportUrl, Mode=OneWay, FallbackValue={x:Null}}" 
+                                                 AutomationProperties.AutomationId="SupportHyperlinkButton"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -191,7 +220,8 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="m:AppTextLink">
-                                        <HyperlinkButton Content="{x:Bind Text}" Padding="0,0,0,2" NavigateUri="{x:Bind Url}" />
+                                        <HyperlinkButton Content="{x:Bind Text}" Padding="0,0,0,2" NavigateUri="{x:Bind Url}" 
+                                                         AutomationProperties.AutomationId="DocumentationHyperlinkButton"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -200,23 +230,27 @@
                         <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsAnyVisible(ViewModel.SelectedApp.SelectedVersionDetails.ReleaseNotes.Text, ViewModel.SelectedApp.SelectedVersionDetails.ReleaseNotes.Url), Mode=OneWay, FallbackValue=Collapsed}">
                             <TextBlock Text="Release notes" Style="{StaticResource BodyStrongTextBlockStyle}" />
                             <StackPanel Orientation="Horizontal" Spacing="8"
-                                    Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.SelectedVersionDetails.ReleaseNotes.Url), Mode=OneWay, FallbackValue=Collapsed}">
+                                        Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.SelectedVersionDetails.ReleaseNotes.Url), Mode=OneWay, FallbackValue=Collapsed}">
                                 <FontIcon Glyph="&#xE8A5;" FontSize="16" VerticalAlignment="Center" />
-                                <HyperlinkButton Content="Release notes" Padding="0,0,0,2" VerticalAlignment="Center" NavigateUri="{x:Bind ViewModel.SelectedApp.SelectedVersionDetails.ReleaseNotes.Url, Mode=OneWay, FallbackValue={x:Null}}" />
+                                <HyperlinkButton Content="Release notes" Padding="0,0,0,2" VerticalAlignment="Center" NavigateUri="{x:Bind ViewModel.SelectedApp.SelectedVersionDetails.ReleaseNotes.Url, Mode=OneWay, FallbackValue={x:Null}}" 
+                                                 AutomationProperties.AutomationId="ReleaseNotesHyperlinkButton"/>
                             </StackPanel>
                             <v:ExpandableTextBlock Text="{x:Bind ViewModel.SelectedApp.SelectedVersionDetails.ReleaseNotes.Text, Mode=OneWay}"
-                                    Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.SelectedVersionDetails.ReleaseNotes.Text), Mode=OneWay, FallbackValue=Collapsed}" />
+                                                   Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.SelectedVersionDetails.ReleaseNotes.Text), Mode=OneWay, FallbackValue=Collapsed}" 
+                                                   AutomationProperties.AutomationId="ReleaseNotesTextBlock"/>
                         </StackPanel>
 
                         <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.Description), Mode=OneWay, FallbackValue=Collapsed}">
                             <TextBlock Text="Description" Style="{StaticResource BodyStrongTextBlockStyle}" />
-                            <v:ExpandableTextBlock Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Description, Mode=OneWay}" />
+                            <v:ExpandableTextBlock Text="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.Description, Mode=OneWay}" 
+                                                   AutomationProperties.AutomationId="DescriptionTextBlock"/>
                         </StackPanel>
 
                         <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.Tags), Mode=OneWay, FallbackValue=Collapsed}">
                             <TextBlock Text="Tags" Style="{StaticResource BodyStrongTextBlockStyle}" />
                             <v:ExpandableTextBlock Text="{x:Bind v:ViewConvert.Join(ViewModel.SelectedApp.DefaultVersionDetails.Tags), Mode=OneWay}"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
+                                                   AutomationProperties.AutomationId="TagsTextBlock"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
