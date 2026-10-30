@@ -19,7 +19,7 @@ public abstract class UITestBase : IDisposable
         CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 
         Mouse.MovePixelsPerMillisecond = 2;
-        Retry.DefaultTimeout = TimeSpan.FromSeconds(5);
+        Retry.DefaultTimeout = TimeSpan.FromSeconds(10);
         Retry.DefaultInterval = TimeSpan.FromMilliseconds(250);
     }
 

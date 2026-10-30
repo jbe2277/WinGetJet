@@ -1,5 +1,6 @@
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Definitions;
+using FlaUI.Core.Tools;
 using WinGetJet.Tests.Views;
 using Xunit;
 
@@ -13,14 +14,17 @@ public class WinGetJetTest : UITest
         Launch();
         var window = GetShellWindow();
         window.SetState(WindowVisualState.Maximized);
+        var mainView = window.MainView;
+        var detailsView = mainView.DetailsView;
 
-        Thread.Sleep(8000);
+        Retry.WhileTrue(() => string.IsNullOrEmpty(detailsView.AppNameTextBlock.Text), throwOnTimeout: true);
+        Thread.Sleep(1000);
         window.CaptureToFile(GetScreenshotFile("Launch"));
 
         window.SearchBox.TextBox.Enter("git");
+        Retry.WhileFalse(() => "Git" == detailsView.AppNameTextBlock.Text, throwOnTimeout: true);
         Thread.Sleep(1000);
         window.CaptureToFile(GetScreenshotFile("Launch2"));
-        var mainView = window.MainView;
         
         var itemsCount = mainView.AppsListView.Items.Length;  // Virtualization will only load the visible items
         var appsFoundCount = int.Parse(mainView.AppsFoundTextBlock.Text.Split(" ")[0]);
@@ -30,7 +34,6 @@ public class WinGetJetTest : UITest
         Assert.Equal("Git", selectedApp.AppNameTextBlock.Text);
         Assert.Contains("The Git Development Community", selectedApp.AppVersionAndPublisherTextBlock.Text);
 
-        var detailsView = mainView.DetailsView;
         Assert.Equal("Git", detailsView.AppNameTextBlock.Text);
         Assert.Equal("The Git Development Community", detailsView.PublisherHeaderTextBlock.Text);
 
