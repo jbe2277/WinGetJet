@@ -32,7 +32,10 @@ public class WinGetJetTest : UITest
         var detailsView = mainView.DetailsView;
         Assert.Equal("Git", detailsView.AppNameTextBlock.Text);
         Assert.Equal("The Git Development Community", detailsView.PublisherHeaderTextBlock.Text);
-        
+
+        Assert.NotEmpty(detailsView.InstalledVersionTextBlock.Text);
+        Assert.NotEmpty(detailsView.VersionComboBox.SelectedItem?.Text ?? "");
+
         Assert.Equal("The Git Development Community", detailsView.PublisherTextBlock.Text);
         Assert.False(detailsView.PublisherHyperlinkButton.IsOffscreen);
 
@@ -43,6 +46,7 @@ public class WinGetJetTest : UITest
 
         Assert.False(detailsView.HomepageHyperlinkButton.IsOffscreen);
         Assert.False(detailsView.SupportHyperlinkButton.IsOffscreen);
+        Assert.Equal("Wiki", detailsView.DocumentationHyperlinkButtons.Single().Name);
 
         Assert.NotEmpty(detailsView.ReleaseNotesTextBlock.TextBox.Text);
         Assert.False(detailsView.ReleaseNotesHyperlinkButton.IsOffscreen);
