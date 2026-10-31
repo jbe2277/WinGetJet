@@ -55,8 +55,9 @@ jobs:
         include:
         - arch: x64
           os: windows-2025
-        - arch: arm64
-          os: windows-11-arm
+        # TODO: Disable because of https://github.com/actions/runner-images/issues/14069
+        # - arch: arm64
+        #   os: windows-11-arm
     steps:
     - name: 📥 Check-out
       uses: actions/checkout@v6
