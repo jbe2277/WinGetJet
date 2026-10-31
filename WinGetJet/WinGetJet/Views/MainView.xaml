@@ -93,7 +93,8 @@
                             </Grid.ColumnDefinitions>
                             <v:AppIcon Width="48" Height="48" VerticalAlignment="Top" 
                                        Icon="{x:Bind (media:ImageSource)ViewModel.SelectedApp.Icon, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}"
-                                       IsUpdateAvailable="{x:Bind ViewModel.SelectedApp.IsUpdateAvailable, Mode=OneWay, FallbackValue=False}" />
+                                       IsUpdateAvailable="{x:Bind ViewModel.SelectedApp.IsUpdateAvailable, Mode=OneWay, FallbackValue=False}"
+                                       AutomationProperties.AutomationId="AppIcon" />
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.Name, Mode=OneWay, FallbackValue=''}" 
                                            Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap" IsTextSelectionEnabled="True" 

@@ -9,6 +9,7 @@ public class DetailsView(FrameworkAutomationElementBase element) : AutomationEle
 {
     public Label NoAppSelectedTextBlock => this.Find("NoAppSelectedTextBlock").AsLabel();
 
+    public AppIcon AppIcon => this.Find("AppIcon").As<AppIcon>();
     public Label AppNameTextBlock => this.Find("AppNameTextBlock").AsLabel();
     public Label PublisherHeaderTextBlock => this.Find("PublisherHeaderTextBlock").AsLabel();
 

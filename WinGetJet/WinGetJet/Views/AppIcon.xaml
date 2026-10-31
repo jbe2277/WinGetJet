@@ -16,7 +16,8 @@
         <Image Source="{x:Bind Icon, Mode=OneWay}" />
         <Viewbox x:Name="UpdateBadge" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                  ToolTipService.ToolTip="Update available"
-                 Visibility="{x:Bind v:ViewConvert.BoolToVisibility(IsUpdateAvailable), Mode=OneWay}">
+                 Visibility="{x:Bind v:ViewConvert.BoolToVisibility(IsUpdateAvailable), Mode=OneWay}"
+                 AutomationProperties.Name="UpdateBadge" AutomationProperties.AutomationId="UpdateBadge">
             <Canvas Width="12" Height="12">
                 <Ellipse Width="12" Height="12" Fill="{ThemeResource AccentFillColorDefaultBrush}" 
                       Stroke="{ThemeResource SolidBackgroundFillColorBaseBrush}" StrokeThickness="1"/>

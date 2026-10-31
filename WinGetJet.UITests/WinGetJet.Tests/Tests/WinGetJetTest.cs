@@ -25,7 +25,7 @@ public class WinGetJetTest : UITest
         Retry.WhileFalse(() => "Git" == detailsView.AppNameTextBlock.Text, throwOnTimeout: true);
         Thread.Sleep(1000);
         window.CaptureToFile(GetScreenshotFile("Launch2"));
-        
+
         var itemsCount = mainView.AppsListView.Items.Length;  // Virtualization will only load the visible items
         var appsFoundCount = int.Parse(mainView.AppsFoundTextBlock.Text.Split(" ")[0]);
         Assert.True(appsFoundCount >= itemsCount);
@@ -39,6 +39,7 @@ public class WinGetJetTest : UITest
 
         Assert.NotEmpty(detailsView.InstalledVersionTextBlock.Text);
         Assert.NotEmpty(detailsView.VersionComboBox.SelectedItem?.Text ?? "");
+        Assert.Equal("WinGet", detailsView.SourceTextBlock.Text);
 
         Assert.Equal("The Git Development Community", detailsView.PublisherTextBlock.Text);
         Assert.False(detailsView.PublisherHyperlinkButton.IsOffscreen);
@@ -64,5 +65,20 @@ public class WinGetJetTest : UITest
         Thread.Sleep(1000);
         window.CaptureToFile(GetScreenshotFile("Launch3"));
         Assert.Equal("Git", detailsView.AppNameTextBlock.Text);
+    }
+
+    [Fact]
+    public void ShowOnlyUpdates()
+    {
+        Launch();
+        var window = GetShellWindow();
+        window.SetState(WindowVisualState.Maximized);
+        var mainView = window.MainView;
+        var detailsView = mainView.DetailsView;
+        Retry.WhileTrue(() => string.IsNullOrEmpty(detailsView.AppNameTextBlock.Text), throwOnTimeout: true);
+        Thread.Sleep(1000);
+        mainView.ShowOnlyUpdatesCheckBox.IsChecked = true;
+        
+        Assert.False(detailsView.AppIcon.UpdateBadge.IsOffscreen);
     }
 }
