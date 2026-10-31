@@ -1,13 +1,17 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Waf.Foundation;
 using WinGetJet.ViewModels;
 
 namespace WinGetJet.Views;
 
 public sealed partial class ShellWindow : Window, IShellView
 {
+    private readonly ThrottledAction updateFilterAction;
+
     public ShellWindow()
     {
+        updateFilterAction = new ThrottledAction(UpdateFilter, ThrottledActionMode.InvokeOnlyIfIdleForDelayTime, TimeSpan.FromMilliseconds(300));
         InitializeComponent();
         AppWindow.SetIcon("Assets/AppIcon.ico");
 
@@ -25,12 +29,15 @@ public sealed partial class ShellWindow : Window, IShellView
         set => RootFrame.Content = value;
     }
 
+    private void UpdateFilter()
+    {
+        ((MainViewModel)((MainView)ContentPage!).DataContext).FilterText = SearchBox.Text;
+    }
+
     private void SearchBoxTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if (args.Reason is not AutoSuggestionBoxTextChangeReason.ProgrammaticChange)
-        {
-            ((MainViewModel)((MainView)ContentPage!).DataContext).FilterText = SearchBox.Text;
-        }
+            updateFilterAction.InvokeAccumulated();
     }
 
     private void AppTitleBarSizeChanged(object sender, SizeChangedEventArgs e)
