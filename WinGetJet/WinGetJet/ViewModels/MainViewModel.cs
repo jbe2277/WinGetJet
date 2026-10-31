@@ -43,10 +43,13 @@ public class MainViewModel : ViewModelCore<IMainView>
         if (e.PropertyName is nameof(FilterText) or nameof(ShowOnlyUpdates)) 
         { 
             var selectedApp = SelectedApp;
-            AppsView.Update(); 
-            if (selectedApp is not null && !AppsView.Contains(selectedApp))
+            AppsView.Update();
+            if (selectedApp is not null) 
             {
-                SelectedApp = AppsView.FirstOrDefault();
+                if (AppsView.Contains(selectedApp))
+                    SelectedApp = selectedApp;
+                else
+                    SelectedApp = AppsView.FirstOrDefault();                        
             }
         }
     }

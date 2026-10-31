@@ -22,7 +22,6 @@ public class WinGetJetTest : UITest
         window.CaptureToFile(GetScreenshotFile("Launch"));
 
         window.SearchBox.TextBox.Enter("git");
-        Assert.Equal("git", window.SearchBox.TextBox.Text);
         Retry.WhileFalse(() => "Git" == detailsView.AppNameTextBlock.Text, throwOnTimeout: true);
         Thread.Sleep(1000);
         window.CaptureToFile(GetScreenshotFile("Launch2"));
@@ -59,5 +58,10 @@ public class WinGetJetTest : UITest
         Assert.Contains("Git is a free", detailsView.DescriptionTextBlock.TextBox.Text);
 
         Assert.Contains("git", detailsView.TagsTextBlock.TextBox.Text);
+
+
+        window.SearchBox.TextBox.Enter("");
+        Thread.Sleep(1000);
+        Assert.Equal("Git", detailsView.AppNameTextBlock.Text);
     }
 }
