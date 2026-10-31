@@ -15,6 +15,7 @@ public class MainViewModel : ViewModelCore<IMainView>
     public MainViewModel(IMainView view) : base(view, false)
     {
         AppsView = new(appsSource, null, Filter, null);
+        appsSource.CollectionItemChanged += AppsSourceCollectionItemChanged;
 
         AppsView.PropertyChanged += AppsViewPropertyChanged;
         AppsView.CollectionItemChanged += AppsViewCollectionItemChanged;
@@ -40,7 +41,15 @@ public class MainViewModel : ViewModelCore<IMainView>
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
-        if (e.PropertyName is nameof(FilterText) or nameof(ShowOnlyUpdates)) AppsView.Update();
+        if (e.PropertyName is nameof(FilterText) or nameof(ShowOnlyUpdates)) 
+        { 
+            var selectedApp = SelectedApp;
+            AppsView.Update();
+            if (selectedApp is not null && AppsView.Contains(selectedApp))
+                SelectedApp = selectedApp;
+            else
+                SelectedApp = AppsView.FirstOrDefault();
+        }
     }
 
     private bool Filter(AppModel app)
@@ -58,6 +67,11 @@ public class MainViewModel : ViewModelCore<IMainView>
     }
 
     private void UpdateCountProperty() => UpdateCount = AppsView.Count(x => x.IsUpdateAvailable);
+
+    private void AppsSourceCollectionItemChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(AppModel.IsUpdateAvailable)) AppsView.Update();
+    }
 
     private void AppsViewPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {

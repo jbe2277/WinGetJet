@@ -1,4 +1,5 @@
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 
@@ -28,6 +29,8 @@ public sealed partial class AppIcon : UserControl
         get => (bool)GetValue(IsUpdateAvailableProperty);
         set => SetValue(IsUpdateAvailableProperty, value);
     }
+
+    protected override AutomationPeer OnCreateAutomationPeer() => new FrameworkElementAutomationPeer(this);
 
     private static void IconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
