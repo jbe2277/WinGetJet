@@ -62,6 +62,7 @@ public class WinGetJetTest : UITest
 
         window.SearchBox.TextBox.Enter("");
         Thread.Sleep(1000);
+        window.CaptureToFile(GetScreenshotFile("Launch3"));
         Assert.Equal("Git", detailsView.AppNameTextBlock.Text);
     }
 }
