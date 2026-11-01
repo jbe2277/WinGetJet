@@ -57,22 +57,10 @@ public class PackageService
     /// <summary>Slow: correlates a single package with remote sources and fills details.</summary>
     public async Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey? version = null, CancellationToken cancellation = default)
     {
+        var package = await FindPackageAsync(id, cancellation).ConfigureAwait(false);
+        if (package is null) return null;
+
         version ??= new(PackageVersionKind.DefaultInstall);
-        var catalog = await compositeCatalog.Value.ConfigureAwait(false);
-
-        var options = new FindPackagesOptions { ResultLimit = 1 };
-        options.Selectors.Add(new PackageMatchFilter
-        {
-            Field = PackageMatchField.Id,
-            Option = PackageFieldMatchOption.Equals,
-            Value = id
-        });
-
-        var findResult = await catalog.FindPackagesAsync(options).AsTask(cancellation).ConfigureAwait(false);
-        if (findResult.Status != FindPackagesResultStatus.Ok || findResult.Matches.Count == 0)
-            return null;
-
-        var package = findResult.Matches[0].CatalogPackage;
         var availableVersionsRaw = package.AvailableVersions.ToArray();
         var packageVersion = version.Kind switch
         {
@@ -133,5 +121,20 @@ public class PackageService
             throw new InvalidOperationException($"Failed to connect to composite catalog: {connect.Status}");
 
         return connect.PackageCatalog;
+    }
+
+    private async Task<CatalogPackage?> FindPackageAsync(string id, CancellationToken cancellation)
+    {
+        var catalog = await compositeCatalog.Value.ConfigureAwait(false);
+        var options = new FindPackagesOptions { ResultLimit = 1 };
+        options.Selectors.Add(new PackageMatchFilter
+        {
+            Field = PackageMatchField.Id,
+            Option = PackageFieldMatchOption.Equals,
+            Value = id
+        });
+        var result = await catalog.FindPackagesAsync(options).AsTask(cancellation).ConfigureAwait(false);
+        if (result.Status != FindPackagesResultStatus.Ok || result.Matches.Count == 0) return null;
+        return result.Matches[0].CatalogPackage;
     }
 }
