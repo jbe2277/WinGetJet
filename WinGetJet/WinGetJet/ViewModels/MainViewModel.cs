@@ -8,7 +8,7 @@ namespace WinGetJet.ViewModels;
 
 public interface IMainView : IView { }
 
-public class MainViewModel : ViewModelCore<IMainView>
+public class MainViewModel : ViewModelCore<IMainView>, IFilterable
 {
     private readonly ObservableList<AppModel> appsSource = [];
 

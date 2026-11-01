@@ -23,15 +23,15 @@ public sealed partial class ShellWindow : Window, IShellView
 
     public object? DataContext { get; set; }
 
-    public Page? ContentPage 
+    public object? ContentPage 
     { 
-        get => RootFrame.Content as Page;
+        get => RootFrame.Content;
         set => RootFrame.Content = value;
     }
 
     private void UpdateFilter()
     {
-        ((MainViewModel)((MainView)ContentPage!).DataContext).FilterText = SearchBox.Text;
+        if (ViewModel.ContentViewModel is IFilterable filterable) filterable.FilterText = SearchBox.Text;
     }
 
     private void SearchBoxTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)

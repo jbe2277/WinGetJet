@@ -74,9 +74,7 @@ public partial class App : Application
         {
             RefreshCommand = refreshCommand
         };
-        mainViewModel.Initialize();
-
-        shellWindow.ContentPage = mainView;
+        shellViewModel.ContentViewModel = mainViewModel;
         shellWindow.Activate();
 
         mainViewModel.StatusText = "Retrieving installed packages...";
