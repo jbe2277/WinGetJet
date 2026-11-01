@@ -26,6 +26,7 @@ public partial class App : Application
     private readonly SemaphoreSlim loadDetailsSemaphore = new(16);
     private readonly PackageService packageService = new();
     private readonly AsyncDelegateCommand refreshCommand;
+    private readonly AsyncDelegateCommand updateCommand;
     private ShellWindow shellWindow = null!;
     private ShellViewModel shellViewModel = null!;
     private MainViewModel mainViewModel = null!;
@@ -57,6 +58,7 @@ public partial class App : Application
             }
         });
         refreshCommand = new AsyncDelegateCommand(Refresh);
+        updateCommand = new AsyncDelegateCommand(Update, CanUpdate);
         InitializeComponent();
     }
 
@@ -72,8 +74,10 @@ public partial class App : Application
         var mainView = new MainView();
         mainViewModel = new MainViewModel(mainView)
         {
-            RefreshCommand = refreshCommand
+            RefreshCommand = refreshCommand,
+            UpdateCommand = updateCommand
         };
+        mainViewModel.PropertyChanged += (_, e) => { if (e.PropertyName is nameof(MainViewModel.SelectedApp)) updateCommand.RaiseCanExecuteChanged(); };
         shellViewModel.ContentViewModel = mainViewModel;
         shellWindow.Activate();
 
@@ -108,6 +112,43 @@ public partial class App : Application
             app.InstalledVersion = packages.FirstOrDefault(p => p.Id == app.Id)?.InstalledVersion;            
             LoadDetails(app);
         }
+    }
+
+    private bool CanUpdate() => mainViewModel?.SelectedApp is { SelectedVersion.Version: not null };
+
+    private async Task Update()
+    {
+        var app = mainViewModel.SelectedApp;
+        var targetVersion = app?.SelectedVersion;
+        if (app is null || targetVersion is null) return;
+
+        var updateViewModel = new UpdateViewModel(new UpdateView())
+        {
+            App = app,
+            TargetVersion = targetVersion,
+            TargetVersionDetails = app.SelectedVersionDetails ?? app.DefaultVersionDetails
+        };
+        updateViewModel.Initialize();
+        var dialogTask = updateViewModel.ShowDialogAsync(mainViewModel.View);
+        try
+        {
+            updateViewModel.Requirements = await packageService.GetInstallRequirementsAsync(app.Id, targetVersion);
+            if (updateViewModel.Requirements is null) updateViewModel.ErrorMessage = "The selected version could not be found.";
+            else if (!updateViewModel.Requirements.IsInstallerAvailable) updateViewModel.ErrorMessage = "No applicable installer found for this system.";
+        }
+        catch (Exception ex)
+        {
+            Log.Default.Error(ex, "Failed to retrieve install requirements for {0}", app.Id);
+            updateViewModel.ErrorMessage = $"Failed to retrieve the update requirements: {ex.Message}";
+        }
+        finally
+        {
+            updateViewModel.IsLoading = false;
+        }
+
+        if (!await dialogTask) return;
+        Log.Default.Info("User confirmed update of {0} to version {1}", app.Id, targetVersion.Version);
+        // TODO: Start the update
     }
 
     private void AppsSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -158,6 +199,7 @@ public partial class App : Application
         if (e.PropertyName is nameof(AppModel.SelectedVersion))
         {
             var source = (AppModel)sender!;
+            if (source == mainViewModel.SelectedApp) updateCommand.RaiseCanExecuteChanged();
             if (source.SelectedVersion?.Version is not null)
             {
                 if (!source.VersionDetailsCache.TryGetValue(source.SelectedVersion.Version, out var versionDetails))

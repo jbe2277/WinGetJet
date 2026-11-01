@@ -28,6 +28,8 @@ public class MainViewModel : ViewModelCore<IMainView>, IFilterable
 
     public ICommand RefreshCommand { get; internal set; } = DelegateCommand.DisabledCommand;
 
+    public ICommand UpdateCommand { get; internal set; } = DelegateCommand.DisabledCommand;
+
     public string FilterText { get; set => SetProperty(ref field, value); } = "";
 
     public int UpdateCount { get; set => SetProperty(ref field, value); }

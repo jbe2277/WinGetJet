@@ -146,7 +146,7 @@
                                 </Grid>
                             </Grid>
                             <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,8">
-                                <Button Content="Update to selected version" Style="{StaticResource AccentButtonStyle}" AutomationProperties.AutomationId="UpdateButton"/>
+                                <Button Content="Update to selected version" Style="{StaticResource AccentButtonStyle}" Command="{x:Bind ViewModel.UpdateCommand}" AutomationProperties.AutomationId="UpdateButton"/>
                                 <Button Content="Uninstall" MinWidth="100" AutomationProperties.AutomationId="UninstallButton"/>
                             </StackPanel>
                         </StackPanel>
