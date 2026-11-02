@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="WinGetJet.Views.UpdateView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:v="using:WinGetJet.Views"
+    xmlns:wpm="using:WindowsPackageManager"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" Style="{StaticResource DefaultContentDialogStyle}"
+    Title="{x:Bind v:ViewConvert.Format('Update {0}', ViewModel.App.Name), Mode=OneWay}"
+    PrimaryButtonText="Update" CloseButtonText="Cancel" DefaultButton="Close"
+    IsPrimaryButtonEnabled="{x:Bind ViewModel.CanUpdate, Mode=OneWay}"
+    AutomationProperties.Name="UpdateView" AutomationProperties.AutomationId="UpdateView">
+
+    <ScrollViewer MinWidth="420">
+        <StackPanel Spacing="16">
+            <Grid ColumnSpacing="12" RowSpacing="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Publisher" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.TargetVersionDetails.Publisher.Text, Mode=OneWay, FallbackValue=''}" TextWrapping="Wrap"
+                           AutomationProperties.AutomationId="PublisherTextBlock"/>
+                <TextBlock Grid.Row="1" Text="Installed" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.App.InstalledVersion, Mode=OneWay, FallbackValue=''}"
+                           AutomationProperties.AutomationId="InstalledVersionTextBlock"/>
+                <TextBlock Grid.Row="2" Text="Update to" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.TargetVersion.Version, Mode=OneWay, FallbackValue=''}" FontWeight="SemiBold"
+                           AutomationProperties.AutomationId="TargetVersionTextBlock"/>
+                <TextBlock Grid.Row="3" Text="Source" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind v:ViewConvert.GetSourceDisplayName(ViewModel.TargetVersionDetails.Source), Mode=OneWay, FallbackValue=''}"
+                           AutomationProperties.AutomationId="SourceTextBlock"/>
+            </Grid>
+
+            <InfoBar IsOpen="{x:Bind v:ViewConvert.IsNotEmpty(ViewModel.ErrorMessage), Mode=OneWay}" IsClosable="False" Severity="Error"
+                     Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" AutomationProperties.AutomationId="ErrorInfoBar"/>
+
+            <InfoBar IsOpen="{x:Bind ViewModel.IsElevationRequired, Mode=OneWay}" IsClosable="False" Severity="Warning" Title="Administrator permissions required"
+                     Message="The installer requires administrator permissions. You might be asked to confirm a User Account Control prompt."
+                     AutomationProperties.AutomationId="ElevationInfoBar"/>
+
+            <StackPanel Spacing="8" Visibility="{x:Bind v:ViewConvert.BoolToVisibility(ViewModel.HasAgreements), Mode=OneWay}">
+                <TextBlock Text="Package agreements" Style="{StaticResource BodyStrongTextBlockStyle}" />
+                <TextBlock Text="The publisher requires you to accept the following agreements before the package can be installed." TextWrapping="Wrap"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                <ItemsControl ItemsSource="{x:Bind ViewModel.TargetVersionDetails.Agreements, Mode=OneWay, FallbackValue={x:Null}}" AutomationProperties.AutomationId="AgreementsList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="wpm:PackageAgreement">
+                            <StackPanel Spacing="2" Margin="0,0,0,8">
+                                <TextBlock Text="{x:Bind Label}" FontWeight="SemiBold" TextWrapping="Wrap" Visibility="{x:Bind v:ViewConvert.IsVisible(Label)}"/>
+                                <TextBlock Text="{x:Bind Text}" TextWrapping="Wrap" IsTextSelectionEnabled="True" Visibility="{x:Bind v:ViewConvert.IsVisible(Text)}"/>
+                                <HyperlinkButton Padding="0" Content="{x:Bind Url}" NavigateUri="{x:Bind Url}" Visibility="{x:Bind v:ViewConvert.IsVisible(Url)}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <CheckBox Content="I accept the package agreements" IsChecked="{x:Bind ViewModel.AgreementsAccepted, Mode=TwoWay}"
+                          AutomationProperties.AutomationId="AcceptAgreementsCheckBox"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</ContentDialog>

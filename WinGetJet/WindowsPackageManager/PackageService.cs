@@ -1,5 +1,6 @@
 ﻿using Microsoft.Management.Deployment;
 using System.Runtime.InteropServices;
+using Windows.System;
 
 namespace WindowsPackageManager;
 
@@ -9,11 +10,18 @@ public record PackageDetails(string Id, IReadOnlyList<PackageVersionKey> Availab
     PackageVersionDetails VersionDetails);
 
 public record PackageVersionDetails(PackageVersionKey Version, string? Source,
-    PackageTextLink Publisher, string? Author, string? Description, Uri? PackageUrl, PackageTextLink License, Uri? IconUrl,
+    PackageTextLink Publisher, string? Author, string? Description, Uri? PackageUrl, Uri? PrivacyUrl, PackageTextLink License, Uri? IconUrl,
     Uri? PublisherSupportUrl, string? Copyright, PackageTextLink ReleaseNotes,
-    IReadOnlyList<PackageTextLink> Documentations, IReadOnlyList<string> Tags);
+    IReadOnlyList<PackageTextLink> Documentations, IReadOnlyList<string> Tags, IReadOnlyList<PackageAgreement> Agreements,
+    PackageInstallRequirements InstallRequirements);
 
 public record PackageTextLink(string? Text, Uri? Url);
+
+public record PackageAgreement(string? Label, string? Text, Uri? Url);
+
+public enum PackageElevation { Unknown, Required, Prohibited, ElevatesSelf }
+
+public record PackageInstallRequirements(PackageInstallerType InstallerType, ProcessorArchitecture Architecture, PackageInstallerScope Scope, ElevationRequirement Elevation, bool IsInstallerAvailable);
 
 public enum PackageVersionKind { Installed, DefaultInstall, Available }
 public record PackageVersionKey(PackageVersionKind Kind, string? Version = null);
@@ -82,8 +90,21 @@ public class PackageService
         {
             // Some package sources don't implement IPackageVersionInfo4
         }
+        PackageInstallerInfo? installer = null;
+        try { installer = packageVersion?.GetApplicableInstaller(new InstallOptions()); }
+        catch (COMException) { }
+
+        var installerType = installer?.InstallerType ?? PackageInstallerType.Unknown;
+        if (installerType is PackageInstallerType.Zip) installerType = installer!.NestedInstallerType;
+        var installRequirements = new PackageInstallRequirements(
+            InstallerType: installerType,
+            Architecture: installer?.Architecture ?? ProcessorArchitecture.Unknown,
+            Scope: installer?.Scope ?? PackageInstallerScope.Unknown,
+            Elevation: installer?.ElevationRequirement ?? ElevationRequirement.Unknown,
+            IsInstallerAvailable: installer is not null);
 
         var iconUrl = metadata?.Icons.ToArray().FirstOrDefault(x => !string.IsNullOrEmpty(x.Url))?.Url;
+
         return new PackageDetails(id,
             AvailableVersions: availableVersions.ToArray(),
             IsUpdateAvailable: package.IsUpdateAvailable,
@@ -93,13 +114,16 @@ public class PackageService
                 Author: metadata?.Author,
                 Description: metadata?.Description,
                 PackageUrl: ToUri(metadata?.PackageUrl),
+                PrivacyUrl: ToUri(metadata?.PrivacyUrl),
                 License: new(metadata?.License, ToUri(metadata?.LicenseUrl)),
                 IconUrl: ToUri(iconUrl),
                 PublisherSupportUrl: ToUri(metadata?.PublisherSupportUrl),
                 Copyright: metadata?.Copyright,
                 ReleaseNotes: new(metadata?.ReleaseNotes, ToUri(metadata?.ReleaseNotesUrl)),
                 Documentations: metadata?.Documentations.ToArray().Select(d => new PackageTextLink(d.DocumentLabel, ToUri(d.DocumentUrl))).ToArray() ?? [],
-                Tags: metadata?.Tags.ToArray() ?? []));
+                Tags: metadata?.Tags.ToArray() ?? [],
+                Agreements: metadata?.Agreements.ToArray().Select(a => new PackageAgreement(a.Label, a.Text, ToUri(a.Url))).ToArray() ?? [],
+                InstallRequirements: installRequirements));
     }
 
     private static Uri? ToUri(string? url) => Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;

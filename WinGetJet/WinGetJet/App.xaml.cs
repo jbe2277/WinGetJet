@@ -26,6 +26,7 @@ public partial class App : Application
     private readonly SemaphoreSlim loadDetailsSemaphore = new(16);
     private readonly PackageService packageService = new();
     private readonly AsyncDelegateCommand refreshCommand;
+    private readonly AsyncDelegateCommand updateCommand;
     private ShellWindow shellWindow = null!;
     private ShellViewModel shellViewModel = null!;
     private MainViewModel mainViewModel = null!;
@@ -57,6 +58,7 @@ public partial class App : Application
             }
         });
         refreshCommand = new AsyncDelegateCommand(Refresh);
+        updateCommand = new AsyncDelegateCommand(Update, CanUpdate);
         InitializeComponent();
     }
 
@@ -72,8 +74,10 @@ public partial class App : Application
         var mainView = new MainView();
         mainViewModel = new MainViewModel(mainView)
         {
-            RefreshCommand = refreshCommand
+            RefreshCommand = refreshCommand,
+            UpdateCommand = updateCommand
         };
+        mainViewModel.PropertyChanged += (_, e) => { if (e.PropertyName is nameof(MainViewModel.SelectedApp)) updateCommand.RaiseCanExecuteChanged(); };
         shellViewModel.ContentViewModel = mainViewModel;
         shellWindow.Activate();
 
@@ -102,12 +106,36 @@ public partial class App : Application
         packageService.InvalidateCache();
         var packages = await packageService.GetInstalledPackagesAsync();
         var appModels = packages.OrderBy(a => a.Name).Select(x => new AppModel(x.Id, x.Name, x.ProductCodes, x.InstalledVersion)).ToArray();
-        CollectionHelper.Merge(mainViewModel.AppsSource, appModels, AppModelComparer.Default, null, null, null, moveAction: mainViewModel.AppsSource.Move);        
+        CollectionHelper.Merge(mainViewModel.AppsSource, appModels, AppModelComparer.Default, null, null, null, moveAction: mainViewModel.AppsSource.Move);
         foreach (var app in mainViewModel.AppsSource)
         {
-            app.InstalledVersion = packages.FirstOrDefault(p => p.Id == app.Id)?.InstalledVersion;            
+            app.InstalledVersion = packages.FirstOrDefault(p => p.Id == app.Id)?.InstalledVersion;
             LoadDetails(app);
         }
+    }
+
+    private bool CanUpdate() => mainViewModel?.SelectedApp is { SelectedVersion.Version: not null };
+
+    private async Task Update()
+    {
+        var app = mainViewModel.SelectedApp;
+        var targetVersion = app?.SelectedVersion;
+        if (app is null || targetVersion is null) return;
+
+        var updateViewModel = new UpdateViewModel(new UpdateView())
+        {
+            App = app,
+            TargetVersion = targetVersion,
+            TargetVersionDetails = app.SelectedVersionDetails ?? app.DefaultVersionDetails
+        };
+        if (!updateViewModel.TargetVersionDetails!.InstallRequirements.IsInstallerAvailable)
+            updateViewModel.ErrorMessage = "No applicable installer found for this system.";
+        updateViewModel.Initialize();
+        var dialogTask = updateViewModel.ShowDialogAsync(mainViewModel.View);
+
+        if (!await dialogTask) return;
+        Log.Default.Info("User confirmed update of {0} to version {1}", app.Id, targetVersion.Version);
+        // TODO: Start the update
     }
 
     private void AppsSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -132,14 +160,14 @@ public partial class App : Application
                     app.AvailableVersions = availableVersions;
                     app.SelectedVersion = app.AvailableVersions.FirstOrDefault();
                 }
-                
+
                 if (!details.VersionDetails.Version.Equals(app.DefaultVersionDetails?.Version))
                 {
                     app.DefaultVersionDetails = CreateAppVersionModel(details.VersionDetails);
                     app.SelectedVersionDetails = app.DefaultVersionDetails;
                     if (app.DefaultVersionDetails.Version.Version is not null) app.VersionDetailsCache[app.DefaultVersionDetails.Version.Version] = app.DefaultVersionDetails;
                 }
-                
+
                 app.Icon ??= await IconService.ResolveIconAsync(app);
             }
         }
@@ -158,6 +186,7 @@ public partial class App : Application
         if (e.PropertyName is nameof(AppModel.SelectedVersion))
         {
             var source = (AppModel)sender!;
+            if (source == mainViewModel.SelectedApp) updateCommand.RaiseCanExecuteChanged();
             if (source.SelectedVersion?.Version is not null)
             {
                 if (!source.VersionDetailsCache.TryGetValue(source.SelectedVersion.Version, out var versionDetails))
@@ -178,19 +207,9 @@ public partial class App : Application
 
     private static AppVersionModel CreateAppVersionModel(PackageVersionDetails versionDetails)
     {
-        return new AppVersionModel(
-            Version: versionDetails.Version,
-            Source: versionDetails.Source,
-            Publisher: new(versionDetails.Publisher.Text, versionDetails.Publisher.Url),
-            Author: versionDetails.Author,
-            Description: versionDetails.Description,
-            PackageUrl: versionDetails.PackageUrl,
-            License: new(versionDetails.License.Text, versionDetails.License.Url),
-            IconUrl: versionDetails.IconUrl,
-            PublisherSupportUrl: versionDetails.PublisherSupportUrl,
-            Copyright: versionDetails.Copyright,
-            ReleaseNotes: new(versionDetails.ReleaseNotes.Text, versionDetails.ReleaseNotes.Url),
-            Documentations: [.. versionDetails.Documentations.Select(d => new AppTextLink(d.Text, d.Url))],
-            Tags: versionDetails.Tags);
+        return new AppVersionModel(versionDetails.Version, versionDetails.Source, versionDetails.Publisher, versionDetails.Author,
+            versionDetails.Description, versionDetails.PackageUrl, versionDetails.PrivacyUrl, versionDetails.License, versionDetails.IconUrl,
+            versionDetails.PublisherSupportUrl, versionDetails.Copyright, versionDetails.ReleaseNotes,
+            versionDetails.Documentations, versionDetails.Tags, versionDetails.Agreements, versionDetails.InstallRequirements);
     }
 }

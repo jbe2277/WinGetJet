@@ -35,6 +35,8 @@ public static class ViewConvert
 
     public static Visibility IsNotVisible(object? value) => IsVisible(value) == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
 
+    public static bool IsNotEmpty(string? value) => !string.IsNullOrEmpty(value);
+
     public static string? GetSourceDisplayName(string? source) => source switch
     {
         "winget" => "WinGet",
