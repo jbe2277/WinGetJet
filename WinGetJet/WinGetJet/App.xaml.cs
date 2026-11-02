@@ -208,7 +208,7 @@ public partial class App : Application
     private static AppVersionModel CreateAppVersionModel(PackageVersionDetails versionDetails)
     {
         return new AppVersionModel(versionDetails.Version, versionDetails.Source, versionDetails.Publisher, versionDetails.Author,
-            versionDetails.Description, versionDetails.PackageUrl, versionDetails.License, versionDetails.IconUrl,
+            versionDetails.Description, versionDetails.PackageUrl, versionDetails.PrivacyUrl, versionDetails.License, versionDetails.IconUrl,
             versionDetails.PublisherSupportUrl, versionDetails.Copyright, versionDetails.ReleaseNotes,
             versionDetails.Documentations, versionDetails.Tags, versionDetails.Agreements, versionDetails.InstallRequirements);
     }

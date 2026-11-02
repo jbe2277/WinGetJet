@@ -29,6 +29,6 @@ public class AppModel(string id, string name, IReadOnlyList<string> productCodes
 }
 
 public record AppVersionModel(PackageVersionKey Version, string? Source, PackageTextLink Publisher, string? Author, string? Description, Uri? PackageUrl,
-    PackageTextLink License, Uri? IconUrl, Uri? PublisherSupportUrl, string? Copyright, PackageTextLink ReleaseNotes,
+    Uri? PrivacyUrl, PackageTextLink License, Uri? IconUrl, Uri? PublisherSupportUrl, string? Copyright, PackageTextLink ReleaseNotes,
     IReadOnlyList<PackageTextLink> Documentations, IReadOnlyList<string> Tags, IReadOnlyList<PackageAgreement> Agreements,
     PackageInstallRequirements InstallRequirements);

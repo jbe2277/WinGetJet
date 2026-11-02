@@ -203,6 +203,13 @@
                                                  AutomationProperties.AutomationId="HomepageHyperlinkButton"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="8"
+                                    Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.PrivacyUrl), Mode=OneWay, FallbackValue=Collapsed}">
+                                <FontIcon Glyph="&#xE8D7;" FontSize="16" VerticalAlignment="Center" />
+                                <HyperlinkButton Content="Privacy Policy" Padding="0,0,0,2" VerticalAlignment="Center" 
+                                                 NavigateUri="{x:Bind ViewModel.SelectedApp.DefaultVersionDetails.PrivacyUrl, Mode=OneWay, FallbackValue={x:Null}}" 
+                                                 AutomationProperties.AutomationId="PrivacyPolicyHyperlinkButton"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="8"
                                     Visibility="{x:Bind v:ViewConvert.IsVisible(ViewModel.SelectedApp.DefaultVersionDetails.PublisherSupportUrl), Mode=OneWay, FallbackValue=Collapsed}">
                                 <FontIcon Glyph="&#xEA6B;" FontSize="16" VerticalAlignment="Center" />
                                 <HyperlinkButton Content="Support" Padding="0,0,0,2" VerticalAlignment="Center" 

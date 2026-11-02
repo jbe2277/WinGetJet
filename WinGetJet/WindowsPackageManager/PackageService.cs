@@ -10,7 +10,7 @@ public record PackageDetails(string Id, IReadOnlyList<PackageVersionKey> Availab
     PackageVersionDetails VersionDetails);
 
 public record PackageVersionDetails(PackageVersionKey Version, string? Source,
-    PackageTextLink Publisher, string? Author, string? Description, Uri? PackageUrl, PackageTextLink License, Uri? IconUrl,
+    PackageTextLink Publisher, string? Author, string? Description, Uri? PackageUrl, Uri? PrivacyUrl, PackageTextLink License, Uri? IconUrl,
     Uri? PublisherSupportUrl, string? Copyright, PackageTextLink ReleaseNotes,
     IReadOnlyList<PackageTextLink> Documentations, IReadOnlyList<string> Tags, IReadOnlyList<PackageAgreement> Agreements,
     PackageInstallRequirements InstallRequirements);
@@ -114,6 +114,7 @@ public class PackageService
                 Author: metadata?.Author,
                 Description: metadata?.Description,
                 PackageUrl: ToUri(metadata?.PackageUrl),
+                PrivacyUrl: ToUri(metadata?.PrivacyUrl),
                 License: new(metadata?.License, ToUri(metadata?.LicenseUrl)),
                 IconUrl: ToUri(iconUrl),
                 PublisherSupportUrl: ToUri(metadata?.PublisherSupportUrl),
