@@ -1,5 +1,6 @@
 ﻿using Microsoft.Management.Deployment;
 using System.Runtime.InteropServices;
+using Windows.System;
 
 namespace WindowsPackageManager;
 
@@ -20,7 +21,7 @@ public record PackageAgreement(string? Label, string? Text, Uri? Url);
 
 public enum PackageElevation { Unknown, Required, Prohibited, ElevatesSelf }
 
-public record PackageInstallRequirements(string? InstallerType, string? Architecture, string? Scope, PackageElevation Elevation, bool IsInstallerAvailable);
+public record PackageInstallRequirements(PackageInstallerType InstallerType, ProcessorArchitecture Architecture, PackageInstallerScope Scope, ElevationRequirement Elevation, bool IsInstallerAvailable);
 
 public enum PackageVersionKind { Installed, DefaultInstall, Available }
 public record PackageVersionKey(PackageVersionKind Kind, string? Version = null);
@@ -93,21 +94,13 @@ public class PackageService
         try { installer = packageVersion?.GetApplicableInstaller(new InstallOptions()); }
         catch (COMException) { }
 
-        var elevation = installer?.ElevationRequirement switch
-        {
-            ElevationRequirement.ElevationRequired => PackageElevation.Required,
-            ElevationRequirement.ElevationProhibited => PackageElevation.Prohibited,
-            ElevationRequirement.ElevatesSelf => PackageElevation.ElevatesSelf,
-            _ => PackageElevation.Unknown
-        };
-        if (elevation == PackageElevation.Unknown && installer?.Scope == PackageInstallerScope.System) elevation = PackageElevation.Required;
-
+        var installerType = installer?.InstallerType ?? PackageInstallerType.Unknown;
+        if (installerType is PackageInstallerType.Zip) installerType = installer!.NestedInstallerType;
         var installRequirements = new PackageInstallRequirements(
-            InstallerType: installer is null ? null : installer.NestedInstallerType != PackageInstallerType.Unknown
-                ? $"{installer.InstallerType} ({installer.NestedInstallerType})" : installer.InstallerType.ToString(),
-            Architecture: installer?.Architecture.ToString(),
-            Scope: installer?.Scope.ToString(),
-            Elevation: elevation,
+            InstallerType: installerType,
+            Architecture: installer?.Architecture ?? ProcessorArchitecture.Unknown,
+            Scope: installer?.Scope ?? PackageInstallerScope.Unknown,
+            Elevation: installer?.ElevationRequirement ?? ElevationRequirement.Unknown,
             IsInstallerAvailable: installer is not null);
 
         var iconUrl = metadata?.Icons.ToArray().FirstOrDefault(x => !string.IsNullOrEmpty(x.Url))?.Url;

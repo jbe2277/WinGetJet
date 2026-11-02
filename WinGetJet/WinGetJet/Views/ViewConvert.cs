@@ -37,14 +37,6 @@ public static class ViewConvert
 
     public static bool IsNotEmpty(string? value) => !string.IsNullOrEmpty(value);
 
-    public static string InstallerInfo(WindowsPackageManager.PackageInstallRequirements? requirements)
-    {
-        if (requirements is null) return "";
-        if (!requirements.IsInstallerAvailable) return "No applicable installer found";
-        return string.Join(", ", new[] { requirements.InstallerType, requirements.Architecture, requirements.Scope is null or "Unknown" ? null : requirements.Scope + " scope" }
-            .Where(x => !string.IsNullOrEmpty(x)));
-    }
-
     public static string? GetSourceDisplayName(string? source) => source switch
     {
         "winget" => "WinGet",

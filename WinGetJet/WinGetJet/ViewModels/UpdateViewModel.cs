@@ -1,3 +1,4 @@
+using Microsoft.Management.Deployment;
 using System.ComponentModel;
 using System.Waf.Applications;
 using WindowsPackageManager;
@@ -22,7 +23,7 @@ public class UpdateViewModel(IUpdateView view) : ViewModelCore<IUpdateView>(view
 
     public bool HasAgreements => TargetVersionDetails?.Agreements.Count > 0;
 
-    public bool IsElevationRequired => TargetVersionDetails?.InstallRequirements.Elevation is PackageElevation.Required or PackageElevation.ElevatesSelf;
+    public bool IsElevationRequired => TargetVersionDetails?.InstallRequirements.Elevation is ElevationRequirement.ElevationRequired or ElevationRequirement.ElevatesSelf;
 
     public bool AgreementsAccepted { get; set => SetProperty(ref field, value); }
 
@@ -33,11 +34,6 @@ public class UpdateViewModel(IUpdateView view) : ViewModelCore<IUpdateView>(view
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
-        if (e.PropertyName is nameof(TargetVersionDetails))
-        {
-            RaisePropertyChanged(nameof(HasAgreements));
-            RaisePropertyChanged(nameof(IsElevationRequired));
-        }
-        if (e.PropertyName is nameof(TargetVersionDetails) or nameof(AgreementsAccepted)) RaisePropertyChanged(nameof(CanUpdate));
+        if (e.PropertyName is nameof(AgreementsAccepted)) RaisePropertyChanged(nameof(CanUpdate));
     }
 }

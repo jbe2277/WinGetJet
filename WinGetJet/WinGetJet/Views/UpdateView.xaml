@@ -25,28 +25,19 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Package Id" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.App.Id, Mode=OneWay, FallbackValue=''}" IsTextSelectionEnabled="True" TextWrapping="Wrap"
-                           AutomationProperties.AutomationId="PackageIdTextBlock"/>
-                <TextBlock Grid.Row="1" Text="Publisher" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.TargetVersionDetails.Publisher.Text, Mode=OneWay, FallbackValue=''}" TextWrapping="Wrap"
+                <TextBlock Grid.Row="0" Text="Publisher" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.TargetVersionDetails.Publisher.Text, Mode=OneWay, FallbackValue=''}" TextWrapping="Wrap"
                            AutomationProperties.AutomationId="PublisherTextBlock"/>
-                <TextBlock Grid.Row="2" Text="Installed" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.App.InstalledVersion, Mode=OneWay, FallbackValue=''}"
+                <TextBlock Grid.Row="1" Text="Installed" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.App.InstalledVersion, Mode=OneWay, FallbackValue=''}"
                            AutomationProperties.AutomationId="InstalledVersionTextBlock"/>
-                <TextBlock Grid.Row="3" Text="Update to" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind ViewModel.TargetVersion.Version, Mode=OneWay, FallbackValue=''}" FontWeight="SemiBold"
+                <TextBlock Grid.Row="2" Text="Update to" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.TargetVersion.Version, Mode=OneWay, FallbackValue=''}" FontWeight="SemiBold"
                            AutomationProperties.AutomationId="TargetVersionTextBlock"/>
-                <TextBlock Grid.Row="4" Text="Source" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="{x:Bind v:ViewConvert.GetSourceDisplayName(ViewModel.TargetVersionDetails.Source), Mode=OneWay, FallbackValue=''}"
+                <TextBlock Grid.Row="3" Text="Source" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind v:ViewConvert.GetSourceDisplayName(ViewModel.TargetVersionDetails.Source), Mode=OneWay, FallbackValue=''}"
                            AutomationProperties.AutomationId="SourceTextBlock"/>
-                <TextBlock Grid.Row="5" Text="Installer" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                <TextBlock Grid.Row="5" Grid.Column="1" TextWrapping="Wrap"
-                           Text="{x:Bind v:ViewConvert.InstallerInfo(ViewModel.TargetVersionDetails.InstallRequirements), Mode=OneWay, FallbackValue=''}"
-                           AutomationProperties.AutomationId="InstallerTextBlock"/>
             </Grid>
 
             <InfoBar IsOpen="{x:Bind v:ViewConvert.IsNotEmpty(ViewModel.ErrorMessage), Mode=OneWay}" IsClosable="False" Severity="Error"
