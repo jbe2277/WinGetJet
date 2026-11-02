@@ -3,11 +3,6 @@ using WindowsPackageManager;
 
 namespace WinGetJet.Models;
 
-public record AppTextLink(string? Text, Uri? Url)
-{
-    public static AppTextLink Empty { get; } = new(null, null);
-}
-
 public class AppModel(string id, string name, IReadOnlyList<string> productCodes, string? installedVersion) : Model
 {
     public string Id { get; } = id;
@@ -33,6 +28,7 @@ public class AppModel(string id, string name, IReadOnlyList<string> productCodes
     public object? Icon { get; set => SetProperty(ref field, value); }
 }
 
-public record AppVersionModel(PackageVersionKey Version, string? Source, AppTextLink Publisher, string? Author, string? Description, Uri? PackageUrl,
-    AppTextLink License, Uri? IconUrl, Uri? PublisherSupportUrl, string? Copyright, AppTextLink ReleaseNotes,
-    IReadOnlyList<AppTextLink> Documentations, IReadOnlyList<string> Tags);
+public record AppVersionModel(PackageVersionKey Version, string? Source, PackageTextLink Publisher, string? Author, string? Description, Uri? PackageUrl,
+    PackageTextLink License, Uri? IconUrl, Uri? PublisherSupportUrl, string? Copyright, PackageTextLink ReleaseNotes,
+    IReadOnlyList<PackageTextLink> Documentations, IReadOnlyList<string> Tags, IReadOnlyList<PackageAgreement> Agreements,
+    PackageInstallRequirements InstallRequirements);

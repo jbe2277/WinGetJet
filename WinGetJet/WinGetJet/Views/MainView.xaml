@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:v="using:WinGetJet.Views"
     xmlns:m="using:WinGetJet.Models"
+    xmlns:wpm="using:WindowsPackageManager"
     xmlns:media="using:Microsoft.UI.Xaml.Media"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" AutomationProperties.Name="MainView" AutomationProperties.AutomationId="MainView">
@@ -220,7 +221,7 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="m:AppTextLink">
+                                    <DataTemplate x:DataType="wpm:PackageTextLink">
                                         <HyperlinkButton Content="{x:Bind Text}" Padding="0,0,0,2" NavigateUri="{x:Bind Url}" 
                                                          AutomationProperties.AutomationId="DocumentationHyperlinkButton"/>
                                     </DataTemplate>

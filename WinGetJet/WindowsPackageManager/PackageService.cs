@@ -11,16 +11,16 @@ public record PackageDetails(string Id, IReadOnlyList<PackageVersionKey> Availab
 public record PackageVersionDetails(PackageVersionKey Version, string? Source,
     PackageTextLink Publisher, string? Author, string? Description, Uri? PackageUrl, PackageTextLink License, Uri? IconUrl,
     Uri? PublisherSupportUrl, string? Copyright, PackageTextLink ReleaseNotes,
-    IReadOnlyList<PackageTextLink> Documentations, IReadOnlyList<string> Tags);
+    IReadOnlyList<PackageTextLink> Documentations, IReadOnlyList<string> Tags, IReadOnlyList<PackageAgreement> Agreements,
+    PackageInstallRequirements InstallRequirements);
 
 public record PackageTextLink(string? Text, Uri? Url);
 
-public enum PackageElevation { Unknown, Required, Prohibited, ElevatesSelf }
-
 public record PackageAgreement(string? Label, string? Text, Uri? Url);
 
-public record PackageInstallRequirements(PackageVersionKey Version, string? Source, string? InstallerType, string? Architecture, string? Scope,
-    PackageElevation Elevation, bool IsInstallerAvailable, IReadOnlyList<PackageAgreement> Agreements);
+public enum PackageElevation { Unknown, Required, Prohibited, ElevatesSelf }
+
+public record PackageInstallRequirements(string? InstallerType, string? Architecture, string? Scope, PackageElevation Elevation, bool IsInstallerAvailable);
 
 public enum PackageVersionKind { Installed, DefaultInstall, Available }
 public record PackageVersionKey(PackageVersionKind Kind, string? Version = null);
@@ -89,8 +89,29 @@ public class PackageService
         {
             // Some package sources don't implement IPackageVersionInfo4
         }
+        PackageInstallerInfo? installer = null;
+        try { installer = packageVersion?.GetApplicableInstaller(new InstallOptions()); }
+        catch (COMException) { }
+
+        var elevation = installer?.ElevationRequirement switch
+        {
+            ElevationRequirement.ElevationRequired => PackageElevation.Required,
+            ElevationRequirement.ElevationProhibited => PackageElevation.Prohibited,
+            ElevationRequirement.ElevatesSelf => PackageElevation.ElevatesSelf,
+            _ => PackageElevation.Unknown
+        };
+        if (elevation == PackageElevation.Unknown && installer?.Scope == PackageInstallerScope.System) elevation = PackageElevation.Required;
+
+        var installRequirements = new PackageInstallRequirements(
+            InstallerType: installer is null ? null : installer.NestedInstallerType != PackageInstallerType.Unknown
+                ? $"{installer.InstallerType} ({installer.NestedInstallerType})" : installer.InstallerType.ToString(),
+            Architecture: installer?.Architecture.ToString(),
+            Scope: installer?.Scope.ToString(),
+            Elevation: elevation,
+            IsInstallerAvailable: installer is not null);
 
         var iconUrl = metadata?.Icons.ToArray().FirstOrDefault(x => !string.IsNullOrEmpty(x.Url))?.Url;
+
         return new PackageDetails(id,
             AvailableVersions: availableVersions.ToArray(),
             IsUpdateAvailable: package.IsUpdateAvailable,
@@ -106,51 +127,9 @@ public class PackageService
                 Copyright: metadata?.Copyright,
                 ReleaseNotes: new(metadata?.ReleaseNotes, ToUri(metadata?.ReleaseNotesUrl)),
                 Documentations: metadata?.Documentations.ToArray().Select(d => new PackageTextLink(d.DocumentLabel, ToUri(d.DocumentUrl))).ToArray() ?? [],
-                Tags: metadata?.Tags.ToArray() ?? []));
-    }
-
-    /// <summary>Retrieves the requirements (elevation, agreements, installer) for installing the specified version.</summary>
-    public async Task<PackageInstallRequirements?> GetInstallRequirementsAsync(string id, PackageVersionKey version, CancellationToken cancellation = default)
-    {
-        var package = await FindPackageAsync(id, cancellation).ConfigureAwait(false);
-        if (package is null) return null;
-
-        var packageVersion = version.Kind switch
-        {
-            PackageVersionKind.Installed => package.InstalledVersion,
-            PackageVersionKind.DefaultInstall => package.DefaultInstallVersion,
-            PackageVersionKind.Available => package.AvailableVersions.ToArray().FirstOrDefault(x => x.Version == version.Version) is { } v ? package.GetPackageVersionInfo(v) : null,
-            _ => throw new NotSupportedException($"Unsupported version kind: {version.Kind}")
-        };
-        if (packageVersion is null) return null;
-
-        CatalogPackageMetadata? metadata = null;
-        try { metadata = packageVersion.GetCatalogPackageMetadata(); }
-        catch (COMException) { }
-
-        PackageInstallerInfo? installer = null;
-        try { installer = packageVersion.GetApplicableInstaller(new InstallOptions()); }
-        catch (COMException) { }
-        catch (ArgumentException) { }
-
-        var elevation = installer?.ElevationRequirement switch
-        {
-            ElevationRequirement.ElevationRequired => PackageElevation.Required,
-            ElevationRequirement.ElevationProhibited => PackageElevation.Prohibited,
-            ElevationRequirement.ElevatesSelf => PackageElevation.ElevatesSelf,
-            _ => PackageElevation.Unknown
-        };
-        if (elevation == PackageElevation.Unknown && installer?.Scope == PackageInstallerScope.System) elevation = PackageElevation.Required;
-
-        return new PackageInstallRequirements(version,
-            Source: packageVersion.PackageCatalog?.Info?.Name,
-            InstallerType: installer is null ? null : installer.NestedInstallerType != PackageInstallerType.Unknown
-                ? $"{installer.InstallerType} ({installer.NestedInstallerType})" : installer.InstallerType.ToString(),
-            Architecture: installer?.Architecture.ToString(),
-            Scope: installer?.Scope.ToString(),
-            Elevation: elevation,
-            IsInstallerAvailable: installer is not null,
-            Agreements: metadata?.Agreements.ToArray().Select(a => new PackageAgreement(a.Label, a.Text, ToUri(a.Url))).ToArray() ?? []);
+                Tags: metadata?.Tags.ToArray() ?? [],
+                Agreements: metadata?.Agreements.ToArray().Select(a => new PackageAgreement(a.Label, a.Text, ToUri(a.Url))).ToArray() ?? [],
+                InstallRequirements: installRequirements));
     }
 
     private static Uri? ToUri(string? url) => Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;

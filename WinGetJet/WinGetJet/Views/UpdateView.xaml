@@ -41,16 +41,13 @@
                 <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind ViewModel.TargetVersion.Version, Mode=OneWay, FallbackValue=''}" FontWeight="SemiBold"
                            AutomationProperties.AutomationId="TargetVersionTextBlock"/>
                 <TextBlock Grid.Row="4" Text="Source" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="{x:Bind v:ViewConvert.GetSourceDisplayName(ViewModel.Requirements.Source), Mode=OneWay, FallbackValue=''}"
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="{x:Bind v:ViewConvert.GetSourceDisplayName(ViewModel.TargetVersionDetails.Source), Mode=OneWay, FallbackValue=''}"
                            AutomationProperties.AutomationId="SourceTextBlock"/>
                 <TextBlock Grid.Row="5" Text="Installer" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                 <TextBlock Grid.Row="5" Grid.Column="1" TextWrapping="Wrap"
-                           Text="{x:Bind v:ViewConvert.InstallerInfo(ViewModel.Requirements), Mode=OneWay, FallbackValue=''}"
+                           Text="{x:Bind v:ViewConvert.InstallerInfo(ViewModel.TargetVersionDetails.InstallRequirements), Mode=OneWay, FallbackValue=''}"
                            AutomationProperties.AutomationId="InstallerTextBlock"/>
             </Grid>
-
-            <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Visibility="{x:Bind v:ViewConvert.BoolToVisibility(ViewModel.IsLoading), Mode=OneWay}"
-                          HorizontalAlignment="Left" AutomationProperties.AutomationId="LoadingProgressRing"/>
 
             <InfoBar IsOpen="{x:Bind v:ViewConvert.IsNotEmpty(ViewModel.ErrorMessage), Mode=OneWay}" IsClosable="False" Severity="Error"
                      Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" AutomationProperties.AutomationId="ErrorInfoBar"/>
@@ -63,7 +60,7 @@
                 <TextBlock Text="Package agreements" Style="{StaticResource BodyStrongTextBlockStyle}" />
                 <TextBlock Text="The publisher requires you to accept the following agreements before the package can be installed." TextWrapping="Wrap"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                <ItemsControl ItemsSource="{x:Bind ViewModel.Requirements.Agreements, Mode=OneWay, FallbackValue={x:Null}}" AutomationProperties.AutomationId="AgreementsList">
+                <ItemsControl ItemsSource="{x:Bind ViewModel.TargetVersionDetails.Agreements, Mode=OneWay, FallbackValue={x:Null}}" AutomationProperties.AutomationId="AgreementsList">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="wpm:PackageAgreement">
                             <StackPanel Spacing="2" Margin="0,0,0,8">

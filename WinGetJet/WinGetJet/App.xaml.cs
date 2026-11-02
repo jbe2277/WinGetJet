@@ -106,10 +106,10 @@ public partial class App : Application
         packageService.InvalidateCache();
         var packages = await packageService.GetInstalledPackagesAsync();
         var appModels = packages.OrderBy(a => a.Name).Select(x => new AppModel(x.Id, x.Name, x.ProductCodes, x.InstalledVersion)).ToArray();
-        CollectionHelper.Merge(mainViewModel.AppsSource, appModels, AppModelComparer.Default, null, null, null, moveAction: mainViewModel.AppsSource.Move);        
+        CollectionHelper.Merge(mainViewModel.AppsSource, appModels, AppModelComparer.Default, null, null, null, moveAction: mainViewModel.AppsSource.Move);
         foreach (var app in mainViewModel.AppsSource)
         {
-            app.InstalledVersion = packages.FirstOrDefault(p => p.Id == app.Id)?.InstalledVersion;            
+            app.InstalledVersion = packages.FirstOrDefault(p => p.Id == app.Id)?.InstalledVersion;
             LoadDetails(app);
         }
     }
@@ -128,23 +128,10 @@ public partial class App : Application
             TargetVersion = targetVersion,
             TargetVersionDetails = app.SelectedVersionDetails ?? app.DefaultVersionDetails
         };
+        if (!updateViewModel.TargetVersionDetails!.InstallRequirements.IsInstallerAvailable)
+            updateViewModel.ErrorMessage = "No applicable installer found for this system.";
         updateViewModel.Initialize();
         var dialogTask = updateViewModel.ShowDialogAsync(mainViewModel.View);
-        try
-        {
-            updateViewModel.Requirements = await packageService.GetInstallRequirementsAsync(app.Id, targetVersion);
-            if (updateViewModel.Requirements is null) updateViewModel.ErrorMessage = "The selected version could not be found.";
-            else if (!updateViewModel.Requirements.IsInstallerAvailable) updateViewModel.ErrorMessage = "No applicable installer found for this system.";
-        }
-        catch (Exception ex)
-        {
-            Log.Default.Error(ex, "Failed to retrieve install requirements for {0}", app.Id);
-            updateViewModel.ErrorMessage = $"Failed to retrieve the update requirements: {ex.Message}";
-        }
-        finally
-        {
-            updateViewModel.IsLoading = false;
-        }
 
         if (!await dialogTask) return;
         Log.Default.Info("User confirmed update of {0} to version {1}", app.Id, targetVersion.Version);
@@ -173,14 +160,14 @@ public partial class App : Application
                     app.AvailableVersions = availableVersions;
                     app.SelectedVersion = app.AvailableVersions.FirstOrDefault();
                 }
-                
+
                 if (!details.VersionDetails.Version.Equals(app.DefaultVersionDetails?.Version))
                 {
                     app.DefaultVersionDetails = CreateAppVersionModel(details.VersionDetails);
                     app.SelectedVersionDetails = app.DefaultVersionDetails;
                     if (app.DefaultVersionDetails.Version.Version is not null) app.VersionDetailsCache[app.DefaultVersionDetails.Version.Version] = app.DefaultVersionDetails;
                 }
-                
+
                 app.Icon ??= await IconService.ResolveIconAsync(app);
             }
         }
@@ -220,19 +207,9 @@ public partial class App : Application
 
     private static AppVersionModel CreateAppVersionModel(PackageVersionDetails versionDetails)
     {
-        return new AppVersionModel(
-            Version: versionDetails.Version,
-            Source: versionDetails.Source,
-            Publisher: new(versionDetails.Publisher.Text, versionDetails.Publisher.Url),
-            Author: versionDetails.Author,
-            Description: versionDetails.Description,
-            PackageUrl: versionDetails.PackageUrl,
-            License: new(versionDetails.License.Text, versionDetails.License.Url),
-            IconUrl: versionDetails.IconUrl,
-            PublisherSupportUrl: versionDetails.PublisherSupportUrl,
-            Copyright: versionDetails.Copyright,
-            ReleaseNotes: new(versionDetails.ReleaseNotes.Text, versionDetails.ReleaseNotes.Url),
-            Documentations: [.. versionDetails.Documentations.Select(d => new AppTextLink(d.Text, d.Url))],
-            Tags: versionDetails.Tags);
+        return new AppVersionModel(versionDetails.Version, versionDetails.Source, versionDetails.Publisher, versionDetails.Author,
+            versionDetails.Description, versionDetails.PackageUrl, versionDetails.License, versionDetails.IconUrl,
+            versionDetails.PublisherSupportUrl, versionDetails.Copyright, versionDetails.ReleaseNotes,
+            versionDetails.Documentations, versionDetails.Tags, versionDetails.Agreements, versionDetails.InstallRequirements);
     }
 }
