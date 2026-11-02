@@ -23,7 +23,8 @@ public class UpdateViewModel(IUpdateView view) : ViewModelCore<IUpdateView>(view
 
     public bool HasAgreements => TargetVersionDetails?.Agreements.Count > 0;
 
-    public bool IsElevationRequired => TargetVersionDetails?.InstallRequirements.Elevation is ElevationRequirement.ElevationRequired or ElevationRequirement.ElevatesSelf;
+    public bool IsElevationRequired => TargetVersionDetails?.InstallRequirements.Elevation is ElevationRequirement.ElevationRequired or ElevationRequirement.ElevatesSelf
+        || (TargetVersionDetails?.InstallRequirements.Elevation is ElevationRequirement.Unknown && TargetVersionDetails.InstallRequirements.Scope is PackageInstallerScope.System);
 
     public bool AgreementsAccepted { get; set => SetProperty(ref field, value); }
 
