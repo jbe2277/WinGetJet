@@ -6,7 +6,7 @@ namespace WindowsPackageManager;
 
 public record PackageInfo(string Id, string Name, IReadOnlyList<string> ProductCodes, string? InstalledVersion);
 
-public record PackageDetails(string Id, IReadOnlyList<PackageVersionKey> AvailableVersions, bool IsUpdateAvailable,
+public record PackageDetails(string Id, string RemoteId, IReadOnlyList<PackageVersionKey> AvailableVersions, bool IsUpdateAvailable,
     PackageVersionDetails VersionDetails);
 
 public record PackageVersionDetails(PackageVersionKey Version, string? Source,
@@ -105,7 +105,7 @@ public class PackageService
 
         var iconUrl = metadata?.Icons.ToArray().FirstOrDefault(x => !string.IsNullOrEmpty(x.Url))?.Url;
 
-        return new PackageDetails(id,
+        return new PackageDetails(id, package.Id,
             AvailableVersions: availableVersions.ToArray(),
             IsUpdateAvailable: package.IsUpdateAvailable,
             VersionDetails: new PackageVersionDetails(version,
