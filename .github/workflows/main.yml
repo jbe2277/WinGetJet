@@ -30,7 +30,7 @@ jobs:
     - name: 🧪 Test
       run: |
         cd WinGetJet
-        dotnet test --solution ./WinGetJet.slnx -c Release
+        dotnet test --solution ./WinGetJet.slnx -c Release -p:Platform=x64
 
     - name: 📦 Create MSIX x64
       run: |
