@@ -27,7 +27,7 @@ jobs:
       run: |
         [IO.File]::WriteAllBytes((Join-Path $pwd "WinGetJet/WinGetJet" "MSStoreLocalCert.p12"), [Convert]::FromBase64String($env:MSStoreLocalCert64))
 
-    - name: 🧪 Test
+    - name: 🧪 Unit Tests
       run: |
         cd WinGetJet
         dotnet test --solution ./WinGetJet.slnx -c Release -p:Platform=x64
