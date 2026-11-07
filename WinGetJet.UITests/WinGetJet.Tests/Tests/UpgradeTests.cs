@@ -6,7 +6,9 @@ namespace WinGetJet.Tests.Tests;
 
 public class UpgradeTests : UITest
 {
-    [Fact]
+    public static bool IsGitHubActions { get; } = string.Equals(Environment.GetEnvironmentVariable("GITHUB_ACTIONS"), "true", StringComparison.OrdinalIgnoreCase);
+
+    [Fact(Skip = "Runs only on GitHub Actions", SkipUnless = nameof(IsGitHubActions))]
     public async Task InstallNotepadPlusPlus()
     {
         var manager = new PackageManager();
