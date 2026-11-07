@@ -57,17 +57,8 @@ public class UpgradeTests : UITest
         var uninstallResult = await manager.UninstallPackageAsync(package, uninstallOptions);
         Assert.Equal(UninstallResultStatus.Ok, uninstallResult.Status);
 
-        // NSIS uninstaller (Notepad++) returns before uninstall is finished -> poll until ARP entry is removed
-        PackageVersionInfo? remainingVersion = null;
-        var timeout = DateTime.UtcNow.AddSeconds(60);
-        do
-        {
-            package = await FindPackageAsync(manager, packageId);
-            remainingVersion = package.InstalledVersion;
-            if (remainingVersion is null) break;
-            await Task.Delay(1000, Cancellation);
-        } while (DateTime.UtcNow < timeout);
-        Assert.Null(remainingVersion);
+        // NSIS uninstaller (Notepad++) returns before uninstall is finished -> retry until ARP entry is removed
+        await Assert.RetryAsync(async () => (await FindPackageAsync(manager, packageId)).InstalledVersion, Assert.Null, cancellationToken: Cancellation);
     }
 
     private async Task<CatalogPackage> FindPackageAsync(PackageManager manager, string packageId)
