@@ -8,6 +8,8 @@ public class UpgradeTests : UITest
 {
     public static bool IsGitHubActions { get; } = string.Equals(Environment.GetEnvironmentVariable("GITHUB_ACTIONS"), "true", StringComparison.OrdinalIgnoreCase);
 
+    public static CancellationToken Cancellation => TestContext.Current.CancellationToken;
+
     [Fact(Skip = "Runs only on GitHub Actions", SkipUnless = nameof(IsGitHubActions))]
     public async Task InstallNotepadPlusPlus()
     {
@@ -67,9 +69,18 @@ public class UpgradeTests : UITest
         var uninstallResult = await manager.UninstallPackageAsync(package, uninstallOptions);
         Assert.Equal(UninstallResultStatus.Ok, uninstallResult.Status);
 
-        catalog = await ConnectAsync(manager);
-        installedResult = await catalog.FindPackagesAsync(findOptions);
-        Assert.Null(installedResult.Matches[0].CatalogPackage.InstalledVersion);
+        // NSIS uninstaller (Notepad++) returns before uninstall is finished -> poll until ARP entry is removed
+        PackageVersionInfo? remainingVersion = null;
+        var timeout = DateTime.UtcNow.AddSeconds(60);
+        do
+        {
+            catalog = await ConnectAsync(manager);
+            installedResult = await catalog.FindPackagesAsync(findOptions);
+            remainingVersion = installedResult.Matches[0].CatalogPackage.InstalledVersion;
+            if (remainingVersion is null) break;
+            await Task.Delay(1000, Cancellation);
+        } while (DateTime.UtcNow < timeout);
+        Assert.Null(remainingVersion);
     }
 
     private async Task<PackageCatalog> ConnectAsync(PackageManager manager)
