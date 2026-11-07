@@ -41,7 +41,8 @@ public class UpgradeTests : UITest
         Assert.Equal(InstallResultStatus.Ok, installResult.Status);        
         catalog = await ConnectAsync(manager);
         installedResult = await catalog.FindPackagesAsync(findOptions);
-        var installedVersion = installedResult.Matches[0].CatalogPackage.InstalledVersion;
+        package = installedResult.Matches[0].CatalogPackage;
+        var installedVersion = package.InstalledVersion;
         Assert.NotNull(installedVersion);
         Assert.Equal(versions[1].Version, installedVersion.Version);
 
@@ -54,16 +55,19 @@ public class UpgradeTests : UITest
         var upgradeResult = await manager.UpgradePackageAsync(package, upgradeOptions);
         Assert.Equal(InstallResultStatus.Ok, upgradeResult.Status);
 
+        catalog = await ConnectAsync(manager);
         installedResult = await catalog.FindPackagesAsync(findOptions);
-        installedVersion = installedResult.Matches[0].CatalogPackage.InstalledVersion;
+        package = installedResult.Matches[0].CatalogPackage;
+        installedVersion = package.InstalledVersion;
         Assert.NotNull(installedVersion);
-        Assert.Equal(versions[1].Version, installedVersion.Version);
+        Assert.Equal(versions[0].Version, installedVersion.Version);
 
 
         var uninstallOptions = new UninstallOptions { PackageUninstallMode = PackageUninstallMode.Silent };
         var uninstallResult = await manager.UninstallPackageAsync(package, uninstallOptions);
         Assert.Equal(UninstallResultStatus.Ok, uninstallResult.Status);
 
+        catalog = await ConnectAsync(manager);
         installedResult = await catalog.FindPackagesAsync(findOptions);
         Assert.Null(installedResult.Matches[0].CatalogPackage.InstalledVersion);
     }
