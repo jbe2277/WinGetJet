@@ -86,7 +86,7 @@ jobs:
     - name: 🖥️ UI Test
       run: |
         cd ./WinGetJet.UITests
-        dotnet test --solution ./WinGetJet.UITests.slnx  --max-parallel-test-modules 1 --output Detailed
+        dotnet test --solution ./WinGetJet.UITests.slnx -p:Platform=x64 --max-parallel-test-modules 1 --output Detailed
 
     - name: 📦 Upload UI Test results
       uses: actions/upload-artifact@v6
