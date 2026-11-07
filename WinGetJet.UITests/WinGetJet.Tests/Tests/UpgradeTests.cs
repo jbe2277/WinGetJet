@@ -35,7 +35,11 @@ public class UpgradeTests : UITest
         Log.WriteLine(("Latest version:", $"{versions[0].Version}"));
         Log.WriteLine(("2nd latest version:", $"{versions[1].Version}"));
 
-        
+
+        // Verify that the package is not installed before starting the test
+        var installedResult = await catalog.FindPackagesAsync(findOptions);
+        Assert.Null(installedResult.Matches[0].CatalogPackage.InstalledVersion);
+
         var installOptions = new InstallOptions
         {
             PackageInstallMode = PackageInstallMode.Silent,
@@ -44,7 +48,7 @@ public class UpgradeTests : UITest
         var installResult = await manager.InstallPackageAsync(package, installOptions);
         Assert.Equal(InstallResultStatus.Ok, installResult.Status);
 
-        var installedResult = await catalog.FindPackagesAsync(findOptions);
+        installedResult = await catalog.FindPackagesAsync(findOptions);
         var installedVersion = installedResult.Matches[0].CatalogPackage.InstalledVersion;
         Assert.NotNull(installedVersion);
         Assert.Equal(versions[1].Version, installedVersion.Version);
@@ -69,6 +73,6 @@ public class UpgradeTests : UITest
         Assert.Equal(UninstallResultStatus.Ok, uninstallResult.Status);
 
         installedResult = await catalog.FindPackagesAsync(findOptions);
-        Assert.Empty(installedResult.Matches);
+        Assert.Null(installedResult.Matches[0].CatalogPackage.InstalledVersion);
     }
 }
