@@ -8,7 +8,7 @@ public class UpgradeTests : UITest
 {
     [Fact]
     public async Task InstallNotepadPlusPlus()
-    {        
+    {
         var manager = new PackageManager();
         var catalogs = manager.GetPackageCatalogs();
         var catalogOptions = new CreateCompositePackageCatalogOptions
@@ -34,5 +34,13 @@ public class UpgradeTests : UITest
         var versions = package.AvailableVersions.ToArray();
         Log.WriteLine(("Latest version:", $"{versions[0].Version}"));
         Log.WriteLine(("2nd latest version:", $"{versions[1].Version}"));
+
+        var installOptions = new InstallOptions
+        {
+            PackageInstallMode = PackageInstallMode.Silent,
+            PackageVersionId = versions[1]
+        };
+        var installResult = await manager.InstallPackageAsync(package, installOptions);
+        Assert.Equal(InstallResultStatus.Ok, installResult.Status);
     }
 }
