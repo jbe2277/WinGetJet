@@ -12,17 +12,7 @@ public class UpgradeTests : UITest
     public async Task InstallNotepadPlusPlus()
     {
         var manager = new PackageManager();
-        var catalogs = manager.GetPackageCatalogs();
-        var catalogOptions = new CreateCompositePackageCatalogOptions
-        {
-            CompositeSearchBehavior = CompositeSearchBehavior.AllCatalogs,
-            InstalledScope = PackageInstallScope.Any
-        };
-        for (int i = 0; i < catalogs.Count; i++) catalogOptions.Catalogs.Add(catalogs[i]);
-
-        var connect = await manager.CreateCompositePackageCatalog(catalogOptions).ConnectAsync();
-        Assert.Equal(ConnectResultStatus.Ok, connect.Status);
-        var catalog = connect.PackageCatalog;
+        var catalog = await ConnectAsync(manager);
 
         var findOptions = new FindPackagesOptions { ResultLimit = 1 };
         findOptions.Selectors.Add(new PackageMatchFilter
@@ -48,8 +38,8 @@ public class UpgradeTests : UITest
             PackageVersionId = versions[1]
         };
         var installResult = await manager.InstallPackageAsync(package, installOptions);
-        Assert.Equal(InstallResultStatus.Ok, installResult.Status);
-
+        Assert.Equal(InstallResultStatus.Ok, installResult.Status);        
+        catalog = await ConnectAsync(manager);
         installedResult = await catalog.FindPackagesAsync(findOptions);
         var installedVersion = installedResult.Matches[0].CatalogPackage.InstalledVersion;
         Assert.NotNull(installedVersion);
@@ -76,5 +66,19 @@ public class UpgradeTests : UITest
 
         installedResult = await catalog.FindPackagesAsync(findOptions);
         Assert.Null(installedResult.Matches[0].CatalogPackage.InstalledVersion);
+    }
+
+    private async Task<PackageCatalog> ConnectAsync(PackageManager manager)
+    {
+        var options = new CreateCompositePackageCatalogOptions
+        {
+            CompositeSearchBehavior = CompositeSearchBehavior.AllCatalogs,
+            InstalledScope = PackageInstallScope.Any
+        };
+        var catalogs = manager.GetPackageCatalogs();
+        for (int i = 0; i < catalogs.Count; i++) options.Catalogs.Add(catalogs[i]);
+        var catalogRef = await manager.CreateCompositePackageCatalog(options).ConnectAsync();
+        Assert.Equal(ConnectResultStatus.Ok, catalogRef.Status);
+        return catalogRef.PackageCatalog;
     }
 }
