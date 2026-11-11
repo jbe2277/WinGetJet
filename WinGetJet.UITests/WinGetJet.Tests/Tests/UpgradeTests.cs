@@ -6,7 +6,8 @@ namespace WinGetJet.Tests.Tests;
 
 public class UpgradeTests : UITest
 {
-    public static bool IsGitHubActions { get; } = string.Equals(Environment.GetEnvironmentVariable("GITHUB_ACTIONS"), "true", StringComparison.OrdinalIgnoreCase);
+    // TODO: Enable GitHub Actions when the test is finished
+    public static bool IsGitHubActions { get; } = false; //string.Equals(Environment.GetEnvironmentVariable("GITHUB_ACTIONS"), "true", StringComparison.OrdinalIgnoreCase);
 
     public static CancellationToken Cancellation => TestContext.Current.CancellationToken;
 
