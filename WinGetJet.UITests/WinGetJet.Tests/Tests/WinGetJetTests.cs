@@ -6,7 +6,7 @@ using Xunit;
 
 namespace WinGetJet.Tests.Tests;
 
-public class WinGetJetTest : UITest
+public class WinGetJetTests : UITest
 {
     [Fact]
     public void SearchForGitAndVerifyDetails()
