@@ -24,7 +24,7 @@ public partial class App : Application
     ];
 
     private readonly SemaphoreSlim loadDetailsSemaphore = new(16);
-    private readonly PackageService packageService = new();
+    private readonly IWinGetClient winGetClient;
     private readonly AsyncDelegateCommand refreshCommand;
     private readonly AsyncDelegateCommand updateCommand;
     private ShellWindow shellWindow = null!;
@@ -34,6 +34,9 @@ public partial class App : Application
 
     public App()
     {
+        // TODO: var args = Environment.GetCommandLineArgs(); -> MockWinGetClient for testing
+        winGetClient = new WinGetClient(new PackageService());
+
         LogManager.Setup().LoadConfiguration(c =>
         {
             c.Configuration.DefaultCultureInfo = CultureInfo.InvariantCulture;
@@ -87,7 +90,7 @@ public partial class App : Application
         try
         {
             var timeStamp = Stopwatch.GetTimestamp();
-            var packages = await packageService.GetInstalledPackagesAsync();
+            var packages = await winGetClient.GetInstalledPackagesAsync();
             foreach (var app in packages.OrderBy(a => a.Name))
                 mainViewModel.AppsSource.Add(new AppModel(app.Id, app.Name, app.ProductCodes, app.InstalledVersion));
             mainViewModel.SelectedApp = mainViewModel.AppsView.FirstOrDefault();
@@ -103,8 +106,8 @@ public partial class App : Application
 
     private async Task Refresh()
     {
-        packageService.InvalidateCache();
-        var packages = await packageService.GetInstalledPackagesAsync();
+        winGetClient.InvalidateCache();
+        var packages = await winGetClient.GetInstalledPackagesAsync();
         var appModels = packages.OrderBy(a => a.Name).Select(x => new AppModel(x.Id, x.Name, x.ProductCodes, x.InstalledVersion)).ToArray();
         CollectionHelper.Merge(mainViewModel.AppsSource, appModels, AppModelComparer.Default, null, null, null, moveAction: mainViewModel.AppsSource.Move);
         foreach (var app in mainViewModel.AppsSource)
@@ -149,7 +152,7 @@ public partial class App : Application
         await loadDetailsSemaphore.WaitAsync();
         try
         {
-            var details = await packageService.LoadDetailsAsync(app.Id, null, CancellationToken.None);
+            var details = await winGetClient.LoadDetailsAsync(app.Id, null, CancellationToken.None);
             if (details is not null)
             {
                 app.IsUpdateAvailable = details.IsUpdateAvailable;
@@ -191,7 +194,7 @@ public partial class App : Application
             {
                 if (!source.VersionDetailsCache.TryGetValue(source.SelectedVersion.Version, out var versionDetails))
                 {
-                    var details = await packageService.LoadDetailsAsync(source.Id, new(PackageVersionKind.Available, source.SelectedVersion.Version));
+                    var details = await winGetClient.LoadDetailsAsync(source.Id, new(PackageVersionKind.Available, source.SelectedVersion.Version));
                     versionDetails = details?.VersionDetails is null ? null : CreateAppVersionModel(details.VersionDetails);
                     source.VersionDetailsCache[source.SelectedVersion.Version] = versionDetails;
                 }
