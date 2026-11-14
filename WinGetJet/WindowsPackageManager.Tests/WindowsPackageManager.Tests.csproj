@@ -14,9 +14,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitHubActionsTestLogger" Version="3.0.5" />
-    <PackageReference Include="Microsoft.WindowsPackageManager.ComInterop" Version="1.29.380" />
-    <PackageReference Include="xunit.v3" Version="4.0.2" />
+    <PackageReference Include="GitHubActionsTestLogger" />
+    <PackageReference Include="Microsoft.WindowsPackageManager.ComInterop" />
+    <PackageReference Include="xunit.v3" />
   </ItemGroup>
 
   <ItemGroup>

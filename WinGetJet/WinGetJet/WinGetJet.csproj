@@ -17,8 +17,6 @@
     <UseWinUI>true</UseWinUI>
     <WinUISDKReferences>false</WinUISDKReferences>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -48,14 +46,14 @@
     <PropertyGroup> above to opt out.
   -->
   <ItemGroup>    
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="*" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="*" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinApp" Version="*" />
-    <PackageReference Include="Microsoft.WindowsPackageManager.ComInterop" Version="1.29.380" />
-    <PackageReference Include="NLog" Version="6.2.2" />
-    <PackageReference Include="NLog.Targets.AtomicFile" Version="6.2.2" />
-    <PackageReference Include="NLog.Targets.Trace" Version="6.0.3" />
-    <PackageReference Include="System.Waf.Core" Version="8.3.0" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" VersionOverride="*" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" VersionOverride="*" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinApp" VersionOverride="*" />
+    <PackageReference Include="Microsoft.WindowsPackageManager.ComInterop" />
+    <PackageReference Include="NLog" />
+    <PackageReference Include="NLog.Targets.AtomicFile" />
+    <PackageReference Include="NLog.Targets.Trace" />
+    <PackageReference Include="System.Waf.Core" />
   </ItemGroup>
 
   <ItemGroup>
