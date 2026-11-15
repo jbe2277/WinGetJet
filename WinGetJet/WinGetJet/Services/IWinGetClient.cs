@@ -19,12 +19,3 @@ internal class WinGetClient(PackageService packageService) : IWinGetClient
 
     public Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey? version, CancellationToken cancellation) => packageService.LoadDetailsAsync(id, version, cancellation);
 }
-
-internal class MockWinGetClient : IWinGetClient
-{
-    public void InvalidateCache() { }
-
-    public Task<IReadOnlyList<PackageInfo>> GetInstalledPackagesAsync(CancellationToken cancellation) => Task.FromResult<IReadOnlyList<PackageInfo>>([]);
-
-    public Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey? version, CancellationToken cancellation) => Task.FromResult<PackageDetails?>(null);
-}

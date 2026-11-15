@@ -34,8 +34,11 @@ public partial class App : Application
 
     public App()
     {
-        // TODO: var args = Environment.GetCommandLineArgs(); -> MockWinGetClient for testing
-        winGetClient = new WinGetClient(new PackageService());
+        var args = Environment.GetCommandLineArgs();
+        if (args.Contains("--UseMock=true", StringComparer.OrdinalIgnoreCase))
+            winGetClient = new MockWinGetClient();
+        else
+            winGetClient = new WinGetClient(new PackageService());
 
         LogManager.Setup().LoadConfiguration(c =>
         {
