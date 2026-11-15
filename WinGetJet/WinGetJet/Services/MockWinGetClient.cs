@@ -62,4 +62,38 @@ internal class MockWinGetClient : IWinGetClient
     public Task<IReadOnlyList<PackageInfo>> GetInstalledPackagesAsync(CancellationToken cancellation) => Task.FromResult<IReadOnlyList<PackageInfo>>(installedPackages);
 
     public Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey? version, CancellationToken cancellation) => Task.FromResult(packageDetails.FirstOrDefault(x => x.Id == id));
+
+    public async Task UpgradeAsync(string id, PackageVersionKey version, bool acceptPackageAgreements = false, IProgress<double>? progress = null, CancellationToken cancellation = default)
+    {
+        cancellation.ThrowIfCancellationRequested();
+        var packageIndex = installedPackages.FindIndex(x => x.Id == id);
+        var detailsIndex = packageDetails.FindIndex(x => x.Id == id);
+        if (packageIndex < 0 || detailsIndex < 0) throw new InvalidOperationException($"Package not found: {id}");
+
+        var details = packageDetails[detailsIndex];
+        var targetVersion = details.AvailableVersions.FirstOrDefault(x => version.Version is null
+            ? x.Kind == PackageVersionKind.DefaultInstall
+            : x.Kind == PackageVersionKind.Available && x.Version == version.Version)
+            ?? throw new InvalidOperationException($"Package version not found: {version.Version}");
+        if (!acceptPackageAgreements && details.VersionDetails.Agreements.Count > 0)
+            throw new InvalidOperationException("Package agreements must be accepted before upgrading.");
+
+        progress?.Report(0);
+        for (int step = 1; step <= 20; step++)
+        {
+            await Task.Delay(100, cancellation);
+            if (step < 20) progress?.Report(step / 20.0);
+        }
+
+        cancellation.ThrowIfCancellationRequested();
+        installedPackages[packageIndex] = installedPackages[packageIndex] with { InstalledVersion = targetVersion.Version };
+        packageDetails[detailsIndex] = details with
+        {
+            AvailableVersions = details.AvailableVersions.Select(x => x.Kind == PackageVersionKind.Installed
+                ? new PackageVersionKey(PackageVersionKind.Installed, targetVersion.Version)
+                : x).ToArray(),
+            IsUpdateAvailable = details.AvailableVersions.Any(x => x.Kind == PackageVersionKind.DefaultInstall && x.Version != targetVersion.Version)
+        };
+        progress?.Report(1);
+    }
 }

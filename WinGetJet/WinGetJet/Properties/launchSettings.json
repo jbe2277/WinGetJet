@@ -1,7 +1,8 @@
 {
   "profiles": {
     "WinGetJet (Package)": {
-      "commandName": "MsixPackage"
+      "commandName": "MsixPackage",
+      "commandLineArgs": "--UseMock=true"
     },
     "WinGetJet (Unpackaged)": {
       "commandName": "Project"
