@@ -26,6 +26,7 @@ public record PackageInstallRequirements(PackageInstallerType InstallerType, Pro
 public enum PackageVersionKind { Installed, DefaultInstall, Available }
 public record PackageVersionKey(PackageVersionKind Kind, string? Version = null);
 
+
 public class PackageService
 {
     private readonly Lazy<Task<PackageManager>> packageManager = new(() => Task.Run(() => new PackageManager()));
@@ -124,6 +125,25 @@ public class PackageService
                 Tags: metadata?.Tags.ToArray() ?? [],
                 Agreements: metadata?.Agreements.ToArray().Select(a => new PackageAgreement(a.Label, a.Text, ToUri(a.Url))).ToArray() ?? [],
                 InstallRequirements: installRequirements));
+    }
+
+    /// <summary>Upgrades the package to the specified version.</summary>
+    public async Task UpgradeAsync(string id, PackageVersionKey version, bool acceptPackageAgreements = false, IProgress<double>? progress = null, CancellationToken cancellation = default)
+    {
+        var manager = await packageManager.Value.ConfigureAwait(false);
+        var package = await FindPackageAsync(id, cancellation).ConfigureAwait(false) ?? throw new InvalidOperationException($"Package not found: {id}");
+        var options = new InstallOptions
+        {
+            PackageInstallMode = PackageInstallMode.Silent,
+            AcceptPackageAgreements = acceptPackageAgreements,
+        };
+        if (version.Version is not null)
+            options.PackageVersionId = package.AvailableVersions.ToArray().First(x => x.Version == version.Version);
+        var operation = manager.UpgradePackageAsync(package, options);
+        if (progress is not null) operation.Progress = (_, p) => progress.Report(p.DownloadProgress * 0.5 + p.InstallationProgress * 0.5);
+        var result = await operation.AsTask(cancellation).ConfigureAwait(false);
+        if (result.Status != InstallResultStatus.Ok)
+            throw new InvalidOperationException($"Upgrade failed: {result.Status} (0x{result.ExtendedErrorCode?.HResult:X8})");
     }
 
     private static Uri? ToUri(string? url) => Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
