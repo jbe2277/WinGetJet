@@ -11,8 +11,6 @@
     <PackageVersion Include="System.Waf.Core" Version="8.3.0" />
 
     <PackageVersion Include="GitHubActionsTestLogger" Version="3.0.5" />
-    <PackageVersion Include="Microsoft.WindowsPackageManager.ComInterop" Version="1.29.380" />
     <PackageVersion Include="xunit.v3" Version="4.0.2" />
-
   </ItemGroup>
 </Project>
