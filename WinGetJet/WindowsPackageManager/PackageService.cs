@@ -26,6 +26,8 @@ public record PackageInstallRequirements(PackageInstallerType InstallerType, Pro
 public enum PackageVersionKind { Installed, DefaultInstall, Available }
 public record PackageVersionKey(PackageVersionKind Kind, string? Version = null);
 
+public record PackageInstallResult(InstallResultStatus Status, Exception? Exception, uint ErrorCode, bool IsRebootRequired);
+
 
 public class PackageService
 {
@@ -128,7 +130,7 @@ public class PackageService
     }
 
     /// <summary>Upgrades the package to the specified version.</summary>
-    public async Task UpgradeAsync(string id, PackageVersionKey version, bool acceptPackageAgreements = false, IProgress<double>? progress = null, CancellationToken cancellation = default)
+    public async Task<PackageInstallResult> UpgradeAsync(string id, PackageVersionKey version, bool acceptPackageAgreements = false, Action<InstallProgress>? progress = null, CancellationToken cancellation = default)
     {
         var manager = await packageManager.Value.ConfigureAwait(false);
         var package = await FindPackageAsync(id, cancellation).ConfigureAwait(false) ?? throw new InvalidOperationException($"Package not found: {id}");
@@ -140,10 +142,9 @@ public class PackageService
         if (version.Version is not null)
             options.PackageVersionId = package.AvailableVersions.ToArray().First(x => x.Version == version.Version);
         var operation = manager.UpgradePackageAsync(package, options);
-        if (progress is not null) operation.Progress = (_, p) => progress.Report(p.DownloadProgress * 0.5 + p.InstallationProgress * 0.5);
+        if (progress is not null) operation.Progress = (_, p) => progress(p);
         var result = await operation.AsTask(cancellation).ConfigureAwait(false);
-        if (result.Status != InstallResultStatus.Ok)
-            throw new InvalidOperationException($"Upgrade failed: {result.Status} (0x{result.ExtendedErrorCode?.HResult:X8})");
+        return new PackageInstallResult(result.Status, result.ExtendedErrorCode, result.InstallerErrorCode, result.RebootRequired);
     }
 
     private static Uri? ToUri(string? url) => Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;

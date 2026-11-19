@@ -26,6 +26,8 @@ public class AppModel(string id, string name, IReadOnlyList<string> productCodes
     public Dictionary<string, AppVersionModel?> VersionDetailsCache { get; } = [];
 
     public object? Icon { get; set => SetProperty(ref field, value); }
+
+    public InstallationOperationState InstallationOperationState { get; } = new InstallationOperationState();
 }
 
 public record AppVersionModel(PackageVersionKey Version, string? Source, PackageTextLink Publisher, string? Author, string? Description, Uri? PackageUrl,

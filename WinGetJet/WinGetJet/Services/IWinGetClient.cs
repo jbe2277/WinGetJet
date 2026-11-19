@@ -1,4 +1,5 @@
-﻿using WindowsPackageManager;
+﻿using Microsoft.Management.Deployment;
+using WindowsPackageManager;
 
 namespace WinGetJet.Services;
 
@@ -10,7 +11,7 @@ internal interface IWinGetClient
 
     Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey? version = null, CancellationToken cancellation = default);
 
-    Task UpgradeAsync(string id, PackageVersionKey version, bool acceptPackageAgreements = false, IProgress<double>? progress = null, CancellationToken cancellation = default);
+    Task<PackageInstallResult> UpgradeAsync(string id, PackageVersionKey version, bool acceptPackageAgreements = false, Action<InstallProgress>? progress = null, CancellationToken cancellation = default);
 }
 
 internal class WinGetClient(PackageService packageService) : IWinGetClient
@@ -21,5 +22,5 @@ internal class WinGetClient(PackageService packageService) : IWinGetClient
 
     public Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey? version, CancellationToken cancellation) => packageService.LoadDetailsAsync(id, version, cancellation);
 
-    public Task UpgradeAsync(string id, PackageVersionKey version, bool acceptPackageAgreements = false, IProgress<double>? progress = null, CancellationToken cancellation = default) => packageService.UpgradeAsync(id, version, acceptPackageAgreements, progress, cancellation);
+    public Task<PackageInstallResult> UpgradeAsync(string id, PackageVersionKey version, bool acceptPackageAgreements, Action<InstallProgress>? progress, CancellationToken cancellation) => packageService.UpgradeAsync(id, version, acceptPackageAgreements, progress, cancellation);
 }

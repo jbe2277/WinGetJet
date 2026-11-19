@@ -6,12 +6,12 @@ namespace WinGetJet.Services;
 
 internal class MockWinGetClient : IWinGetClient
 {
-    private readonly List<PackageInfo> installedPackages = 
+    private readonly List<PackageInfo> installedPackages =
     [
         new PackageInfo(Id: "Git.Git", Name: "Git", ProductCodes: ["Git_is1"], InstalledVersion: "2.55.0.5")
     ];
 
-    private readonly List<PackageDetails> packageDetails = 
+    private readonly List<PackageDetails> packageDetails =
     [
         new PackageDetails(
             Id: "Git.Git",
@@ -63,29 +63,38 @@ internal class MockWinGetClient : IWinGetClient
 
     public Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey? version, CancellationToken cancellation) => Task.FromResult(packageDetails.FirstOrDefault(x => x.Id == id));
 
-    public async Task UpgradeAsync(string id, PackageVersionKey version, bool acceptPackageAgreements = false, IProgress<double>? progress = null, CancellationToken cancellation = default)
+    public async Task<PackageInstallResult> UpgradeAsync(string id, PackageVersionKey version, bool acceptPackageAgreements, Action<InstallProgress>? progress, CancellationToken cancellation)
     {
         cancellation.ThrowIfCancellationRequested();
         var packageIndex = installedPackages.FindIndex(x => x.Id == id);
         var detailsIndex = packageDetails.FindIndex(x => x.Id == id);
-        if (packageIndex < 0 || detailsIndex < 0) throw new InvalidOperationException($"Package not found: {id}");
+        if (packageIndex < 0 || detailsIndex < 0)
+            return new(InstallResultStatus.CatalogError, new InvalidOperationException($"Package not found: {id}"), 0, false);
 
         var details = packageDetails[detailsIndex];
         var targetVersion = details.AvailableVersions.FirstOrDefault(x => version.Version is null
             ? x.Kind == PackageVersionKind.DefaultInstall
-            : x.Kind == PackageVersionKind.Available && x.Version == version.Version)
-            ?? throw new InvalidOperationException($"Package version not found: {version.Version}");
+            : x.Kind == PackageVersionKind.Available && x.Version == version.Version);
+        if (targetVersion is null)
+            return new(InstallResultStatus.NoApplicableUpgrade, new InvalidOperationException($"Package version not found: {version.Version}"), 0, false);
         if (!acceptPackageAgreements && details.VersionDetails.Agreements.Count > 0)
-            throw new InvalidOperationException("Package agreements must be accepted before upgrading.");
+            return new(InstallResultStatus.PackageAgreementsNotAccepted, null, 0, false);
 
-        progress?.Report(0);
-        for (int step = 1; step <= 20; step++)
+        const ulong bytesRequired = 60_000_000;
+        progress?.Invoke(new InstallProgress(PackageInstallProgressState.Queued, 0, bytesRequired, 0, 0));
+        for (int step = 1; step <= 10; step++)
         {
             await Task.Delay(100, cancellation);
-            if (step < 20) progress?.Report(step / 20.0);
+            var downloadProgress = step / 10.0;
+            progress?.Invoke(new InstallProgress(PackageInstallProgressState.Downloading, (ulong)(bytesRequired * downloadProgress), bytesRequired, downloadProgress, 0));
         }
+        for (int step = 1; step <= 10; step++)
+        {
+            await Task.Delay(100, cancellation);
+            progress?.Invoke(new InstallProgress(PackageInstallProgressState.Installing, bytesRequired, bytesRequired, 1, step / 10.0));
+        }
+        progress?.Invoke(new InstallProgress(PackageInstallProgressState.PostInstall, bytesRequired, bytesRequired, 1, 1));
 
-        cancellation.ThrowIfCancellationRequested();
         installedPackages[packageIndex] = installedPackages[packageIndex] with { InstalledVersion = targetVersion.Version };
         packageDetails[detailsIndex] = details with
         {
@@ -94,6 +103,7 @@ internal class MockWinGetClient : IWinGetClient
                 : x).ToArray(),
             IsUpdateAvailable = details.AvailableVersions.Any(x => x.Kind == PackageVersionKind.DefaultInstall && x.Version != targetVersion.Version)
         };
-        progress?.Report(1);
+        progress?.Invoke(new InstallProgress(PackageInstallProgressState.Finished, bytesRequired, bytesRequired, 1, 1));
+        return new(InstallResultStatus.Ok, null, 0, false);
     }
 }
