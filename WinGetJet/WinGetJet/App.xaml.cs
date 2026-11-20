@@ -141,7 +141,18 @@ public partial class App : Application
 
         if (!await dialogTask) return;
         Log.Default.Info("User confirmed update of {0} to version {1}", app.Id, targetVersion.Version);
-        // TODO: Start the update
+        var state = app.InstallationOperationState;
+        var upgradeResult = await winGetClient.UpgradeAsync(app.Id, targetVersion, updateViewModel.AgreementsAccepted, x => 
+        { 
+            state.BytesToDownload = x.BytesRequired;
+            state.BytesDownloaded = x.BytesDownloaded;
+            state.DownloadProgress = x.DownloadProgress;
+            state.InstallProgress = x.InstallationProgress;
+        }, CancellationToken.None);
+        state.Result = upgradeResult.Status.ToModel();
+        state.ResultException = upgradeResult.Exception;
+        state.ResultErrorCode = upgradeResult.ErrorCode;
+        state.IsRebootRequired = upgradeResult.IsRebootRequired;
     }
 
     private void AppsSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -169,7 +180,7 @@ public partial class App : Application
 
                 if (!details.VersionDetails.Version.Equals(app.DefaultVersionDetails?.Version))
                 {
-                    app.DefaultVersionDetails = CreateAppVersionModel(details.VersionDetails);
+                    app.DefaultVersionDetails = details.VersionDetails.CreateModel();
                     app.SelectedVersionDetails = app.DefaultVersionDetails;
                     if (app.DefaultVersionDetails.Version.Version is not null) app.VersionDetailsCache[app.DefaultVersionDetails.Version.Version] = app.DefaultVersionDetails;
                 }
@@ -198,7 +209,7 @@ public partial class App : Application
                 if (!source.VersionDetailsCache.TryGetValue(source.SelectedVersion.Version, out var versionDetails))
                 {
                     var details = await winGetClient.LoadDetailsAsync(source.Id, new(PackageVersionKind.Available, source.SelectedVersion.Version));
-                    versionDetails = details?.VersionDetails is null ? null : CreateAppVersionModel(details.VersionDetails);
+                    versionDetails = details?.VersionDetails is null ? null : details.VersionDetails.CreateModel();
                     source.VersionDetailsCache[source.SelectedVersion.Version] = versionDetails;
                 }
                 source.SelectedVersionDetails = versionDetails;
@@ -209,13 +220,5 @@ public partial class App : Application
     private void ShellWindowClosed(object sender, WindowEventArgs args)
     {
         Log.Default.Info("{0} closed", ApplicationInfo.ProductName);
-    }
-
-    private static AppVersionModel CreateAppVersionModel(PackageVersionDetails versionDetails)
-    {
-        return new AppVersionModel(versionDetails.Version, versionDetails.Source, versionDetails.Publisher, versionDetails.Author,
-            versionDetails.Description, versionDetails.PackageUrl, versionDetails.PrivacyUrl, versionDetails.License, versionDetails.IconUrl,
-            versionDetails.PublisherSupportUrl, versionDetails.Copyright, versionDetails.ReleaseNotes,
-            versionDetails.Documentations, versionDetails.Tags, versionDetails.Agreements, versionDetails.InstallRequirements);
     }
 }
