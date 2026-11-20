@@ -84,13 +84,13 @@ internal class MockWinGetClient : IWinGetClient
         progress?.Invoke(new InstallProgress(PackageInstallProgressState.Queued, 0, bytesRequired, 0, 0));
         for (int step = 1; step <= 10; step++)
         {
-            await Task.Delay(100, cancellation);
+            await Task.Delay(250, cancellation);
             var downloadProgress = step / 10.0;
             progress?.Invoke(new InstallProgress(PackageInstallProgressState.Downloading, (ulong)(bytesRequired * downloadProgress), bytesRequired, downloadProgress, 0));
         }
         for (int step = 1; step <= 10; step++)
         {
-            await Task.Delay(100, cancellation);
+            await Task.Delay(250, cancellation);
             progress?.Invoke(new InstallProgress(PackageInstallProgressState.Installing, bytesRequired, bytesRequired, 1, step / 10.0));
         }
         progress?.Invoke(new InstallProgress(PackageInstallProgressState.PostInstall, bytesRequired, bytesRequired, 1, 1));

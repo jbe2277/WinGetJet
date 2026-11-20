@@ -42,4 +42,15 @@ public class InstallationOperationState : Model
     public uint ResultErrorCode { get; set => SetProperty(ref field, value); }
 
     public bool IsRebootRequired { get; set => SetProperty(ref field, value); }
+
+    public void Reset()
+    {
+        BytesToDownload = 0;
+        BytesDownloaded = 0;
+        DownloadProgress = 0;
+        InstallProgress = 0;
+        ResultException = null;
+        ResultErrorCode = 0;
+        IsRebootRequired = false;
+    }
 }

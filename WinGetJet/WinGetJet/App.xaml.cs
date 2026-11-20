@@ -23,6 +23,7 @@ public partial class App : Application
         ("WGJ", LogLevel.Info),
     ];
 
+    private readonly TaskScheduler uiTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
     private readonly SemaphoreSlim loadDetailsSemaphore = new(16);
     private readonly IWinGetClient winGetClient;
     private readonly AsyncDelegateCommand refreshCommand;
@@ -142,13 +143,20 @@ public partial class App : Application
         if (!await dialogTask) return;
         Log.Default.Info("User confirmed update of {0} to version {1}", app.Id, targetVersion.Version);
         var state = app.InstallationOperationState;
+        state.Operation = InstallationOperation.Upgrade;
+        state.Status = InstallationOperationStatus.InProgress;
+        state.Reset();
         var upgradeResult = await winGetClient.UpgradeAsync(app.Id, targetVersion, updateViewModel.AgreementsAccepted, x => 
-        { 
-            state.BytesToDownload = x.BytesRequired;
-            state.BytesDownloaded = x.BytesDownloaded;
-            state.DownloadProgress = x.DownloadProgress;
-            state.InstallProgress = x.InstallationProgress;
+        {
+            TaskHelper.Run(() =>
+            {
+                state.BytesToDownload = x.BytesRequired;
+                state.BytesDownloaded = x.BytesDownloaded;
+                state.DownloadProgress = x.DownloadProgress;
+                state.InstallProgress = x.InstallationProgress;
+            }, uiTaskScheduler);
         }, CancellationToken.None);
+        state.Status = InstallationOperationStatus.Completed;
         state.Result = upgradeResult.Status.ToModel();
         state.ResultException = upgradeResult.Exception;
         state.ResultErrorCode = upgradeResult.ErrorCode;
