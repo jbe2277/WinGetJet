@@ -68,7 +68,7 @@
                                        IsUpdateAvailable="{x:Bind IsUpdateAvailable, Mode=OneWay}" />
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
                                 <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyStrongTextBlockStyle}" FontWeight="Normal" FontSize="16" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" AutomationProperties.AutomationId="AppNameTextBlock"/>
-                                <TextBlock Text="{x:Bind v:ViewConvert.VersionAndPublisher(InstalledVersion, DefaultVersionDetails.Publisher.Text), Mode=OneWay}" 
+                                <TextBlock Text="{x:Bind v:MainView.VersionAndPublisher(InstalledVersion, DefaultVersionDetails.Publisher.Text), Mode=OneWay}" 
                                            Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="NoWrap" 
                                            TextTrimming="CharacterEllipsis" AutomationProperties.AutomationId="AppVersionAndPublisherTextBlock"/>
                             </StackPanel>
@@ -150,10 +150,10 @@
                                 <Button Content="Update to selected version" Style="{StaticResource AccentButtonStyle}" Command="{x:Bind ViewModel.UpdateCommand}" AutomationProperties.AutomationId="UpdateButton"/>
                                 <Button Content="Uninstall" MinWidth="100" AutomationProperties.AutomationId="UninstallButton"/>
                             </StackPanel>
-                            <StackPanel Spacing="6" Visibility="{x:Bind v:ViewConvert.IsOperationVisible(ViewModel.SelectedApp.InstallationOperationState.Status), Mode=OneWay, FallbackValue=Collapsed}"
+                            <StackPanel Spacing="6" Visibility="{x:Bind v:MainView.IsOperationVisible(ViewModel.SelectedApp.InstallationOperationState.Status), Mode=OneWay, FallbackValue=Collapsed}"
                                         AutomationProperties.AutomationId="OperationStatePanel">
-                                <StackPanel Spacing="4" Visibility="{x:Bind v:ViewConvert.IsOperationInProgress(ViewModel.SelectedApp.InstallationOperationState.Status), Mode=OneWay, FallbackValue=Collapsed}">
-                                    <TextBlock Text="{x:Bind v:ViewConvert.DownloadInfo(ViewModel.SelectedApp.InstallationOperationState.BytesDownloaded, ViewModel.SelectedApp.InstallationOperationState.BytesToDownload, ViewModel.SelectedApp.InstallationOperationState.DownloadProgress), Mode=OneWay, FallbackValue=''}"
+                                <StackPanel Spacing="4" Visibility="{x:Bind v:MainView.IsOperationInProgress(ViewModel.SelectedApp.InstallationOperationState.Status), Mode=OneWay, FallbackValue=Collapsed}">
+                                    <TextBlock Text="{x:Bind v:MainView.DownloadInfo(ViewModel.SelectedApp.InstallationOperationState.BytesDownloaded, ViewModel.SelectedApp.InstallationOperationState.BytesToDownload, ViewModel.SelectedApp.InstallationOperationState.DownloadProgress), Mode=OneWay, FallbackValue=''}"
                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" AutomationProperties.AutomationId="DownloadProgressTextBlock"/>
                                     <ProgressBar Maximum="100" Value="{x:Bind v:ViewConvert.ToPercent(ViewModel.SelectedApp.InstallationOperationState.DownloadProgress), Mode=OneWay, FallbackValue=0}"
                                                  AutomationProperties.AutomationId="DownloadProgressBar"/>
@@ -163,8 +163,8 @@
                                                  AutomationProperties.AutomationId="InstallProgressBar"/>
                                 </StackPanel>
                                 <TextBlock TextWrapping="Wrap" IsTextSelectionEnabled="True"
-                                           Visibility="{x:Bind v:ViewConvert.IsOperationCompleted(ViewModel.SelectedApp.InstallationOperationState.Status), Mode=OneWay, FallbackValue=Collapsed}"
-                                           Text="{x:Bind v:ViewConvert.ResultInfo(ViewModel.SelectedApp.InstallationOperationState.Result, ViewModel.SelectedApp.InstallationOperationState.ResultErrorCode, ViewModel.SelectedApp.InstallationOperationState.ResultException, ViewModel.SelectedApp.InstallationOperationState.IsRebootRequired), Mode=OneWay, FallbackValue=''}"
+                                           Visibility="{x:Bind v:MainView.IsOperationCompleted(ViewModel.SelectedApp.InstallationOperationState.Status), Mode=OneWay, FallbackValue=Collapsed}"
+                                           Text="{x:Bind v:MainView.ResultInfo(ViewModel.SelectedApp.InstallationOperationState.Result, ViewModel.SelectedApp.InstallationOperationState.ResultErrorCode, ViewModel.SelectedApp.InstallationOperationState.ResultException, ViewModel.SelectedApp.InstallationOperationState.IsRebootRequired), Mode=OneWay, FallbackValue=''}"
                                            AutomationProperties.AutomationId="OperationResultTextBlock"/>
                             </StackPanel>
                         </StackPanel>

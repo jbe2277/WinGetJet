@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WindowsPackageManager;
+using WinGetJet.Models;
 using WinGetJet.ViewModels;
 
 namespace WinGetJet.Views;
@@ -31,5 +32,31 @@ public sealed partial class MainView : Page, IMainView
     {
         // ComboBox sets SelectedItem to null when ItemsSource changes; do not propagate this to the model
         if (VersionComboBox.SelectedItem is PackageVersionKey version && ViewModel.SelectedApp is { } app) app.SelectedVersion = version;
+    }
+
+    internal static string VersionAndPublisher(object? version, string? publisher) => 
+        string.IsNullOrEmpty(publisher) ? $"{version}" : $"{version}   |   {publisher}";
+
+    internal static Visibility IsOperationVisible(InstallationOperationStatus status) => 
+        status != InstallationOperationStatus.None ? Visibility.Visible : Visibility.Collapsed;
+
+    internal static Visibility IsOperationInProgress(InstallationOperationStatus status) => 
+        status is not InstallationOperationStatus.Pending and not InstallationOperationStatus.InProgress ? Visibility.Collapsed : Visibility.Visible;
+
+    internal static Visibility IsOperationCompleted(InstallationOperationStatus status) => 
+        status == InstallationOperationStatus.Completed ? Visibility.Visible : Visibility.Collapsed;
+
+    internal static string DownloadInfo(ulong bytesDownloaded, ulong bytesToDownload, double progress) => 
+        bytesToDownload == 0 
+        ? $"Download: {progress:P0}"
+        : $"Download: {progress:P0} ({bytesDownloaded / 1_000_000:N1} / {bytesToDownload / 1_000_000:N1} MB)";
+
+    internal static string ResultInfo(InstallationResultStatus result, uint errorCode, Exception? exception, bool isRebootRequired)
+    {
+        var text = result == InstallationResultStatus.Success ? "Update completed successfully." : $"Update failed: {result}";
+        if (errorCode != 0) text += $" (Error code: 0x{errorCode:X8})";
+        if (exception is not null) text += Environment.NewLine + exception.Message;
+        if (isRebootRequired) text += Environment.NewLine + "A reboot is required to complete the installation.";
+        return text;
     }
 }
