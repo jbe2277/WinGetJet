@@ -13,11 +13,23 @@ internal static class InstallationOperationStateHelper
         InstallResultStatus.InternalError => InstallationResultStatus.InternalError,
         InstallResultStatus.InvalidOptions => InstallationResultStatus.InvalidOptions,
         InstallResultStatus.DownloadError => InstallationResultStatus.DownloadError,
-        InstallResultStatus.InstallError => InstallationResultStatus.InstallError,
+        InstallResultStatus.InstallError => InstallationResultStatus.InstallationError,
         InstallResultStatus.ManifestError => InstallationResultStatus.ManifestError,
         InstallResultStatus.NoApplicableInstallers => InstallationResultStatus.NoApplicableInstallers,
         InstallResultStatus.NoApplicableUpgrade => InstallationResultStatus.NoApplicableUpgrade,
         InstallResultStatus.PackageAgreementsNotAccepted => InstallationResultStatus.PackageAgreementsNotAccepted,
         _ => throw new NotSupportedException($"Unsupported InstallResultStatus: {status}"),
+    };
+
+    public static InstallationResultStatus ToModel(this UninstallResultStatus status) => status switch
+    {
+        UninstallResultStatus.Ok => InstallationResultStatus.Success,
+        UninstallResultStatus.BlockedByPolicy => InstallationResultStatus.BlockedByPolicy,
+        UninstallResultStatus.CatalogError => InstallationResultStatus.CatalogError,
+        UninstallResultStatus.InternalError => InstallationResultStatus.InternalError,
+        UninstallResultStatus.InvalidOptions => InstallationResultStatus.InvalidOptions,
+        UninstallResultStatus.UninstallError => InstallationResultStatus.InstallationError,
+        UninstallResultStatus.ManifestError => InstallationResultStatus.ManifestError,
+        _ => throw new NotSupportedException($"Unsupported UninstallResultStatus: {status}"),
     };
 }

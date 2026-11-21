@@ -118,4 +118,23 @@ internal class MockWinGetClient : IWinGetClient
         progress?.Invoke(new InstallProgress(PackageInstallProgressState.Finished, bytesRequired, bytesRequired, 1, 1));
         return new(InstallResultStatus.Ok, null, 0, false);
     }
+
+    public async Task<PackageUninstallResult> UninstallAsync(string id, Action<UninstallProgress>? progress, CancellationToken cancellation)
+    {
+        cancellation.ThrowIfCancellationRequested();
+        var packageIndex = installedPackages.FindIndex(x => x.Id == id);
+        if (packageIndex < 0) return new(UninstallResultStatus.CatalogError, new InvalidOperationException($"Package not found: {id}"), 0, false);
+
+        progress?.Invoke(new UninstallProgress(PackageUninstallProgressState.Queued, 0));
+        for (int step = 1; step <= 10; step++)
+        {
+            await Task.Delay(250, cancellation);
+            progress?.Invoke(new UninstallProgress(PackageUninstallProgressState.Uninstalling, step / 10.0));
+        }
+        progress?.Invoke(new UninstallProgress(PackageUninstallProgressState.PostUninstall, 1));
+
+        installedPackages[packageIndex] = installedPackages[packageIndex] with { InstalledVersion = null };
+        progress?.Invoke(new UninstallProgress(PackageUninstallProgressState.Finished, 1));
+        return new(UninstallResultStatus.Ok, null, 0, false);
+    }
 }
