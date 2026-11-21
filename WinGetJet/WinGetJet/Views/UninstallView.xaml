@@ -21,9 +21,9 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="Id" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.App.Id, Mode=OneWay, FallbackValue=''}" TextWrapping="Wrap"
-                       AutomationProperties.AutomationId="IdTextBlock"/>
+            <TextBlock Grid.Row="0" Text="Publisher" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.App.DefaultVersionDetails.Publisher.Text, Mode=OneWay, FallbackValue=''}" TextWrapping="Wrap"
+                       AutomationProperties.AutomationId="PublisherTextBlock"/>
             <TextBlock Grid.Row="1" Text="Installed" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.App.InstalledVersion, Mode=OneWay, FallbackValue=''}"
                        AutomationProperties.AutomationId="InstalledVersionTextBlock"/>
