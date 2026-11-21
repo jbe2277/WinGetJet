@@ -87,7 +87,7 @@ public partial class App : Application
             UpdateCommand = updateCommand,
             UninstallCommand = uninstallCommand
         };
-        mainViewModel.PropertyChanged += (_, e) => { if (e.PropertyName is nameof(MainViewModel.SelectedApp)) { updateCommand.RaiseCanExecuteChanged(); uninstallCommand.RaiseCanExecuteChanged(); } };
+        mainViewModel.PropertyChanged += (_, e) => { if (e.PropertyName is nameof(MainViewModel.SelectedApp)) { DelegateCommand.RaiseCanExecuteChanged(updateCommand, uninstallCommand); } };
         shellViewModel.ContentViewModel = mainViewModel;
         shellWindow.Activate();
 
