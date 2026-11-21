@@ -58,6 +58,13 @@ public class UpgradeTests : UITest
 
         detailsView.UpdateButton.Click();
         var updateView = window.FirstModalWindow().As<UpdateView>();
+        Assert.Equal("Notepad++ Team", updateView.PublisherTextBlock.Text);
+        Assert.Equal(versions[1].Version, updateView.InstalledVersionTextBlock.Text);
+        Assert.Equal(versions[0].Version, updateView.TargetVersionTextBlock.Text);
+        Assert.Equal("WinGet", updateView.SourceTextBlock.Text);
+        Assert.False(updateView.ElevationInfoBar.IsOffscreen);
+        Assert.True(updateView.UpdateButton.IsEnabled);
+        Assert.True(updateView.CancelButton.IsEnabled);
         Thread.Sleep(1000);
         window.CaptureToFile(GetScreenshotFile("UpdateView"));
 
