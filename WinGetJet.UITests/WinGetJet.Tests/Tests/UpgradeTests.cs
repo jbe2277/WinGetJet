@@ -1,4 +1,6 @@
-﻿using Microsoft.Management.Deployment;
+﻿using FlaUI.Core.Definitions;
+using FlaUI.Core.Tools;
+using Microsoft.Management.Deployment;
 using UITests;
 using Xunit;
 
@@ -6,13 +8,12 @@ namespace WinGetJet.Tests.Tests;
 
 public class UpgradeTests : UITest
 {
-    // TODO: Enable GitHub Actions when the test is finished
-    public static bool IsGitHubActions { get; } = false; //string.Equals(Environment.GetEnvironmentVariable("GITHUB_ACTIONS"), "true", StringComparison.OrdinalIgnoreCase);
+    public static bool IsGitHubActions { get; } = string.Equals(Environment.GetEnvironmentVariable("GITHUB_ACTIONS"), "true", StringComparison.OrdinalIgnoreCase);
 
     public static CancellationToken Cancellation => TestContext.Current.CancellationToken;
 
     [Fact(Skip = "Runs only on GitHub Actions", SkipUnless = nameof(IsGitHubActions))]
-    public async Task InstallNotepadPlusPlus()
+    public async Task InstallUpgradeUninstallNotepadPlusPlus()
     {
         const string packageId = "Notepad++.Notepad++";
 
@@ -21,7 +22,6 @@ public class UpgradeTests : UITest
         var versions = package.AvailableVersions.ToArray();
         Log.WriteLine(("Latest version:", $"{versions[0].Version}"));
         Log.WriteLine(("2nd latest version:", $"{versions[1].Version}"));
-
 
         // Verify that the package is not installed before starting the test
         package = await FindPackageAsync(manager, packageId);
@@ -38,6 +38,21 @@ public class UpgradeTests : UITest
         var installedVersion = package.InstalledVersion;
         Assert.NotNull(installedVersion);
         Assert.Equal(versions[1].Version, installedVersion.Version);
+
+
+        Launch();
+        var window = GetShellWindow();
+        window.SetState(WindowVisualState.Maximized);
+        var mainView = window.MainView;
+        var detailsView = mainView.DetailsView;
+
+        Retry.WhileTrue(() => string.IsNullOrEmpty(detailsView.AppNameTextBlock.Text), throwOnTimeout: true);
+        Thread.Sleep(1000);
+        
+        window.SearchBox.TextBox.Enter("Notepad");
+        //Retry.WhileFalse(() => "Git" == detailsView.AppNameTextBlock.Text, throwOnTimeout: true);
+        Thread.Sleep(1000);
+        window.CaptureToFile(GetScreenshotFile("Launch2"));
 
 
         var upgradeOptions = new InstallOptions
