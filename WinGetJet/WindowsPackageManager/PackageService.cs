@@ -28,6 +28,8 @@ public record PackageVersionKey(PackageVersionKind Kind, string? Version = null)
 
 public record PackageInstallResult(InstallResultStatus Status, Exception? Exception, uint ErrorCode, bool IsRebootRequired);
 
+public record PackageUninstallResult(UninstallResultStatus Status, Exception? Exception, uint ErrorCode, bool IsRebootRequired);
+
 
 public class PackageService
 {
@@ -145,6 +147,21 @@ public class PackageService
         if (progress is not null) operation.Progress = (_, p) => progress(p);
         var result = await operation.AsTask(cancellation).ConfigureAwait(false);
         return new PackageInstallResult(result.Status, result.ExtendedErrorCode, result.InstallerErrorCode, result.RebootRequired);
+    }
+
+    /// <summary>Uninstalls the package.</summary>
+    public async Task<PackageUninstallResult> UninstallAsync(string id, Action<UninstallProgress>? progress = null, CancellationToken cancellation = default)
+    {
+        var manager = await packageManager.Value.ConfigureAwait(false);
+        var package = await FindPackageAsync(id, cancellation).ConfigureAwait(false) ?? throw new InvalidOperationException($"Package not found: {id}");
+        var options = new UninstallOptions
+        {
+            PackageUninstallMode = PackageUninstallMode.Silent,
+        };
+        var operation = manager.UninstallPackageAsync(package, options);
+        if (progress is not null) operation.Progress = (_, p) => progress(p);
+        var result = await operation.AsTask(cancellation).ConfigureAwait(false);
+        return new PackageUninstallResult(result.Status, result.ExtendedErrorCode, result.UninstallerErrorCode, result.RebootRequired);
     }
 
     private static Uri? ToUri(string? url) => Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
