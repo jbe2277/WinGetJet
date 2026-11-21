@@ -49,7 +49,7 @@ public class UpgradeTests : UITest
         Retry.WhileTrue(() => string.IsNullOrEmpty(detailsView.AppNameTextBlock.Text), throwOnTimeout: true);
         Thread.Sleep(1000);
         
-        window.SearchBox.TextBox.Enter("Notepad");
+        window.SearchBox.TextBox.Enter("Notepad++ Team");
         //Retry.WhileFalse(() => "Git" == detailsView.AppNameTextBlock.Text, throwOnTimeout: true);
         Thread.Sleep(1000);
         window.CaptureToFile(GetScreenshotFile("Launch2"));
