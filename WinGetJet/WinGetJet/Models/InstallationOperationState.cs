@@ -14,7 +14,7 @@ public enum InstallationResultStatus
     InternalError,
     InvalidOptions,
     DownloadError,
-    InstallError,
+    InstallationError,
     ManifestError,
     NoApplicableInstallers,
     NoApplicableUpgrade,

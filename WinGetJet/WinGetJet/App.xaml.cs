@@ -28,6 +28,7 @@ public partial class App : Application
     private readonly IWinGetClient winGetClient;
     private readonly AsyncDelegateCommand refreshCommand;
     private readonly AsyncDelegateCommand updateCommand;
+    private readonly AsyncDelegateCommand uninstallCommand;
     private ShellWindow shellWindow = null!;
     private ShellViewModel shellViewModel = null!;
     private MainViewModel mainViewModel = null!;
@@ -64,8 +65,9 @@ public partial class App : Application
                 c.ForLogger(loggerNamePattern).FilterMinLevel(minLevel).WriteTo(fileTarget).WriteTo(traceTarget);
             }
         });
-        refreshCommand = new AsyncDelegateCommand(Refresh);
-        updateCommand = new AsyncDelegateCommand(Update, CanUpdate);
+        refreshCommand = new AsyncDelegateCommand(RefreshPackages);
+        updateCommand = new AsyncDelegateCommand(UpdatePackage, CanUpdatePackage);
+        uninstallCommand = new AsyncDelegateCommand(UninstallPackage, CanUninstallPackage);
         InitializeComponent();
     }
 
@@ -82,9 +84,10 @@ public partial class App : Application
         mainViewModel = new MainViewModel(mainView)
         {
             RefreshCommand = refreshCommand,
-            UpdateCommand = updateCommand
+            UpdateCommand = updateCommand,
+            UninstallCommand = uninstallCommand
         };
-        mainViewModel.PropertyChanged += (_, e) => { if (e.PropertyName is nameof(MainViewModel.SelectedApp)) updateCommand.RaiseCanExecuteChanged(); };
+        mainViewModel.PropertyChanged += (_, e) => { if (e.PropertyName is nameof(MainViewModel.SelectedApp)) { DelegateCommand.RaiseCanExecuteChanged(updateCommand, uninstallCommand); } };
         shellViewModel.ContentViewModel = mainViewModel;
         shellWindow.Activate();
 
@@ -108,7 +111,7 @@ public partial class App : Application
         }
     }
 
-    private async Task Refresh()
+    private async Task RefreshPackages()
     {
         winGetClient.InvalidateCache();
         var packages = await winGetClient.GetInstalledPackagesAsync();
@@ -121,9 +124,9 @@ public partial class App : Application
         }
     }
 
-    private bool CanUpdate() => mainViewModel?.SelectedApp is { SelectedVersion.Version: not null };
+    private bool CanUpdatePackage() => mainViewModel?.SelectedApp is { SelectedVersion.Version: not null };
 
-    private async Task Update()
+    private async Task UpdatePackage()
     {
         var app = mainViewModel.SelectedApp;
         var targetVersion = app?.SelectedVersion;
@@ -161,6 +164,32 @@ public partial class App : Application
         state.ResultException = upgradeResult.Exception;
         state.ResultErrorCode = upgradeResult.ErrorCode;
         state.IsRebootRequired = upgradeResult.IsRebootRequired;
+    }
+
+    private bool CanUninstallPackage() => mainViewModel?.SelectedApp is { InstalledVersion: not null };
+
+    private async Task UninstallPackage()
+    {
+        var app = mainViewModel.SelectedApp;
+        if (app is null) return;
+
+        var uninstallViewModel = new UninstallViewModel(new UninstallView()) { App = app };
+        uninstallViewModel.Initialize();
+        if (!await uninstallViewModel.ShowDialogAsync(mainViewModel.View)) return;
+        Log.Default.Info("User confirmed uninstall of {0} version {1}", app.Id, app.InstalledVersion);
+        var state = app.InstallationOperationState;
+        state.Operation = InstallationOperation.Uninstall;
+        state.Status = InstallationOperationStatus.InProgress;
+        state.Reset();
+        var uninstallResult = await winGetClient.UninstallAsync(app.Id, x =>
+        {
+            TaskHelper.Run(() => state.InstallProgress = x.UninstallationProgress, uiTaskScheduler);
+        }, CancellationToken.None);
+        state.Status = InstallationOperationStatus.Completed;
+        state.Result = uninstallResult.Status.ToModel();
+        state.ResultException = uninstallResult.Exception;
+        state.ResultErrorCode = uninstallResult.ErrorCode;
+        state.IsRebootRequired = uninstallResult.IsRebootRequired;
     }
 
     private void AppsSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

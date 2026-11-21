@@ -12,6 +12,8 @@ internal interface IWinGetClient
     Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey? version = null, CancellationToken cancellation = default);
 
     Task<PackageInstallResult> UpgradeAsync(string id, PackageVersionKey version, bool acceptPackageAgreements = false, Action<InstallProgress>? progress = null, CancellationToken cancellation = default);
+
+    Task<PackageUninstallResult> UninstallAsync(string id, Action<UninstallProgress>? progress = null, CancellationToken cancellation = default);
 }
 
 internal class WinGetClient(PackageService packageService) : IWinGetClient
@@ -23,4 +25,6 @@ internal class WinGetClient(PackageService packageService) : IWinGetClient
     public Task<PackageDetails?> LoadDetailsAsync(string id, PackageVersionKey? version, CancellationToken cancellation) => packageService.LoadDetailsAsync(id, version, cancellation);
 
     public Task<PackageInstallResult> UpgradeAsync(string id, PackageVersionKey version, bool acceptPackageAgreements, Action<InstallProgress>? progress, CancellationToken cancellation) => packageService.UpgradeAsync(id, version, acceptPackageAgreements, progress, cancellation);
+
+    public Task<PackageUninstallResult> UninstallAsync(string id, Action<UninstallProgress>? progress, CancellationToken cancellation) => packageService.UninstallAsync(id, progress, cancellation);
 }

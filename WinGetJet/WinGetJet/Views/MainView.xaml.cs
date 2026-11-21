@@ -51,9 +51,16 @@ public sealed partial class MainView : Page, IMainView
         ? $"Download: {progress:P0}"
         : $"Download: {progress:P0} ({bytesDownloaded / 1_000_000:N1} / {bytesToDownload / 1_000_000:N1} MB)";
 
-    internal static string ResultInfo(InstallationResultStatus result, uint errorCode, Exception? exception, bool isRebootRequired)
+    internal static Visibility IsDownloadVisible(InstallationOperation operation) =>
+        operation == InstallationOperation.Uninstall ? Visibility.Collapsed : Visibility.Visible;
+
+    internal static string InstallInfo(InstallationOperation operation, double progress) =>
+        operation == InstallationOperation.Uninstall ? $"Uninstall: {progress:P0}" : $"Install: {progress:P0}";
+
+    internal static string ResultInfo(InstallationOperation operation, InstallationResultStatus result, uint errorCode, Exception? exception, bool isRebootRequired)
     {
-        var text = result == InstallationResultStatus.Success ? "Update completed successfully." : $"Update failed: {result}";
+        var name = operation == InstallationOperation.Uninstall ? "Uninstall" : "Update";
+        var text = result == InstallationResultStatus.Success ? $"{name} completed successfully." : $"{name} failed: {result}";
         if (errorCode != 0) text += $" (Error code: 0x{errorCode:X8})";
         if (exception is not null) text += Environment.NewLine + exception.Message;
         if (isRebootRequired) text += Environment.NewLine + "A reboot is required to complete the installation.";
