@@ -29,5 +29,8 @@
                        AutomationProperties.AutomationId="InstalledVersionTextBlock"/>
         </Grid>
         <TextBlock Text="Do you want to uninstall this package?" TextWrapping="Wrap" />
+        <InfoBar IsOpen="{x:Bind ViewModel.App.DefaultVersionDetails.InstallRequirements.IsElevationRequired, Mode=OneWay, FallbackValue=False}" IsClosable="False" Severity="Warning" Title="Administrator permissions required"
+                 Message="The uninstaller requires administrator permissions. You might be asked to confirm a User Account Control prompt."
+                 AutomationProperties.AutomationId="ElevationInfoBar"/>
     </StackPanel>
 </ContentDialog>

@@ -21,7 +21,11 @@ public record PackageAgreement(string? Label, string? Text, Uri? Url);
 
 public enum PackageElevation { Unknown, Required, Prohibited, ElevatesSelf }
 
-public record PackageInstallRequirements(PackageInstallerType InstallerType, ProcessorArchitecture Architecture, PackageInstallerScope Scope, ElevationRequirement Elevation, bool IsInstallerAvailable);
+public record PackageInstallRequirements(PackageInstallerType InstallerType, ProcessorArchitecture Architecture, PackageInstallerScope Scope, ElevationRequirement Elevation, bool IsInstallerAvailable)
+{
+    public bool IsElevationRequired => Elevation is ElevationRequirement.ElevationRequired or ElevationRequirement.ElevatesSelf
+        || (Elevation is ElevationRequirement.Unknown && Scope is PackageInstallerScope.System);
+}
 
 public enum PackageVersionKind { Installed, DefaultInstall, Available }
 public record PackageVersionKey(PackageVersionKind Kind, string? Version = null);
