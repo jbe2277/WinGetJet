@@ -1,7 +1,9 @@
-﻿using FlaUI.Core.Definitions;
+﻿using FlaUI.Core.AutomationElements;
+using FlaUI.Core.Definitions;
 using FlaUI.Core.Tools;
 using Microsoft.Management.Deployment;
 using UITests;
+using WinGetJet.Tests.Views;
 using Xunit;
 
 namespace WinGetJet.Tests.Tests;
@@ -50,10 +52,14 @@ public class UpgradeTests : UITest
         Thread.Sleep(1000);
         
         window.SearchBox.TextBox.Enter("Notepad++ Team");
-        //Retry.WhileFalse(() => "Git" == detailsView.AppNameTextBlock.Text, throwOnTimeout: true);
+        Retry.WhileFalse(() => detailsView.AppNameTextBlock.Text.StartsWith("Notepad++"), throwOnTimeout: true);
         Thread.Sleep(1000);
-        window.CaptureToFile(GetScreenshotFile("Launch2"));
+        window.CaptureToFile(GetScreenshotFile("Launch"));
 
+        detailsView.UpdateButton.Click();
+        var updateView = window.FirstModalWindow().As<UpdateView>();
+        Thread.Sleep(1000);
+        window.CaptureToFile(GetScreenshotFile("UpdateView"));
 
         var upgradeOptions = new InstallOptions
         {
