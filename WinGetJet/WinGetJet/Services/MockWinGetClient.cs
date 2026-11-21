@@ -19,7 +19,19 @@ internal class MockWinGetClient : IWinGetClient
             AvailableVersions: [
                 new(PackageVersionKind.Installed, "2.55.0.5"),
                 new(PackageVersionKind.DefaultInstall, "2.56.0.4"),
-                new(PackageVersionKind.Available, "2.56.0.4")
+                new(PackageVersionKind.Available, "2.56.1"),
+                new(PackageVersionKind.Available, "2.56.0.4"),
+                new(PackageVersionKind.Available, "2.56.0.3"),
+                new(PackageVersionKind.Available, "2.56.0.2"),
+                new(PackageVersionKind.Available, "2.56.0"),
+                new(PackageVersionKind.Available, "2.55.0.5"),
+                new(PackageVersionKind.Available, "2.55.0.4"),
+                new(PackageVersionKind.Available, "2.55.0.3"),
+                new(PackageVersionKind.Available, "2.55.0.2"),
+                new(PackageVersionKind.Available, "2.55.0"),
+                new(PackageVersionKind.Available, "2.54.0"),
+                new(PackageVersionKind.Available, "2.53.0.3"),
+                new(PackageVersionKind.Available, "2.53.0.2")
             ],
             IsUpdateAvailable: true,
             VersionDetails: new PackageVersionDetails(
