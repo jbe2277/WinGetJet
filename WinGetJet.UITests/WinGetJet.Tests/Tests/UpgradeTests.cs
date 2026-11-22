@@ -1,4 +1,5 @@
 ﻿using FlaUI.Core.AutomationElements;
+using FlaUI.Core.Capturing;
 using FlaUI.Core.Definitions;
 using FlaUI.Core.Tools;
 using Microsoft.Management.Deployment;
@@ -71,7 +72,7 @@ public class UpgradeTests : UITest
         for (var i = 0; i < 10; i++)
         {
             Thread.Sleep(1000);
-            window.CaptureToFile(GetScreenshotFile($"UpdateProgress_{i}"));
+            Capture.Screen().ToFile(GetScreenshotFile($"UpdateProgress_{i}"));
         }
 
         //var upgradeOptions = new InstallOptions
