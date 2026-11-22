@@ -65,16 +65,19 @@ public class UpgradeTests : UITest
         Assert.False(updateView.ElevationInfoBar.IsOffscreen);
         Assert.True(updateView.UpdateButton.IsEnabled);
         Assert.True(updateView.CancelButton.IsEnabled);
-        Thread.Sleep(1000);
         window.CaptureToFile(GetScreenshotFile("UpdateView"));
 
-        var upgradeOptions = new InstallOptions
-        {
-            PackageInstallMode = PackageInstallMode.Silent,
-            PackageVersionId = versions[0]
-        };
-        var upgradeResult = await manager.UpgradePackageAsync(package, upgradeOptions);
-        Assert.Equal(InstallResultStatus.Ok, upgradeResult.Status);
+        updateView.UpdateButton.Click();
+        Thread.Sleep(5000);
+        window.CaptureToFile(GetScreenshotFile("UpdateView2"));
+
+        //var upgradeOptions = new InstallOptions
+        //{
+        //    PackageInstallMode = PackageInstallMode.Silent,
+        //    PackageVersionId = versions[0]
+        //};
+        //var upgradeResult = await manager.UpgradePackageAsync(package, upgradeOptions);
+        //Assert.Equal(InstallResultStatus.Ok, upgradeResult.Status);
 
         package = await FindPackageAsync(manager, packageId);
         installedVersion = package.InstalledVersion;
