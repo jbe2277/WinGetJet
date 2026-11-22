@@ -68,8 +68,11 @@ public class UpgradeTests : UITest
         window.CaptureToFile(GetScreenshotFile("UpdateView"));
 
         updateView.UpdateButton.Click();
-        Thread.Sleep(5000);
-        window.CaptureToFile(GetScreenshotFile("UpdateView2"));
+        for (var i = 0; i < 10; i++)
+        {
+            Thread.Sleep(1000);
+            window.CaptureToFile(GetScreenshotFile($"UpdateProgress_{i}"));
+        }
 
         //var upgradeOptions = new InstallOptions
         //{
